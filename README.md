@@ -166,10 +166,11 @@ The native game supports deterministic capture helpers used by scripts:
 - Confirm tense/supportive survivors show visible map markers and useful inspector details.
 - Open Log mode after several day summaries; search, filter, page, select a report, and export the archive.
 - Reach victory or failure, then restart and confirm the new run does not leak old selection/log state.
-# Practical Future Improvements
 
-- Add scenario tests for Day 7 victory and failure checks, including food, shelter, mission progress, and relationship pressure.
-- Split runtime colony state from persistence DTOs so future relationship, assignment, and log changes can migrate cleanly.
-- Add fixtures for assignment pinning, role cycling, room filtering, and pair/separate directives in Assign mode.
-- Profile relationship-log rendering and daily report generation, then cache summaries used by the right rail and log screen.
+## Documentation
+
+- `tfl_mvp.md` — the design document: the single pillar, MVP scope, and the loop the game is built around.
+- `docs/verification/manual_relationship_playtest.md` — focused manual QA pass.
+- `docs/verification/playthrough_report.md` — generated headless strategy matrix.
+- `TODO.md` — open playtest, art, and engineering work.
 
