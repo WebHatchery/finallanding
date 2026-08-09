@@ -146,44 +146,32 @@ $sizes = @(
     @{ Width = 1280; Height = 720; Name = "ui_smoke_poses_1280x720.png"; Fullscreen = "0"; Mode = "build"; Selected = ""; ActiveIndex = 0; History = "0"; SocialDay = ""; Poses = "1"; Spaces = "0"; SelectedBuilding = ""; PreviewX = ""; PreviewY = "" }
 )
 
-foreach ($size in $sizes) {
+$manifest = Join-Path $outDir ".capture_manifest_$PID.tsv"
+$rows = foreach ($size in $sizes) {
     $path = Join-Path $outDir $size.Name
     if (Test-Path -LiteralPath $path) {
         Remove-Item -LiteralPath $path -Force
     }
+    $scene = ([IO.Path]::GetFileNameWithoutExtension($size.Name) -replace '^ui_', '')
+    "$scene`t$path"
+}
+Set-Content -LiteralPath $manifest -Value $rows -Encoding utf8
+$env:TFL_CAPTURE_MANIFEST = $manifest
+$env:TFL_CAPTURE_FRAMES = "$Frames"
+$env:TFL_HEADLESS = "1"
+try {
+    $proc = Start-Process -FilePath $exe -PassThru -WindowStyle Hidden
+    Write-Host ("Capturing {0} smoke scenes in one process (PID {1})..." -f $sizes.Count, $proc.Id)
+    $proc.WaitForExit()
+    if ($proc.ExitCode -ne 0) { throw "Capture process exited with code $($proc.ExitCode)." }
+}
+finally {
+    Remove-Item Env:\TFL_CAPTURE_MANIFEST, Env:\TFL_CAPTURE_FRAMES, Env:\TFL_HEADLESS -ErrorAction SilentlyContinue
+    Remove-Item -LiteralPath $manifest -Force -ErrorAction SilentlyContinue
+}
 
-    $env:TFL_START_GAMEPLAY = "1"
-    $env:TFL_CAPTURE_PATH = $path
-    $env:TFL_CAPTURE_FRAMES = "$Frames"
-    $env:TFL_WINDOW_WIDTH = "$($size.Width)"
-    $env:TFL_WINDOW_HEIGHT = "$($size.Height)"
-    $env:TFL_FULLSCREEN = "$($size.Fullscreen)"
-    $env:TFL_START_TOOLBAR_MODE = "$($size.Mode)"
-    $env:TFL_SEED_SOCIAL_HISTORY = "$($size.History)"
-    if ($size.SocialDay -ne "") {
-        $env:TFL_START_SOCIAL_HISTORY_DAY = "$($size.SocialDay)"
-    } else {
-        Remove-Item Env:\TFL_START_SOCIAL_HISTORY_DAY -ErrorAction SilentlyContinue
-    }
-    $env:TFL_SEED_ACTIVITY_POSES = "$($size.Poses)"
-    $env:TFL_SEED_ASSIGN_SPACES = "$($size.Spaces)"
-    if ($size.SelectedBuilding -ne "") {
-        $env:TFL_START_SELECTED_BUILDING = "$($size.SelectedBuilding)"
-        $env:TFL_PREVIEW_GRID_X = "$($size.PreviewX)"
-        $env:TFL_PREVIEW_GRID_Y = "$($size.PreviewY)"
-    } else {
-        Remove-Item Env:\TFL_START_SELECTED_BUILDING -ErrorAction SilentlyContinue
-        Remove-Item Env:\TFL_PREVIEW_GRID_X -ErrorAction SilentlyContinue
-        Remove-Item Env:\TFL_PREVIEW_GRID_Y -ErrorAction SilentlyContinue
-    }
-    if ($size.Selected -ne "") {
-        $env:TFL_START_SELECTED_COLONIST = "$($size.Selected)"
-    } else {
-        Remove-Item Env:\TFL_START_SELECTED_COLONIST -ErrorAction SilentlyContinue
-    }
-
-    & $exe
-
+foreach ($size in $sizes) {
+    $path = Join-Path $outDir $size.Name
     if (!(Test-Path -LiteralPath $path)) {
         throw "Capture failed: $path was not created."
     }
@@ -213,19 +201,3 @@ foreach ($size in $sizes) {
 
     Write-Host "Captured $($file.FullName) ($($file.Length) bytes, $($size.Width)x$($size.Height))"
 }
-
-Remove-Item Env:\TFL_START_GAMEPLAY -ErrorAction SilentlyContinue
-Remove-Item Env:\TFL_CAPTURE_PATH -ErrorAction SilentlyContinue
-Remove-Item Env:\TFL_CAPTURE_FRAMES -ErrorAction SilentlyContinue
-Remove-Item Env:\TFL_WINDOW_WIDTH -ErrorAction SilentlyContinue
-Remove-Item Env:\TFL_WINDOW_HEIGHT -ErrorAction SilentlyContinue
-Remove-Item Env:\TFL_FULLSCREEN -ErrorAction SilentlyContinue
-Remove-Item Env:\TFL_START_TOOLBAR_MODE -ErrorAction SilentlyContinue
-Remove-Item Env:\TFL_START_SELECTED_COLONIST -ErrorAction SilentlyContinue
-Remove-Item Env:\TFL_START_SOCIAL_HISTORY_DAY -ErrorAction SilentlyContinue
-Remove-Item Env:\TFL_START_SELECTED_BUILDING -ErrorAction SilentlyContinue
-Remove-Item Env:\TFL_PREVIEW_GRID_X -ErrorAction SilentlyContinue
-Remove-Item Env:\TFL_PREVIEW_GRID_Y -ErrorAction SilentlyContinue
-Remove-Item Env:\TFL_SEED_SOCIAL_HISTORY -ErrorAction SilentlyContinue
-Remove-Item Env:\TFL_SEED_ACTIVITY_POSES -ErrorAction SilentlyContinue
-Remove-Item Env:\TFL_SEED_ASSIGN_SPACES -ErrorAction SilentlyContinue

@@ -6,6 +6,7 @@ use crate::state::menu_state::MenuState;
 
 use crate::state::game_state::GameplayState;
 use crate::state::{State, StateTransition};
+use macroquad::prelude::{request_new_screen_size, set_fullscreen};
 
 pub enum GameStateEnum {
     Gameplay(GameplayState),
@@ -49,6 +50,74 @@ impl Game {
             GameStateEnum::Gameplay(state) => state.draw(),
             GameStateEnum::Menu(state) => state.draw_ui(),
         }
+    }
+
+    pub fn begin_capture_scene(&mut self, scene: &str) {
+        const KEYS: &[&str] = &[
+            "TFL_START_TOOLBAR_MODE",
+            "TFL_START_SELECTED_COLONIST",
+            "TFL_START_SOCIAL_HISTORY_DAY",
+            "TFL_START_SELECTED_BUILDING",
+            "TFL_PREVIEW_GRID_X",
+            "TFL_PREVIEW_GRID_Y",
+            "TFL_SEED_SOCIAL_HISTORY",
+            "TFL_SEED_ACTIVITY_POSES",
+            "TFL_SEED_ASSIGN_SPACES",
+        ];
+        for key in KEYS {
+            std::env::remove_var(key);
+        }
+
+        let (width, height, fullscreen, values) = match scene {
+            "smoke_1920x1080" => (1920, 1080, true, vec![("TFL_START_TOOLBAR_MODE", "build")]),
+            "smoke_assign_1280x720" => (
+                1280,
+                720,
+                false,
+                vec![
+                    ("TFL_START_TOOLBAR_MODE", "assign"),
+                    ("TFL_START_SELECTED_COLONIST", "5"),
+                    ("TFL_SEED_ASSIGN_SPACES", "1"),
+                ],
+            ),
+            "smoke_log_1280x720" => (
+                1280,
+                720,
+                false,
+                vec![
+                    ("TFL_START_TOOLBAR_MODE", "log"),
+                    ("TFL_SEED_SOCIAL_HISTORY", "1"),
+                    ("TFL_START_SOCIAL_HISTORY_DAY", "4"),
+                ],
+            ),
+            "smoke_placement_1280x720" => (
+                1280,
+                720,
+                false,
+                vec![
+                    ("TFL_START_TOOLBAR_MODE", "rooms"),
+                    ("TFL_START_SELECTED_BUILDING", "habitat"),
+                    ("TFL_PREVIEW_GRID_X", "5"),
+                    ("TFL_PREVIEW_GRID_Y", "9"),
+                ],
+            ),
+            "smoke_poses_1280x720" => (
+                1280,
+                720,
+                false,
+                vec![
+                    ("TFL_START_TOOLBAR_MODE", "build"),
+                    ("TFL_SEED_ACTIVITY_POSES", "1"),
+                ],
+            ),
+            _ => (1280, 720, false, vec![("TFL_START_TOOLBAR_MODE", "build")]),
+        };
+        for (key, value) in values {
+            std::env::set_var(key, value);
+        }
+        set_fullscreen(fullscreen);
+        request_new_screen_size(width as f32, height as f32);
+        self.state = GameStateEnum::Gameplay(GameplayState::new());
     }
 }
 

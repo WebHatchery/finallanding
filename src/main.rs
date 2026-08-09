@@ -39,16 +39,18 @@ async fn main() {
     let mut game: Game = Game::new().await;
 
     // Screenshot harness: when TFL_CAPTURE_PATH is set, render deterministic
-    // frames, write a PNG, and exit. Scenes are seeded via the TFL_START_* /
-    // TFL_SEED_* env vars (see state::game_state_setup), not the scene field.
-    if let Some(mut config) = capture::CaptureConfig::from_env("TFL") {
-        config.frames = capture::env_u32("TFL_CAPTURE_FRAMES", 8).max(1);
-        capture::run_capture(&config, |_dt| {
-            clear_background(BLACK);
-            game.update();
-            game.draw();
-        })
-        .await;
+    // frames and write PNGs from one process/window.
+    if let Some(configs) = capture::CaptureConfig::all_from_env("TFL") {
+        for mut config in configs {
+            config.frames = capture::env_u32("TFL_CAPTURE_FRAMES", 8).max(1);
+            game.begin_capture_scene(&config.scene);
+            capture::run_capture_once(&config, |_dt| {
+                clear_background(BLACK);
+                game.update();
+                game.draw();
+            })
+            .await;
+        }
         return;
     }
 
