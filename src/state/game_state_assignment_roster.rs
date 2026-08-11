@@ -14,16 +14,5 @@ pub(crate) fn next_assign_role_filter(current: Option<JobPreference>) -> Option<
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_next_assign_role_filter_cycles_assignable_roles() {
-        assert_eq!(next_assign_role_filter(None), Some(JobPreference::Explorer));
-        assert_eq!(
-            next_assign_role_filter(Some(JobPreference::Explorer)),
-            Some(JobPreference::Builder)
-        );
-        assert_eq!(next_assign_role_filter(Some(JobPreference::Hauler)), None);
-    }
-}
+#[path = "game_state_assignment_roster/tests.rs"]
+mod tests;
