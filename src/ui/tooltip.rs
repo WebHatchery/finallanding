@@ -1,7 +1,7 @@
 use crate::ui::style;
 use macroquad::prelude::*;
 use macroquad_toolkit::input::mouse_position_vec2;
-use macroquad_toolkit::ui::{draw_ui_text, measure_ui_text};
+use macroquad_toolkit::ui::{draw_ui_text, measure_ui_text, truncate_text_to_width};
 
 const PAD_X: f32 = 10.0;
 const PAD_Y: f32 = 8.0;
@@ -13,11 +13,15 @@ pub fn draw_tooltip_near_mouse(bounds: Rect, title: &str, body: &str) {
 }
 
 pub fn draw_tooltip_at(anchor: Vec2, bounds: Rect, title: &str, body: &str) {
-    let title_text = style::truncate_text(title, 28);
-    let body_text = style::truncate_text(body, 48);
+    let available_width = (bounds.w - PAD_X * 2.0).clamp(0.0, 300.0);
+    if available_width < 16.0 || bounds.h < 44.0 {
+        return;
+    }
+    let title_text = truncate_text_to_width(title, available_width, style::SMALL_SIZE);
+    let body_text = truncate_text_to_width(body, available_width, style::TINY_SIZE);
     let title_width = measure_ui_text(&title_text, None, style::SMALL_SIZE as u16, 1.0).width;
     let body_width = measure_ui_text(&body_text, None, style::TINY_SIZE as u16, 1.0).width;
-    let width = title_width.max(body_width).clamp(130.0, 300.0) + PAD_X * 2.0;
+    let width = title_width.max(body_width).max(130.0).min(available_width) + PAD_X * 2.0;
     let height = 44.0;
     let rect = tooltip_rect(anchor, bounds, width, height);
 
@@ -40,6 +44,8 @@ pub fn draw_tooltip_at(anchor: Vec2, bounds: Rect, title: &str, body: &str) {
 }
 
 pub fn tooltip_rect(anchor: Vec2, bounds: Rect, width: f32, height: f32) -> Rect {
+    let width = width.clamp(0.0, bounds.w.max(0.0));
+    let height = height.clamp(0.0, bounds.h.max(0.0));
     let max_x = bounds.x + bounds.w - width;
     let max_y = bounds.y + bounds.h - height;
     Rect::new(

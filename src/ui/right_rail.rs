@@ -161,7 +161,7 @@ fn draw_resources(rect: Rect, resources: &ResourceState, storage_capacity: i32, 
             row.color,
         );
         draw_ui_text(
-            &style::truncate_text(&row.detail, 22),
+            &style::fit_text(&row.detail, 40.0, style::TINY_SIZE),
             rect.x + rect.w - 56.0,
             y + 12.0,
             style::TINY_SIZE,
@@ -249,7 +249,8 @@ fn draw_colonist_list(
         style::ACCENT_GOLD,
     );
 
-    for (index, colonist) in colonists.iter().take(7).enumerate() {
+    let visible_count = (((rect.h - 72.0) / 33.0).floor().max(0.0) as usize).min(7);
+    for (index, colonist) in colonists.iter().take(visible_count).enumerate() {
         let y = rect.y + 59.0 + index as f32 * 33.0;
         let portrait = Rect::new(rect.x + 16.0, y - 22.0, 25.0, 25.0);
         if let Some(texture) = art.colonist_portrait(colonist.id) {
@@ -280,7 +281,7 @@ fn draw_colonist_list(
             style::PANEL_BORDER,
         );
         draw_ui_text(
-            &style::truncate_text(&colonist.name, 18),
+            &style::fit_text(&colonist.name, rect.w - 160.0, style::SMALL_SIZE),
             rect.x + 48.0,
             y,
             style::SMALL_SIZE,
@@ -316,9 +317,16 @@ fn draw_colonist_list(
         );
     }
 
-    let footer = social_footer(summary);
+    let footer = if colonists.len() > visible_count {
+        format!(
+            "Showing {visible_count}/{} — open Assign for all",
+            colonists.len()
+        )
+    } else {
+        social_footer(summary)
+    };
     draw_ui_text(
-        &style::truncate_text(&footer, 33),
+        &style::fit_text(&footer, rect.w - 32.0, style::TINY_SIZE),
         rect.x + 16.0,
         rect.y + rect.h - 18.0,
         style::TINY_SIZE,

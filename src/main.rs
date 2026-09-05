@@ -48,6 +48,15 @@ async fn main() {
                 clear_background(BLACK);
                 game.update();
                 game.draw();
+                if config.scene == "smoke_toolkit_tooltips" {
+                    for bounds in [Rect::new(50.0, 120.0, 180.0, 90.0), Rect::new(650.0, 120.0, 320.0, 90.0)] {
+                        ui::tooltip::draw_tooltip_at(
+                            vec2(bounds.right(), bounds.bottom()), bounds,
+                            "WWW — A very long colony infrastructure title",
+                            "Wide glyphs and long reports must fit inside the available tooltip width.",
+                        );
+                    }
+                }
             })
             .await;
         }

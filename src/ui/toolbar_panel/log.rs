@@ -23,7 +23,7 @@ pub(super) fn draw_log_context(
         social_brief.color,
     );
     draw_ui_text(
-        &style::truncate_text(&social_brief.detail, 72),
+        &style::fit_text(&social_brief.detail, context.w - 36.0, style::TINY_SIZE),
         context.x + 18.0,
         context.y + 68.0,
         style::TINY_SIZE,
@@ -95,7 +95,7 @@ pub(super) fn draw_log_context(
                 row.color,
             );
             draw_ui_text(
-                &style::truncate_text(&row.title, 34),
+                &style::fit_text(&row.title, rect.w - 151.0, style::TINY_SIZE),
                 rect.x + 39.0,
                 y,
                 style::TINY_SIZE,
@@ -143,9 +143,10 @@ pub(super) fn draw_log_context(
             style::HEADING_BLUE,
         );
         draw_ui_text(
-            &style::truncate_text(
+            &style::fit_text(
                 &format!("{} {}", format_clock(log.hour, log.minute), log.title),
-                64,
+                context.w - 64.0,
+                style::TINY_SIZE,
             ),
             context.x + 52.0,
             y,
@@ -174,7 +175,7 @@ pub(super) fn draw_log_search_control(context: Rect, query: &str, active: bool) 
     let mut label = if query.is_empty() {
         "SEARCH REPORTS".to_string()
     } else {
-        style::truncate_text(query, 25)
+        style::fit_text(query, search.w - 22.0, style::TINY_SIZE)
     };
     if active {
         label.push('|');
@@ -224,7 +225,7 @@ pub(super) fn draw_social_report_drilldown(context: Rect, entry: &SocialHistoryE
         &format!(
             "DAY {}: {}",
             entry.day,
-            style::truncate_text(&entry.title, 34)
+            style::fit_text(&entry.title, rect.w - 85.0, style::TINY_SIZE)
         ),
         rect.x + 12.0,
         rect.y + 17.0,
@@ -232,14 +233,14 @@ pub(super) fn draw_social_report_drilldown(context: Rect, entry: &SocialHistoryE
         style::TEXT_PRIMARY,
     );
     draw_ui_text(
-        &style::truncate_text(&entry.detail, 58),
+        &style::fit_text(&entry.detail, rect.w - 24.0, style::TINY_SIZE),
         rect.x + 12.0,
         rect.y + 37.0,
         style::TINY_SIZE,
         style::TEXT_BODY,
     );
     draw_ui_text(
-        &style::truncate_text(&entry.recommendation, 58),
+        &style::fit_text(&entry.recommendation, rect.w - 24.0, style::TINY_SIZE),
         rect.x + 12.0,
         rect.y + 55.0,
         style::TINY_SIZE,

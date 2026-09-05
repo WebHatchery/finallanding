@@ -1,9 +1,9 @@
 use crate::data::colonist::{MoodBand, RelationshipBand};
-use crate::data::text;
 use macroquad::prelude::*;
 use macroquad_toolkit::colors::with_alpha;
 use macroquad_toolkit::input::is_hovered_rect;
 use macroquad_toolkit::ui::draw_ui_text;
+pub use macroquad_toolkit::ui::truncate_text_to_width as fit_text;
 use macroquad_toolkit::ui::{draw_surface, SurfaceStyle};
 
 pub const PANEL_BG: Color = Color::new(0.075, 0.095, 0.1, 0.9);
@@ -80,10 +80,6 @@ pub fn draw_progress_bar(rect: Rect, value: f32, fill: Color) {
     );
     draw_rectangle(rect.x, rect.y, rect.w * value.clamp(0.0, 1.0), rect.h, fill);
     draw_rectangle_lines(rect.x, rect.y, rect.w, rect.h, 1.0, PANEL_DIVIDER);
-}
-
-pub fn truncate_text(text: &str, max_chars: usize) -> String {
-    text::truncate_text(text, max_chars)
 }
 
 pub fn mood_face(mood: f32) -> &'static str {

@@ -1,5 +1,5 @@
 use super::*;
-use macroquad_toolkit::ui::draw_ui_text;
+use macroquad_toolkit::ui::{draw_ui_text, truncate_text_to_width};
 
 impl GameplayState {
     pub(crate) fn draw_ghost_preview(&self) {
@@ -106,7 +106,7 @@ impl GameplayState {
             LIGHTGRAY,
         );
         draw_ui_text(
-            &truncate_text(feedback.purpose, 48),
+            &truncate_text_to_width(feedback.purpose, width - 24.0, 11.0),
             x + 12.0,
             y + 63.0,
             11.0,
@@ -115,7 +115,7 @@ impl GameplayState {
 
         if let Some(reason) = feedback.invalid_reason.as_ref() {
             draw_ui_text(
-                &format!("Blocked: {}", truncate_text(reason, 39)),
+                &truncate_text_to_width(&format!("Blocked: {}", reason), width - 24.0, 12.0),
                 x + 12.0,
                 y + 88.0,
                 12.0,
@@ -130,7 +130,11 @@ impl GameplayState {
             );
         } else {
             draw_ui_text(
-                &format!("Impact: {}", truncate_text(feedback.impact, 42)),
+                &truncate_text_to_width(
+                    &format!("Impact: {}", feedback.impact),
+                    width - 24.0,
+                    12.0,
+                ),
                 x + 12.0,
                 y + 88.0,
                 12.0,

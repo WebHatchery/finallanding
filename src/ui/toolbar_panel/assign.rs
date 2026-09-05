@@ -82,7 +82,7 @@ pub(super) fn draw_assign_context(
                 }),
         );
         draw_ui_text(
-            &style::truncate_text(&colonist.name, 11),
+            &style::fit_text(&colonist.name, rect.w - 20.0, style::SMALL_SIZE),
             rect.x + 10.0,
             rect.y + 18.0,
             style::SMALL_SIZE,
@@ -100,7 +100,7 @@ pub(super) fn draw_assign_context(
                 .map(|warning| format!("{} {}", warning.label, selected_assignment_label(colonist)))
                 .unwrap_or_else(|| selected_assignment_label(colonist));
             draw_ui_text(
-                &style::truncate_text(&label, 17),
+                &style::fit_text(&label, rect.w - 20.0, style::TINY_SIZE),
                 rect.x + 10.0,
                 rect.y + 34.0,
                 style::TINY_SIZE,
@@ -116,7 +116,7 @@ pub(super) fn draw_assign_context(
                 hovered_name = Some(colonist.name.clone());
             }
             draw_ui_text(
-                &style::truncate_text(&action.label, 16),
+                &style::fit_text(&action.label, rect.w - 20.0, style::TINY_SIZE),
                 rect.x + 10.0,
                 rect.y + 34.0,
                 style::TINY_SIZE,
@@ -131,13 +131,14 @@ pub(super) fn draw_assign_context(
                 hovered_name = Some(colonist.name.clone());
             }
             draw_ui_text(
-                &style::truncate_text(
+                &style::fit_text(
                     &format!(
                         "{} -> {}",
                         colonist.job_preference.label(),
                         next_role.label()
                     ),
-                    15,
+                    rect.w - 20.0,
+                    style::TINY_SIZE,
                 ),
                 rect.x + 10.0,
                 rect.y + 34.0,
@@ -172,7 +173,7 @@ pub(super) fn draw_assign_context(
         .map(|warning| warning.detail.clone())
         .unwrap_or(footer);
     draw_ui_text(
-        &style::truncate_text(&footer, 76),
+        &style::fit_text(&footer, context.w - 36.0, style::TINY_SIZE),
         context.x + 18.0,
         context.y + 111.0,
         style::TINY_SIZE,

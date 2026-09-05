@@ -37,14 +37,14 @@ pub fn draw_advisor_overlay(layout: &Layout, objectives: &[ObjectiveCard], plan:
             severity_color(line.severity),
         );
         draw_ui_text(
-            &style::truncate_text(&line.title, 25),
+            &style::fit_text(&line.title, row.w - 46.0, style::SMALL_SIZE),
             row.x + 34.0,
             row.y + 16.0,
             style::SMALL_SIZE,
             style::TEXT_PRIMARY,
         );
         draw_ui_text(
-            &style::truncate_text(&line.detail, 35),
+            &style::fit_text(&line.detail, row.w - 46.0, style::TINY_SIZE),
             row.x + 34.0,
             row.y + 31.0,
             style::TINY_SIZE,
@@ -82,14 +82,14 @@ fn draw_objective_card(x: f32, y: f32, width: f32, objective: &ObjectiveCard) {
     }
 
     draw_ui_text(
-        &style::truncate_text(&objective.title, 23),
+        &style::fit_text(&objective.title, width - 109.0, style::TINY_SIZE),
         x + 28.0,
         y + 11.0,
         style::TINY_SIZE,
         style::TEXT_PRIMARY,
     );
     draw_ui_text(
-        &style::truncate_text(&objective.detail, 29),
+        &style::fit_text(&objective.detail, width - 40.0, style::TINY_SIZE),
         x + 28.0,
         y + 22.0,
         style::TINY_SIZE,

@@ -150,7 +150,7 @@ fn draw_build_context(
             Color::new(r as f32 / 255.0, g as f32 / 255.0, b as f32 / 255.0, 1.0),
         );
         draw_ui_text(
-            &style::truncate_text(building_type.name(), 12),
+            &style::fit_text(building_type.name(), rect.w - 40.0, style::TINY_SIZE),
             rect.x + 30.0,
             rect.y + 18.0,
             style::TINY_SIZE,
@@ -216,7 +216,7 @@ fn draw_colony_context(context: Rect, active_priority: ColonyPriority) {
             style::TEXT_PRIMARY,
         );
         draw_ui_text(
-            &style::truncate_text(priority.description(), 26),
+            &style::fit_text(priority.description(), rect.w - 20.0, style::TINY_SIZE),
             rect.x + 10.0,
             rect.y + 34.0,
             style::TINY_SIZE,
@@ -272,14 +272,18 @@ fn draw_research_context(
         let hovered = style::button_hovered(rect);
         style::draw_button(rect, false, hovered);
         draw_ui_text(
-            &style::truncate_text(tech_id.name(), 15),
+            &style::fit_text(tech_id.name(), rect.w - 20.0, style::SMALL_SIZE),
             rect.x + 10.0,
             rect.y + 18.0,
             style::SMALL_SIZE,
             style::TEXT_PRIMARY,
         );
         draw_ui_text(
-            &style::truncate_text(&technology.requirement_progress_text(*tech_id), 19),
+            &style::fit_text(
+                &technology.requirement_progress_text(*tech_id),
+                rect.w - 20.0,
+                style::TINY_SIZE,
+            ),
             rect.x + 10.0,
             rect.y + 34.0,
             style::TINY_SIZE,

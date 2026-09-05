@@ -61,10 +61,9 @@ impl Layout {
             x: screen_width() - self.right_panel_width + self.screen_margin,
             y: self.top_bar_height + self.screen_margin,
             w: self.right_panel_width - self.screen_margin * 2.0,
-            h: screen_height()
-                - self.top_bar_height
-                - self.bottom_toolbar_height
-                - self.screen_margin * 2.0,
+            // The toolbar occupies the center; the right rail can use the
+            // full screen height without crossing it.
+            h: screen_height() - self.top_bar_height - self.screen_margin * 2.0,
         }
     }
 

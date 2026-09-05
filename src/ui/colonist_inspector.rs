@@ -21,7 +21,7 @@ pub fn draw_colonist_inspector(
 
     let rail = layout.left_panel();
     let width = rail.w;
-    let height = 260.0_f32.min(rail.h * 0.48);
+    let height = 320.0_f32.min(rail.h * 0.48);
     let x = rail.x;
     let y = rail.y + rail.h - height;
     let accent = style::mood_color(colonist.mood);
@@ -30,7 +30,7 @@ pub fn draw_colonist_inspector(
     draw_rectangle(x, y, 4.0, height, accent);
 
     draw_ui_text(
-        &style::truncate_text(&colonist.name.to_uppercase(), 25),
+        &style::fit_text(&colonist.name.to_uppercase(), width - 28.0, 18.0),
         x + 14.0,
         y + 31.0,
         18.0,
@@ -94,10 +94,14 @@ pub fn draw_colonist_inspector(
         style::BAR_GREEN,
     );
     draw_ui_text(
-        &format!(
-            "{} at {}",
-            activity_label(&colonist.current_activity),
-            style::truncate_text(&activity_location_label(&colonist.activity_location), 17)
+        &style::fit_text(
+            &format!(
+                "{} at {}",
+                activity_label(&colonist.current_activity),
+                activity_location_label(&colonist.activity_location)
+            ),
+            width - 126.0,
+            style::TINY_SIZE,
         ),
         x + 112.0,
         y + 116.0,
@@ -135,25 +139,24 @@ pub fn draw_colonist_inspector(
     );
 
     let relationship = strongest_relationship(colonist, colonists)
-        .map(|(name, value)| {
-            format!(
-                "{} {} ({:+})",
-                style::truncate_text(&name, 16),
-                relationship_label(value),
-                value
-            )
-        })
+        .map(|(name, value)| format!("{} {} ({:+})", name, relationship_label(value), value))
         .unwrap_or_else(|| "No strong tie yet".to_string());
 
     draw_ui_text(
-        &format!("RELATIONSHIP  {}", style::truncate_text(&relationship, 24)),
+        &style::fit_text(
+            &format!("RELATIONSHIP  {}", relationship),
+            width - 36.0,
+            style::TINY_SIZE,
+        ),
         x + 18.0,
         y + height - 13.0,
         style::TINY_SIZE,
         style::TEXT_BODY,
     );
 
-    draw_relationship_portraits(x + 18.0, y + height - 58.0, colonist, art);
+    if height >= 310.0 {
+        draw_relationship_portraits(x + 18.0, y + height - 58.0, colonist, art);
+    }
 }
 
 fn draw_relationship_portraits(x: f32, y: f32, colonist: &Colonist, art: &PlaceholderArt) {
