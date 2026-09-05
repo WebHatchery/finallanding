@@ -1,6 +1,8 @@
+use macroquad_toolkit::rng::LegacyLcg64;
+
 #[derive(Clone, Debug)]
 pub struct SimulationRng {
-    state: u64,
+    stream: LegacyLcg64<1>,
 }
 
 impl Default for SimulationRng {
@@ -11,7 +13,9 @@ impl Default for SimulationRng {
 
 impl SimulationRng {
     pub fn with_seed(seed: u64) -> Self {
-        Self { state: seed.max(1) }
+        Self {
+            stream: LegacyLcg64::new(seed),
+        }
     }
 
     pub fn range_i32(&mut self, min: i32, max: i32) -> i32 {
@@ -26,11 +30,7 @@ impl SimulationRng {
     }
 
     fn next_u32(&mut self) -> u32 {
-        self.state = self
-            .state
-            .wrapping_mul(6_364_136_223_846_793_005)
-            .wrapping_add(1);
-        (self.state >> 32) as u32
+        self.stream.next_u32()
     }
 }
 
