@@ -12,6 +12,7 @@ pub struct AssignContext<'a> {
     pub active_sort: AssignRosterSort,
     pub active_role_filter: Option<JobPreference>,
     pub active_building_filter: Option<u32>,
+    pub room_filter_armed: bool,
     pub technology: &'a TechnologyState,
 }
 
@@ -25,6 +26,7 @@ pub fn draw_assign_context(view: AssignContext<'_>) {
         active_sort,
         active_role_filter,
         active_building_filter,
+        room_filter_armed,
         technology,
     } = view;
     let mut hovered_forecast = None;
@@ -170,6 +172,19 @@ pub fn draw_assign_context(view: AssignContext<'_>) {
     if let Some(colonist) = selected_colonist {
         draw_assign_batch_controls(context, colonist);
     }
+    let room_filter = assign_room_filter_rect(context);
+    style::draw_button(
+        room_filter,
+        room_filter_armed,
+        style::button_hovered(room_filter),
+    );
+    draw_ui_text(
+        "FILTER ROOM",
+        room_filter.x + 8.0,
+        room_filter.y + 15.0,
+        style::TINY_SIZE,
+        style::TEXT_PRIMARY,
+    );
     let footer = selected_colonist
         .map(|colonist| {
             let filter_note = active_building_filter

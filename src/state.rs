@@ -2,6 +2,7 @@
 
 pub mod game_state;
 pub mod menu_state;
+pub mod persistence;
 pub mod runtime_state;
 
 use crate::state::game_state::GameplayState;

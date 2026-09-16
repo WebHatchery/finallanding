@@ -43,6 +43,29 @@ impl GameplayState {
     }
 
     pub fn handle_log_toolbar_click(&mut self, context: Rect, mouse_x: f32, mouse_y: f32) {
+        if self.social_history_search_active {
+            if let Some(action) = log_keyboard_action_at(context, mouse_x, mouse_y) {
+                match action {
+                    LogSearchAction::Key(character) => {
+                        if self.social_history_query.chars().count() < 28 {
+                            self.social_history_query
+                                .push(character.to_ascii_lowercase());
+                            self.social_history_page = 0;
+                            self.selected_social_history_day = None;
+                        }
+                    }
+                    LogSearchAction::Backspace => {
+                        self.social_history_query.pop();
+                        self.social_history_page = 0;
+                        self.selected_social_history_day = None;
+                    }
+                    LogSearchAction::Done => self.social_history_search_active = false,
+                    LogSearchAction::Focus | LogSearchAction::Clear | LogSearchAction::Export => {}
+                }
+                return;
+            }
+        }
+
         if let Some(action) = log_search_action_at(context, mouse_x, mouse_y) {
             match action {
                 LogSearchAction::Focus => {
@@ -58,6 +81,7 @@ impl GameplayState {
                     self.social_history_search_active = false;
                     self.export_social_archive();
                 }
+                LogSearchAction::Key(_) | LogSearchAction::Backspace | LogSearchAction::Done => {}
             }
             return;
         }

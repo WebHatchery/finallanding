@@ -4,9 +4,9 @@ use super::*;
 
 impl GameplayState {
     pub fn update_pointer_ui_input(&mut self, input: &InputState) {
-        let assign_room_filter_click =
-            self.toolbar_mode == ToolbarMode::Assign && input.right_pressed;
-        if !input.left_pressed && !assign_room_filter_click {
+        let assign_room_filter_click = self.toolbar_mode == ToolbarMode::Assign
+            && (input.right_released || self.assign_room_filter_armed && input.left_released);
+        if !input.left_released && !assign_room_filter_click {
             return;
         }
 
@@ -16,6 +16,7 @@ impl GameplayState {
         if assign_room_filter_click {
             if input.hovered_rect(self.layout.game_area()) {
                 self.update_assign_building_filter_click();
+                self.assign_room_filter_armed = false;
                 return;
             }
             return;
@@ -53,7 +54,10 @@ impl GameplayState {
         }
 
         let context = toolbar_context_rect(toolbar);
-        if !context.contains(Vec2::new(mouse_x, mouse_y)) {
+        let in_touch_keyboard = self.toolbar_mode == ToolbarMode::Log
+            && self.social_history_search_active
+            && log_keyboard_bounds(context).contains(Vec2::new(mouse_x, mouse_y));
+        if !context.contains(Vec2::new(mouse_x, mouse_y)) && !in_touch_keyboard {
             return false;
         }
 

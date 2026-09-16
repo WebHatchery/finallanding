@@ -4,6 +4,11 @@ use super::*;
 
 impl GameplayState {
     pub fn handle_assign_toolbar_click(&mut self, context: Rect, mouse_x: f32, mouse_y: f32) {
+        if assign_room_filter_rect(context).contains(Vec2::new(mouse_x, mouse_y)) {
+            self.assign_room_filter_armed = !self.assign_room_filter_armed;
+            return;
+        }
+
         if let Some(filter) = assign_filter_at(context, mouse_x, mouse_y) {
             self.assign_roster_filter = filter;
             self.assign_roster_page = 0;

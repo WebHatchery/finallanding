@@ -9,6 +9,9 @@ pub enum LogSearchAction {
     Focus,
     Clear,
     Export,
+    Key(char),
+    Backspace,
+    Done,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -71,6 +74,50 @@ pub fn log_search_action_at(context: Rect, x: f32, y: f32) -> Option<LogSearchAc
         ],
         vec2(x, y),
     )
+}
+
+pub fn log_keyboard_bounds(context: Rect) -> Rect {
+    Rect::new(context.x, context.y - 190.0, context.w, 190.0)
+}
+
+pub fn log_keyboard_key_rect(context: Rect, index: usize) -> Rect {
+    let columns = 7.0;
+    let gap = 4.0;
+    let width = (context.w - 24.0 - gap * (columns - 1.0)) / columns;
+    let row = index / 7;
+    let col = index % 7;
+    Rect::new(
+        context.x + 12.0 + col as f32 * (width + gap),
+        context.y - 184.0 + row as f32 * 45.0,
+        width,
+        41.0,
+    )
+}
+
+pub fn log_keyboard_action_at(context: Rect, x: f32, y: f32) -> Option<LogSearchAction> {
+    let keys: &[char] = &[
+        'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K',
+        'L', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ' ',
+    ];
+    for (index, key) in keys.iter().enumerate() {
+        if log_keyboard_key_rect(context, index).contains(vec2(x, y)) {
+            return Some(LogSearchAction::Key(*key));
+        }
+    }
+    let backspace = Rect::new(context.x + 12.0, context.y - 3.0, context.w * 0.48, 41.0);
+    let done = Rect::new(
+        context.x + context.w * 0.52,
+        context.y - 3.0,
+        context.w * 0.48 - 12.0,
+        41.0,
+    );
+    if backspace.contains(vec2(x, y)) {
+        Some(LogSearchAction::Backspace)
+    } else if done.contains(vec2(x, y)) {
+        Some(LogSearchAction::Done)
+    } else {
+        None
+    }
 }
 
 pub fn log_filter_rect(context: Rect, index: usize) -> Rect {

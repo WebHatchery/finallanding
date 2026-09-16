@@ -25,12 +25,24 @@ impl GameplayState {
     }
 
     pub fn update_top_bar_click(&mut self, mouse_x: f32, mouse_y: f32) {
-        if let Some(speed) = top_bar_speed_at(mouse_x, mouse_y) {
+        if let Some(action) = top_bar_action_at(&self.layout, mouse_x, mouse_y) {
+            match action {
+                TopBarAction::Undo => self.undo_last_building(),
+                TopBarAction::Cancel => {
+                    self.selected_building = None;
+                    self.assign_room_filter_armed = false;
+                    self.social_history_search_active = false;
+                }
+            }
+            return;
+        }
+
+        if let Some(speed) = top_bar_speed_at_for(&self.layout, mouse_x, mouse_y) {
             self.data.time.speed = speed;
             return;
         }
 
-        if let Some(priority) = top_bar_priority_at(mouse_x, mouse_y) {
+        if let Some(priority) = top_bar_priority_at_for(&self.layout, mouse_x, mouse_y) {
             self.set_priority(priority);
         }
     }

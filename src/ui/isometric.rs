@@ -12,7 +12,13 @@ pub struct IsoView {
 
 impl IsoView {
     pub fn for_area(area: Rect, grid_width: u32, grid_height: u32) -> Self {
-        let tile_w = (area.w / ((grid_width + grid_height) as f32 * 0.52)).clamp(24.0, 52.0);
+        let map_span = (grid_width + grid_height) as f32;
+        // Fit the whole diamond inside the playable region at compact sizes so
+        // every cell remains reachable by touch. Desktop layouts still get
+        // generous tiles, while phone layouts trade tile size for coverage.
+        let width_limited = area.w * 1.86 / map_span;
+        let height_limited = area.h * 3.5 / map_span;
+        let tile_w = width_limited.min(height_limited).clamp(8.0, 52.0);
         let tile_h = tile_w * 0.5;
         let map_h = (grid_width + grid_height) as f32 * tile_h * 0.5;
         Self {

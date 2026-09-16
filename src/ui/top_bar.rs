@@ -6,8 +6,8 @@ use crate::data::priority::ColonyPriority;
 use crate::data::resources::ResourceState;
 use crate::systems::time_system::TimeSystem;
 use crate::ui::hit_zones::{
-    priority_button_rect, speed_button_rect, BUTTON_GAP, PRIORITY_BUTTON_START_X,
-    PRIORITY_BUTTON_W, PRIORITY_LABEL_X,
+    priority_button_rect_for, speed_button_rect_for, top_bar_action_rect, TopBarAction, BUTTON_GAP,
+    PRIORITY_BUTTON_START_X, PRIORITY_BUTTON_W, PRIORITY_LABEL_X,
 };
 use crate::ui::style;
 use macroquad::prelude::*;
@@ -27,12 +27,18 @@ pub fn draw_top_bar(
 
     style::draw_deep_panel(Rect::new(12.0, 12.0, rect.w.min(840.0), rect.h - 16.0));
 
+    let phone = layout.viewport_width < 760.0;
+
     // Title
     draw_ui_text(
-        "THE FINAL LANDING",
-        30.0,
-        42.0,
-        style::TITLE_SIZE,
+        if phone {
+            "FINAL LANDING"
+        } else {
+            "THE FINAL LANDING"
+        },
+        if phone { 12.0 } else { 30.0 },
+        if phone { 19.0 } else { 42.0 },
+        if phone { 14.0 } else { style::TITLE_SIZE },
         style::TEXT_PRIMARY,
     );
 
@@ -49,9 +55,9 @@ pub fn draw_top_bar(
 
     draw_ui_text(
         &format!("{}  {}", time_str, time_icon),
-        565.0,
-        42.0,
-        18.0,
+        if phone { 130.0 } else { 565.0 },
+        if phone { 19.0 } else { 42.0 },
+        if phone { 12.0 } else { 18.0 },
         time_color,
     );
 
@@ -64,7 +70,7 @@ pub fn draw_top_bar(
     ];
 
     for (i, (speed, label, _tooltip)) in speeds.iter().enumerate() {
-        let button_rect = speed_button_rect(i);
+        let button_rect = speed_button_rect_for(layout, i);
         let is_active = current_speed == *speed;
 
         style::draw_button(button_rect, is_active, style::button_hovered(button_rect));
@@ -73,8 +79,8 @@ pub fn draw_top_bar(
         draw_ui_text(
             label,
             button_rect.x + (button_rect.w - text_w) / 2.0,
-            button_rect.y + 20.0,
-            16.0,
+            button_rect.y + if phone { 14.0 } else { 20.0 },
+            if phone { 11.0 } else { 16.0 },
             if is_active {
                 style::HEADING_BLUE
             } else {
@@ -83,31 +89,66 @@ pub fn draw_top_bar(
         );
     }
 
-    draw_ui_text("PRIORITY", PRIORITY_LABEL_X, 24.0, 12.0, style::TEXT_MUTED);
+    if !phone {
+        let priority_label_x = if layout.viewport_width < 1_100.0 {
+            500.0
+        } else {
+            PRIORITY_LABEL_X
+        };
+        draw_ui_text("PRIORITY", priority_label_x, 24.0, 12.0, style::TEXT_MUTED);
 
-    for (i, priority) in ColonyPriority::all().iter().enumerate() {
-        let button_rect = priority_button_rect(i);
-        let is_active = current_priority == *priority;
-        style::draw_button(button_rect, is_active, style::button_hovered(button_rect));
+        for (i, priority) in ColonyPriority::all().iter().enumerate() {
+            let button_rect = priority_button_rect_for(layout, i);
+            let is_active = current_priority == *priority;
+            style::draw_button(button_rect, is_active, style::button_hovered(button_rect));
 
-        let label = format!("[{}] {}", priority.shortcut(), priority.short_label());
-        let text_w = measure_ui_text(&label, None, 13, 1.0).width;
+            let label = format!("[{}] {}", priority.shortcut(), priority.short_label());
+            let text_w = measure_ui_text(&label, None, 13, 1.0).width;
+            draw_ui_text(
+                &label,
+                button_rect.x + (button_rect.w - text_w) / 2.0,
+                button_rect.y + 20.0,
+                13.0,
+                if is_active {
+                    style::TEXT_PRIMARY
+                } else {
+                    style::TEXT_BODY
+                },
+            );
+        }
+    }
+
+    for action in [TopBarAction::Undo, TopBarAction::Cancel] {
+        let action_rect = top_bar_action_rect(layout, action);
+        let hovered = style::button_hovered(action_rect);
+        style::draw_button(action_rect, false, hovered);
+        let label = match action {
+            TopBarAction::Undo => "UNDO",
+            TopBarAction::Cancel => "CANCEL",
+        };
+        let label_width = measure_ui_text(label, None, 12, 1.0).width;
         draw_ui_text(
-            &label,
-            button_rect.x + (button_rect.w - text_w) / 2.0,
-            button_rect.y + 20.0,
-            13.0,
-            if is_active {
-                style::TEXT_PRIMARY
-            } else {
-                style::TEXT_BODY
-            },
+            label,
+            action_rect.x + (action_rect.w - label_width) * 0.5,
+            action_rect.y + if phone { 14.0 } else { 20.0 },
+            if phone { 9.0 } else { 12.0 },
+            style::TEXT_PRIMARY,
         );
     }
 
-    let priority_end = PRIORITY_BUTTON_START_X
-        + ColonyPriority::all().len() as f32 * (PRIORITY_BUTTON_W + BUTTON_GAP)
-        - BUTTON_GAP;
+    let priority_end = if phone {
+        0.0
+    } else if layout.viewport_width < 1_100.0 {
+        545.0 + ColonyPriority::all().len() as f32 * 60.0 - 5.0
+    } else {
+        PRIORITY_BUTTON_START_X
+            + ColonyPriority::all().len() as f32 * (PRIORITY_BUTTON_W + BUTTON_GAP)
+            - BUTTON_GAP
+    };
+    if phone {
+        return;
+    }
+
     let status_label = format!(
         "C:{} Mood:{:.0} Supplies:{} Salvage:{} {}",
         colonist_count,

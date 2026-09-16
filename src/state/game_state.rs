@@ -8,6 +8,7 @@ use crate::data::mission::MissionType;
 use crate::data::priority::ColonyPriority;
 use crate::data::types::Position;
 use crate::game::building_system::PlacementResult;
+use crate::state::persistence::save_game;
 use crate::state::runtime_state::GameState;
 use crate::state::{State, StateTransition};
 use crate::systems::advisor_system::AdvisorSystem;
@@ -29,23 +30,27 @@ use crate::systems::time_system::TimeSystem;
 use crate::systems::work_system::WorkSystem;
 use crate::ui::{
     assign_batch_action_at, assign_filter_at, assign_page_action_at, assign_role_filter_at,
-    assign_sort_at, draw_advisor_overlay, draw_bottom_toolbar, draw_colonist_inspector,
-    draw_debug_overlay, draw_right_rail, draw_toolbar_context_panel, draw_top_bar, log_filter_at,
-    log_page_action_at, log_search_action_at, log_timeline_row_at, restart_button_rect,
-    social_history_page_count, social_timeline_day_at, toolbar_building_at_for_mode,
-    toolbar_buildings_for_mode, toolbar_colonist_index_at, toolbar_context_rect,
-    toolbar_mission_at, toolbar_mode_at, toolbar_priority_at, top_bar_priority_at,
-    top_bar_speed_at, AssignBatchAction, AssignRosterFilter, AssignRosterSort, DebugOverlayContext,
-    IsoView, Layout, LogFilter, LogSearchAction, PageAction, PlaceholderArt, ToolbarAssignData,
-    ToolbarLogData, ToolbarMode, ToolbarPanelData, ToolbarResearchData,
+    assign_room_filter_rect, assign_sort_at, draw_advisor_overlay, draw_bottom_toolbar,
+    draw_colonist_inspector, draw_debug_overlay, draw_right_rail, draw_toolbar_context_panel,
+    draw_top_bar, log_filter_at, log_keyboard_action_at, log_keyboard_bounds, log_page_action_at,
+    log_search_action_at, log_timeline_row_at, restart_button_rect, social_history_page_count,
+    social_timeline_day_at, toolbar_building_at_for_mode, toolbar_buildings_for_mode,
+    toolbar_colonist_index_at, toolbar_context_rect, toolbar_mission_at, toolbar_mode_at,
+    toolbar_priority_at, top_bar_action_at, top_bar_priority_at_for, top_bar_speed_at_for,
+    AssignBatchAction, AssignRosterFilter, AssignRosterSort, DebugOverlayContext, IsoView, Layout,
+    LogFilter, LogSearchAction, PageAction, PlaceholderArt, ToolbarAssignData, ToolbarLogData,
+    ToolbarMode, ToolbarPanelData, ToolbarResearchData, TopBarAction,
 };
 use macroquad::prelude::*;
 use macroquad_toolkit::debug::DebugOverlay;
 use macroquad_toolkit::input::InputState;
+use macroquad_toolkit::ui::Pointer;
 use std::path::PathBuf;
 
 pub struct GameplayState {
     pub data: GameState,
+    /// Current step in the first-run arrival briefing; None means the colony is active.
+    pub arrival_stage: Option<usize>,
     pub hovered_cell: Option<Position>,
     /// Currently selected building type for placement (None = not in build mode)
     pub selected_building: Option<BuildingType>,
@@ -75,6 +80,8 @@ pub struct GameplayState {
     pub assign_role_filter: Option<JobPreference>,
     /// Optional room/work-space instance filter in the Assign mode roster.
     pub assign_building_filter: Option<u32>,
+    /// Whether the visible room filter control is waiting for a map tap.
+    pub assign_room_filter_armed: bool,
     /// Current page in the Log mode social archive.
     pub social_history_page: usize,
     /// Active filter in the Log mode social archive.
@@ -87,6 +94,10 @@ pub struct GameplayState {
     pub selected_social_history_day: Option<u32>,
     /// Placeholder visual assets extracted from the rebuild reference.
     pub art: PlaceholderArt,
+    /// Seconds since the last durable autosave.
+    pub autosave_elapsed: f32,
+    /// Prevents a storage failure from flooding the event log every frame.
+    pub save_error_reported: bool,
 }
 
 impl Default for GameplayState {
@@ -99,22 +110,22 @@ impl GameplayState {
     pub fn new() -> Self {
         let mut data = GameState::new();
         data.tick = 420; // Start at 07:00 AM (Work time)
-        crate::game::colonist_spawner::spawn_initial_colonists(&mut data);
-        data.push_log(
-            LogCategory::System,
-            "Crash survivors assembled",
-            format!(
-                "Starting stockpile: {} supplies, {} salvage. Objective: survive to Day {} and unlock {} technologies.",
-                data.resources.supplies,
-                data.resources.salvage,
-                data.scenario.target_day,
-                data.scenario.required_tech_unlocks
-            ),
-        );
-        seed_assign_spaces_for_capture(&mut data);
-        seed_activity_poses_for_capture(&mut data);
-        seed_social_history_for_capture(&mut data);
+        Self::from_data(data, Some(0))
+    }
 
+    /// Create a fully populated state for deterministic screenshot and playthrough harnesses.
+    pub fn new_for_capture() -> Self {
+        let mut state = Self::new();
+        state.complete_arrival();
+        state
+    }
+
+    /// Restore a saved colony without replaying the first-run arrival briefing.
+    pub fn from_saved(data: GameState) -> Self {
+        Self::from_data(data, None)
+    }
+
+    fn from_data(data: GameState, arrival_stage: Option<usize>) -> Self {
         let toolbar_mode = initial_toolbar_mode();
         let selected_building = initial_selected_building(toolbar_mode);
         let selected_colonist_id = initial_selected_colonist_id(&data, toolbar_mode);
@@ -124,6 +135,7 @@ impl GameplayState {
         Self {
             prev_tick: data.tick,
             data,
+            arrival_stage,
             hovered_cell: None,
             selected_building,
             capture_preview_position,
@@ -138,12 +150,52 @@ impl GameplayState {
             assign_roster_sort: AssignRosterSort::Roster,
             assign_role_filter: None,
             assign_building_filter: None,
+            assign_room_filter_armed: false,
             social_history_page: 0,
             social_history_filter: LogFilter::All,
             social_history_query: String::new(),
             social_history_search_active: false,
             selected_social_history_day,
             art: PlaceholderArt::new(),
+            autosave_elapsed: 0.0,
+            save_error_reported: false,
+        }
+    }
+
+    /// Materialize the configured survivor roster and arrival-day capture fixtures once the
+    /// player has read the briefing.
+    pub fn complete_arrival(&mut self) {
+        if self.arrival_stage.is_none() {
+            return;
+        }
+
+        crate::game::colonist_spawner::spawn_initial_colonists(&mut self.data);
+        self.data.push_log(
+            LogCategory::System,
+            "Crash survivors assembled",
+            format!(
+                "Starting stockpile: {} supplies, {} salvage. Objective: survive to Day {} and unlock {} technologies.",
+                self.data.resources.supplies,
+                self.data.resources.salvage,
+                self.data.scenario.target_day,
+                self.data.scenario.required_tech_unlocks
+            ),
+        );
+        seed_assign_spaces_for_capture(&mut self.data);
+        seed_activity_poses_for_capture(&mut self.data);
+        seed_social_history_for_capture(&mut self.data);
+        self.selected_colonist_id = initial_selected_colonist_id(&self.data, self.toolbar_mode);
+        self.selected_social_history_day = initial_selected_social_history_day(&self.data);
+        self.arrival_stage = None;
+        self.autosave_elapsed = 0.0;
+        self.save_error_reported = false;
+        if let Err(error) = save_game(&self.data) {
+            self.data.push_log(
+                LogCategory::System,
+                "Autosave unavailable",
+                format!("The colony is still playable, but progress was not saved: {error}"),
+            );
+            self.save_error_reported = true;
         }
     }
 }

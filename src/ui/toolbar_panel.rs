@@ -12,11 +12,12 @@ use crate::systems::mission_system::MissionPlan;
 use crate::systems::summary_system::ColonyPressureSummary;
 use crate::ui::hit_zones::{
     assign_batch_rect, assign_filter_rect, assign_page_next_rect, assign_page_previous_rect,
-    assign_role_filter_rect, assign_sort_rect, log_filter_rect, log_page_next_rect,
-    log_page_previous_rect, log_search_clear_rect, log_search_export_rect, log_search_rect,
-    log_timeline_row_rect, toolbar_buildings_for_mode, toolbar_context_item_rect,
-    toolbar_context_rect, toolbar_list_item_rect, AssignBatchAction, AssignRosterFilter,
-    AssignRosterSort, LogFilter, ToolbarMode,
+    assign_role_filter_rect, assign_room_filter_rect, assign_sort_rect, log_filter_rect,
+    log_keyboard_bounds, log_keyboard_key_rect, log_page_next_rect, log_page_previous_rect,
+    log_search_clear_rect, log_search_export_rect, log_search_rect, log_timeline_row_rect,
+    toolbar_buildings_for_mode, toolbar_context_item_rect, toolbar_context_rect,
+    toolbar_list_item_rect, AssignBatchAction, AssignRosterFilter, AssignRosterSort, LogFilter,
+    ToolbarMode,
 };
 use crate::ui::style;
 use crate::ui::tooltip::draw_tooltip_near_mouse;
@@ -64,6 +65,7 @@ pub struct ToolbarAssignData<'a> {
     pub roster_sort: AssignRosterSort,
     pub role_filter: Option<JobPreference>,
     pub building_filter: Option<u32>,
+    pub room_filter_armed: bool,
     pub technology: &'a TechnologyState,
 }
 
@@ -112,6 +114,7 @@ pub fn draw_toolbar_context_panel(layout: &Layout, panel: ToolbarPanelData<'_>) 
             active_role_filter: panel.assign.role_filter,
             active_building_filter: panel.assign.building_filter,
             technology: panel.assign.technology,
+            room_filter_armed: panel.assign.room_filter_armed,
         }),
         ToolbarMode::Log => draw_log_context(LogContext {
             context,

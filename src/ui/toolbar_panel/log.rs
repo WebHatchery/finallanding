@@ -29,6 +29,9 @@ pub fn draw_log_context(view: LogContext<'_>) {
     } = view;
     let mut hovered_history = None;
     draw_log_search_control(context, social_history_query, social_history_search_active);
+    if social_history_search_active {
+        draw_touch_keyboard(context);
+    }
     let social_brief = social_brief_lines(summary);
     draw_ui_text(
         &social_brief.header,
@@ -173,6 +176,53 @@ pub fn draw_log_context(view: LogContext<'_>) {
     if let Some(log) = hovered_log {
         draw_tooltip_near_mouse(toolbar_tooltip_bounds(context), &log.title, &log.detail);
     }
+}
+
+fn draw_touch_keyboard(context: Rect) {
+    style::draw_deep_panel(log_keyboard_bounds(context));
+    let keys: &[char] = &[
+        'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K',
+        'L', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ' ',
+    ];
+    for (index, key) in keys.iter().enumerate() {
+        let rect = log_keyboard_key_rect(context, index);
+        style::draw_button(rect, false, style::button_hovered(rect));
+        let label = if *key == ' ' {
+            "_".to_string()
+        } else {
+            key.to_string()
+        };
+        draw_ui_text(
+            &label,
+            rect.x + rect.w * 0.5 - 4.0,
+            rect.y + 27.0,
+            style::SMALL_SIZE,
+            style::TEXT_PRIMARY,
+        );
+    }
+    let backspace = Rect::new(context.x + 12.0, context.y - 3.0, context.w * 0.48, 41.0);
+    let done = Rect::new(
+        context.x + context.w * 0.52,
+        context.y - 3.0,
+        context.w * 0.48 - 12.0,
+        41.0,
+    );
+    style::draw_button(backspace, false, style::button_hovered(backspace));
+    style::draw_button(done, false, style::button_hovered(done));
+    draw_ui_text(
+        "BACKSPACE",
+        backspace.x + 10.0,
+        backspace.y + 27.0,
+        style::TINY_SIZE,
+        style::TEXT_PRIMARY,
+    );
+    draw_ui_text(
+        "DONE",
+        done.x + done.w * 0.5 - 14.0,
+        done.y + 27.0,
+        style::TINY_SIZE,
+        style::TEXT_PRIMARY,
+    );
 }
 
 pub fn draw_log_search_control(context: Rect, query: &str, active: bool) {

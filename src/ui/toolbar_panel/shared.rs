@@ -6,12 +6,7 @@ use crate::ui::style;
 use macroquad::prelude::{Color, Rect};
 
 pub fn toolbar_tooltip_bounds(context: Rect) -> Rect {
-    Rect::new(
-        context.x,
-        (context.y - 58.0).max(0.0),
-        context.w,
-        context.h + 58.0,
-    )
+    Rect::new(0.0, 0.0, context.w, (context.y - 8.0).max(44.0))
 }
 
 pub fn assignment_pressure_color(pressure: AssignmentPressure) -> Color {

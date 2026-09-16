@@ -138,6 +138,10 @@ pub fn assign_role_filter_at(context: Rect, x: f32, y: f32) -> bool {
     rect_contains_point(assign_role_filter_rect(context), vec2(x, y))
 }
 
+pub fn assign_room_filter_rect(context: Rect) -> Rect {
+    Rect::new(context.x + 18.0, context.y + 92.0, 104.0, 23.0)
+}
+
 pub fn assign_batch_rect(context: Rect, index: usize) -> Rect {
     Rect::new(
         context.x + context.w - 222.0 + index as f32 * 53.0,

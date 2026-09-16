@@ -22,7 +22,7 @@ pub struct Game {
 impl Game {
     pub async fn new() -> Self {
         let state = if should_start_gameplay() {
-            GameStateEnum::Gameplay(Box::default())
+            GameStateEnum::Gameplay(Box::new(GameplayState::new_for_capture()))
         } else {
             GameStateEnum::Menu(MenuState::new())
         };
@@ -119,7 +119,7 @@ impl Game {
         }
         set_fullscreen(fullscreen);
         request_new_screen_size(width as f32, height as f32);
-        self.state = GameStateEnum::Gameplay(Box::default());
+        self.state = GameStateEnum::Gameplay(Box::new(GameplayState::new_for_capture()));
     }
 }
 

@@ -1,10 +1,34 @@
 //! game state lifecycle domain.
 
 use super::*;
+use crate::state::persistence::save_game;
+use crate::ui::introduction::{draw_arrival_overlay, ARRIVAL_STAGE_COUNT};
+use crate::ui::introduction_continue_rect;
 
 impl State for GameplayState {
     fn update(&mut self) -> StateTransition {
-        let input = InputState::capture();
+        let mut input = InputState::capture();
+        let pointer = Pointer::read(|position| position);
+        if pointer.released {
+            input.mouse_pos = pointer.position;
+            input.left_pressed = true;
+            input.left_released = true;
+            input.left_click = true;
+        }
+
+        if let Some(stage) = self.arrival_stage {
+            if input.left_released
+                && introduction_continue_rect(screen_width(), screen_height())
+                    .contains(input.mouse_pos)
+            {
+                if stage + 1 >= ARRIVAL_STAGE_COUNT {
+                    self.complete_arrival();
+                } else {
+                    self.arrival_stage = Some(stage + 1);
+                }
+            }
+            return StateTransition::None;
+        }
 
         // Debug toggle
         self.debug_overlay.record_frame(get_frame_time());
@@ -64,6 +88,7 @@ impl State for GameplayState {
             self.update_building_selection();
         }
         self.update_building_placement(&input);
+        self.maybe_autosave();
 
         StateTransition::None
     }
@@ -130,6 +155,7 @@ impl State for GameplayState {
                     roster_sort: self.assign_roster_sort,
                     role_filter: self.assign_role_filter,
                     building_filter: self.assign_building_filter,
+                    room_filter_armed: self.assign_room_filter_armed,
                     technology: &self.data.technology,
                 },
                 log: ToolbarLogData {
@@ -166,5 +192,31 @@ impl State for GameplayState {
         }
 
         self.draw_scenario_overlay();
+        if let Some(stage) = self.arrival_stage {
+            draw_arrival_overlay(stage);
+        }
+    }
+}
+
+impl GameplayState {
+    fn maybe_autosave(&mut self) {
+        self.autosave_elapsed += get_frame_time();
+        if self.autosave_elapsed < 2.0 {
+            return;
+        }
+        self.autosave_elapsed = 0.0;
+
+        match save_game(&self.data) {
+            Ok(()) => self.save_error_reported = false,
+            Err(error) if !self.save_error_reported => {
+                self.data.push_log(
+                    LogCategory::System,
+                    "Autosave unavailable",
+                    format!("The colony is still playable, but progress was not saved: {error}"),
+                );
+                self.save_error_reported = true;
+            }
+            Err(_) => {}
+        }
     }
 }
