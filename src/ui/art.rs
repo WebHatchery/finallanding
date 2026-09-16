@@ -58,6 +58,12 @@ pub struct PlaceholderArt {
     colonist_portraits: Vec<Texture2D>,
 }
 
+impl Default for PlaceholderArt {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl PlaceholderArt {
     pub fn new() -> Self {
         let colonist_sprites = SURVIVOR_ART_PROFILES

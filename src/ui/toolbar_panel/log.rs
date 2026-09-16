@@ -3,17 +3,30 @@
 use super::*;
 use macroquad_toolkit::ui::{draw_ui_text, format_clock};
 
-pub fn draw_log_context(
-    context: Rect,
-    logs: &[ColonyLogEntry],
-    social_history: &[SocialHistoryEntry],
-    social_history_page: usize,
-    social_history_filter: LogFilter,
-    social_history_query: &str,
-    social_history_search_active: bool,
-    selected_social_history_day: Option<u32>,
-    summary: &ColonyPressureSummary,
-) {
+pub struct LogContext<'a> {
+    pub context: Rect,
+    pub logs: &'a [ColonyLogEntry],
+    pub social_history: &'a [SocialHistoryEntry],
+    pub social_history_page: usize,
+    pub social_history_filter: LogFilter,
+    pub social_history_query: &'a str,
+    pub social_history_search_active: bool,
+    pub selected_social_history_day: Option<u32>,
+    pub summary: &'a ColonyPressureSummary,
+}
+
+pub fn draw_log_context(view: LogContext<'_>) {
+    let LogContext {
+        context,
+        logs,
+        social_history,
+        social_history_page,
+        social_history_filter,
+        social_history_query,
+        social_history_search_active,
+        selected_social_history_day,
+        summary,
+    } = view;
     let mut hovered_history = None;
     draw_log_search_control(context, social_history_query, social_history_search_active);
     let social_brief = social_brief_lines(summary);

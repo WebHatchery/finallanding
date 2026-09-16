@@ -56,10 +56,12 @@ fn test_latest_social_history_is_available_to_log_context() {
         "Day 2 summary",
         "Relationships stabilized.",
         "Keep Charlie and Evan together.",
-        64.0,
-        5.0,
-        1,
-        0,
+        SocialHistoryMetrics {
+            average_mood: 64.0,
+            average_relationship: 5.0,
+            close_pairs: 1,
+            strained_pairs: 0,
+        },
     );
 
     assert_eq!(history.day, 2);
@@ -75,10 +77,12 @@ fn test_social_timeline_rows_show_latest_three_days_first() {
                 format!("Day {} summary", day),
                 "Social detail.",
                 "Recommendation.",
-                50.0 + day as f32,
-                day as f32,
-                day,
-                0,
+                SocialHistoryMetrics {
+                    average_mood: 50.0 + day as f32,
+                    average_relationship: day as f32,
+                    close_pairs: day,
+                    strained_pairs: 0,
+                },
             )
         })
         .collect::<Vec<_>>();
@@ -95,7 +99,20 @@ fn test_social_timeline_rows_show_latest_three_days_first() {
 #[test]
 fn test_social_timeline_rows_page_through_archive() {
     let history = (0..7)
-        .map(|day| SocialHistoryEntry::new(day, "", "", "", 50.0, day as f32, 0, 0))
+        .map(|day| {
+            SocialHistoryEntry::new(
+                day,
+                "",
+                "",
+                "",
+                SocialHistoryMetrics {
+                    average_mood: 50.0,
+                    average_relationship: day as f32,
+                    close_pairs: 0,
+                    strained_pairs: 0,
+                },
+            )
+        })
         .collect::<Vec<_>>();
 
     let first_page = social_timeline_rows(&history, LogFilter::All, "", 0);
@@ -122,9 +139,9 @@ fn test_social_timeline_rows_page_through_archive() {
 #[test]
 fn test_social_timeline_rows_filter_tense_and_support_reports() {
     let history = vec![
-        SocialHistoryEntry::new(0, "Neutral", "", "", 52.0, 0.0, 0, 0),
-        SocialHistoryEntry::new(1, "Tense", "", "", 43.0, -9.0, 0, 1),
-        SocialHistoryEntry::new(2, "Support", "", "", 66.0, 12.0, 1, 0),
+        SocialHistoryEntry::new(0, "Neutral", "", "", SocialHistoryMetrics { average_mood: 52.0, average_relationship: 0.0, close_pairs: 0, strained_pairs: 0 }),
+        SocialHistoryEntry::new(1, "Tense", "", "", SocialHistoryMetrics { average_mood: 43.0, average_relationship: -9.0, close_pairs: 0, strained_pairs: 1 }),
+        SocialHistoryEntry::new(2, "Support", "", "", SocialHistoryMetrics { average_mood: 66.0, average_relationship: 12.0, close_pairs: 1, strained_pairs: 0 }),
     ];
 
     let tense = social_timeline_rows(&history, LogFilter::Tense, "", 0);
@@ -145,30 +162,36 @@ fn test_social_timeline_rows_search_reports() {
             "Tension spike",
             "Alice isolated.",
             "Use Apart.",
-            42.0,
-            -8.0,
-            0,
-            1,
+            SocialHistoryMetrics {
+                average_mood: 42.0,
+                average_relationship: -8.0,
+                close_pairs: 0,
+                strained_pairs: 1,
+            },
         ),
         SocialHistoryEntry::new(
             2,
             "Shared meal",
             "Bob encouraged Diana.",
             "Keep together.",
-            66.0,
-            14.0,
-            1,
-            0,
+            SocialHistoryMetrics {
+                average_mood: 66.0,
+                average_relationship: 14.0,
+                close_pairs: 1,
+                strained_pairs: 0,
+            },
         ),
         SocialHistoryEntry::new(
             3,
             "Quiet shift",
             "Workshop stable.",
             "Watch mood.",
-            52.0,
-            2.0,
-            0,
-            0,
+            SocialHistoryMetrics {
+                average_mood: 52.0,
+                average_relationship: 2.0,
+                close_pairs: 0,
+                strained_pairs: 0,
+            },
         ),
     ];
 
@@ -191,10 +214,12 @@ fn test_social_timeline_day_at_matches_filtered_visible_rows() {
                 format!("Day {}", day),
                 "",
                 "",
-                50.0,
-                if day % 2 == 0 { -8.0 } else { 10.0 },
-                u32::from(day % 2 == 1),
-                u32::from(day % 2 == 0),
+                SocialHistoryMetrics {
+                    average_mood: 50.0,
+                    average_relationship: if day % 2 == 0 { -8.0 } else { 10.0 },
+                    close_pairs: u32::from(day % 2 == 1),
+                    strained_pairs: u32::from(day % 2 == 0),
+                },
             )
         })
         .collect::<Vec<_>>();
@@ -215,9 +240,9 @@ fn test_social_timeline_day_at_matches_filtered_visible_rows() {
 
 #[test]
 fn test_social_timeline_colors_pressure_and_support() {
-    let tense = SocialHistoryEntry::new(2, "", "", "", 42.0, -2.0, 0, 1);
-    let close = SocialHistoryEntry::new(3, "", "", "", 68.0, 9.0, 1, 0);
-    let neutral = SocialHistoryEntry::new(4, "", "", "", 55.0, 0.0, 0, 0);
+    let tense = SocialHistoryEntry::new(2, "", "", "", SocialHistoryMetrics { average_mood: 42.0, average_relationship: -2.0, close_pairs: 0, strained_pairs: 1 });
+    let close = SocialHistoryEntry::new(3, "", "", "", SocialHistoryMetrics { average_mood: 68.0, average_relationship: 9.0, close_pairs: 1, strained_pairs: 0 });
+    let neutral = SocialHistoryEntry::new(4, "", "", "", SocialHistoryMetrics { average_mood: 55.0, average_relationship: 0.0, close_pairs: 0, strained_pairs: 0 });
 
     assert_eq!(social_history_color(&tense), style::ALERT_RED);
     assert_eq!(social_history_color(&close), style::BAR_GREEN);

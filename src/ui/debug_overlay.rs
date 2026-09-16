@@ -8,24 +8,41 @@ use crate::data::technology::{TechId, TechnologyState};
 use crate::data::types::Position;
 use macroquad_toolkit::debug::DebugOverlay;
 
+pub struct DebugOverlayContext<'a> {
+    pub overlay: &'a DebugOverlay,
+    pub tick: u64,
+    pub colonists: &'a [Colonist],
+    pub hovered_cell: Option<Position>,
+    pub building_count: usize,
+    pub resources: &'a ResourceState,
+    pub storage_capacity: i32,
+    pub daily_supply_need: i32,
+    pub objective: &'a str,
+    pub outcome: ScenarioOutcome,
+    pub active_mission_count: usize,
+    pub technology: &'a TechnologyState,
+    pub priority: ColonyPriority,
+}
+
 /// Draw debug overlay with game state information. `overlay` owns the
 /// smoothed FPS/frame-time readout and visibility toggle (F3); this function
 /// supplies the colony-specific stat lines drawn beneath it.
-pub fn draw_debug_overlay(
-    overlay: &DebugOverlay,
-    tick: u64,
-    colonists: &[Colonist],
-    hovered_cell: Option<Position>,
-    building_count: usize,
-    resources: &ResourceState,
-    storage_capacity: i32,
-    daily_supply_need: i32,
-    objective: &str,
-    outcome: ScenarioOutcome,
-    active_mission_count: usize,
-    technology: &TechnologyState,
-    priority: ColonyPriority,
-) {
+pub fn draw_debug_overlay(context: DebugOverlayContext<'_>) {
+    let DebugOverlayContext {
+        overlay,
+        tick,
+        colonists,
+        hovered_cell,
+        building_count,
+        resources,
+        storage_capacity,
+        daily_supply_need,
+        objective,
+        outcome,
+        active_mission_count,
+        technology,
+        priority,
+    } = context;
     let mut lines = vec![
         format!("Tick: {}  Priority: {}", tick, priority.label()),
         match hovered_cell {

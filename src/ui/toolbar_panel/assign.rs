@@ -3,17 +3,30 @@
 use super::*;
 use macroquad_toolkit::ui::draw_ui_text;
 
-pub fn draw_assign_context(
-    context: Rect,
-    colonists: &[Colonist],
-    selected_colonist_id: Option<u32>,
-    assign_roster_page: usize,
-    active_filter: AssignRosterFilter,
-    active_sort: AssignRosterSort,
-    active_role_filter: Option<JobPreference>,
-    active_building_filter: Option<u32>,
-    technology: &TechnologyState,
-) {
+pub struct AssignContext<'a> {
+    pub context: Rect,
+    pub colonists: &'a [Colonist],
+    pub selected_colonist_id: Option<u32>,
+    pub assign_roster_page: usize,
+    pub active_filter: AssignRosterFilter,
+    pub active_sort: AssignRosterSort,
+    pub active_role_filter: Option<JobPreference>,
+    pub active_building_filter: Option<u32>,
+    pub technology: &'a TechnologyState,
+}
+
+pub fn draw_assign_context(view: AssignContext<'_>) {
+    let AssignContext {
+        context,
+        colonists,
+        selected_colonist_id,
+        assign_roster_page,
+        active_filter,
+        active_sort,
+        active_role_filter,
+        active_building_filter,
+        technology,
+    } = view;
     let mut hovered_forecast = None;
     let mut hovered_name = None;
     let mut hovered_directive = None;

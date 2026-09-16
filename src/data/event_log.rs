@@ -37,26 +37,31 @@ pub struct SocialHistoryEntry {
     pub strained_pairs: u32,
 }
 
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct SocialHistoryMetrics {
+    pub average_mood: f32,
+    pub average_relationship: f32,
+    pub close_pairs: u32,
+    pub strained_pairs: u32,
+}
+
 impl SocialHistoryEntry {
     pub fn new(
         day: u32,
         title: impl Into<String>,
         detail: impl Into<String>,
         recommendation: impl Into<String>,
-        average_mood: f32,
-        average_relationship: f32,
-        close_pairs: u32,
-        strained_pairs: u32,
+        metrics: SocialHistoryMetrics,
     ) -> Self {
         Self {
             day,
             title: title.into(),
             detail: detail.into(),
             recommendation: recommendation.into(),
-            average_mood,
-            average_relationship,
-            close_pairs,
-            strained_pairs,
+            average_mood: metrics.average_mood,
+            average_relationship: metrics.average_relationship,
+            close_pairs: metrics.close_pairs,
+            strained_pairs: metrics.strained_pairs,
         }
     }
 }

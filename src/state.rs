@@ -8,7 +8,7 @@ use crate::state::game_state::GameplayState;
 
 pub enum StateTransition {
     None,
-    ToGameplay(GameplayState),
+    ToGameplay(Box<GameplayState>),
 }
 
 pub trait State {

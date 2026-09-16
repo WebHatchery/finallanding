@@ -12,7 +12,7 @@ impl GameplayState {
         let clicked_restart = input.left_pressed_rect(restart_rect);
 
         if clicked_restart || is_key_pressed(KeyCode::R) || input.enter_pressed {
-            Some(StateTransition::ToGameplay(GameplayState::new()))
+            Some(StateTransition::ToGameplay(Box::default()))
         } else {
             None
         }

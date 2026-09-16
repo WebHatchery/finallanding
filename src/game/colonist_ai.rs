@@ -75,20 +75,20 @@ pub fn update_colonists(state: &mut GameState, elapsed_ticks: u64) {
     for i in 0..state.data.colonists.len() {
         let scheduled_activity = state.data.colonists[i].schedule.get_activity_for_hour(hour);
 
-        behavior::update_colonist_ai(
-            &mut state.data.colonists[i],
-            &scheduled_activity,
-            &occupied,
-            &colonist_names,
-            &social_locations,
-            &state.data.grid,
-            &mut state.rng,
-            &buildings,
-            &mut building_occupancy,
+        let mut context = behavior::ColonistAiContext {
+            scheduled_activity: &scheduled_activity,
+            occupied: &occupied,
+            colonist_names: &colonist_names,
+            social_locations: &social_locations,
+            grid: &state.data.grid,
+            rng: &mut state.rng,
+            buildings: &buildings,
+            building_occupancy: &mut building_occupancy,
             habitat_capacity,
-            tick,
-            &mut pending_logs,
-        );
+            current_tick: tick,
+            pending_logs: &mut pending_logs,
+        };
+        behavior::update_colonist_ai(&mut state.data.colonists[i], &mut context);
 
         state.data.colonists[i].update_visual_position(VISUAL_MOVE_SPEED);
         update_mood(&mut state.data.colonists[i], elapsed_ticks, priority);

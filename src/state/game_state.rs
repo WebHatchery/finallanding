@@ -2,7 +2,7 @@
 
 use crate::data::building::{Building, BuildingType};
 use crate::data::colonist::{ActivityLocation, Colonist, ColonistState, JobPreference};
-use crate::data::event_log::{LogCategory, SocialHistoryEntry};
+use crate::data::event_log::{LogCategory, SocialHistoryEntry, SocialHistoryMetrics};
 use crate::data::game_state::TimeSpeed;
 use crate::data::mission::MissionType;
 use crate::data::priority::ColonyPriority;
@@ -35,9 +35,9 @@ use crate::ui::{
     social_history_page_count, social_timeline_day_at, toolbar_building_at_for_mode,
     toolbar_buildings_for_mode, toolbar_colonist_index_at, toolbar_context_rect,
     toolbar_mission_at, toolbar_mode_at, toolbar_priority_at, top_bar_priority_at,
-    top_bar_speed_at, AssignBatchAction, AssignRosterFilter, AssignRosterSort, IsoView, Layout,
-    LogFilter, LogSearchAction, PageAction, PlaceholderArt, ToolbarAssignData, ToolbarLogData,
-    ToolbarMode, ToolbarPanelData, ToolbarResearchData,
+    top_bar_speed_at, AssignBatchAction, AssignRosterFilter, AssignRosterSort, DebugOverlayContext,
+    IsoView, Layout, LogFilter, LogSearchAction, PageAction, PlaceholderArt, ToolbarAssignData,
+    ToolbarLogData, ToolbarMode, ToolbarPanelData, ToolbarResearchData,
 };
 use macroquad::prelude::*;
 use macroquad_toolkit::debug::DebugOverlay;
@@ -87,6 +87,12 @@ pub struct GameplayState {
     pub selected_social_history_day: Option<u32>,
     /// Placeholder visual assets extracted from the rebuild reference.
     pub art: PlaceholderArt,
+}
+
+impl Default for GameplayState {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl GameplayState {

@@ -1,19 +1,19 @@
 //! menu state domain.
 
-use crate::state::game_state::GameplayState;
 use crate::state::{State, StateTransition};
 use crate::ui::{menu_start_rect, style};
 use macroquad::prelude::*;
 use macroquad_toolkit::input::InputState;
 use macroquad_toolkit::ui::{draw_ui_text, measure_ui_text};
 
+#[derive(Default)]
 pub struct MenuState {
     // Menu specific data could go here (e.g. animation timers)
 }
 
 impl MenuState {
     pub fn new() -> Self {
-        Self {}
+        Self::default()
     }
 }
 
@@ -46,12 +46,12 @@ impl MenuState {
     pub fn update_with_input(&mut self) -> StateTransition {
         let input = InputState::capture();
         if input.space_pressed || input.enter_pressed {
-            return StateTransition::ToGameplay(GameplayState::new());
+            return StateTransition::ToGameplay(Box::default());
         }
 
         let btn_rect = menu_start_rect(screen_width(), screen_height());
         if input.left_pressed_rect(btn_rect) {
-            return StateTransition::ToGameplay(GameplayState::new());
+            return StateTransition::ToGameplay(Box::default());
         }
 
         StateTransition::None

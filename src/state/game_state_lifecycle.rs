@@ -148,21 +148,21 @@ impl State for GameplayState {
 
         // Debug overlay
         if self.debug_overlay.visible {
-            draw_debug_overlay(
-                &self.debug_overlay,
-                self.data.tick,
-                &self.data.colonists,
-                self.hovered_cell,
-                self.data.building_system.building_count(),
-                &self.data.resources,
-                ResourceSystem::storage_capacity(&self.data),
-                ResourceSystem::daily_supply_need(&self.data),
-                &ScenarioSystem::objective_line(&self.data),
-                self.data.scenario.outcome,
-                self.data.missions.active_count(),
-                &self.data.technology,
-                self.data.priority.active,
-            );
+            draw_debug_overlay(DebugOverlayContext {
+                overlay: &self.debug_overlay,
+                tick: self.data.tick,
+                colonists: &self.data.colonists,
+                hovered_cell: self.hovered_cell,
+                building_count: self.data.building_system.building_count(),
+                resources: &self.data.resources,
+                storage_capacity: ResourceSystem::storage_capacity(&self.data),
+                daily_supply_need: ResourceSystem::daily_supply_need(&self.data),
+                objective: &ScenarioSystem::objective_line(&self.data),
+                outcome: self.data.scenario.outcome,
+                active_mission_count: self.data.missions.active_count(),
+                technology: &self.data.technology,
+                priority: self.data.priority.active,
+            });
         }
 
         self.draw_scenario_overlay();

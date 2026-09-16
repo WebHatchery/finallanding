@@ -11,7 +11,7 @@ use crate::state::{State, StateTransition};
 use macroquad::prelude::{request_new_screen_size, set_fullscreen};
 
 pub enum GameStateEnum {
-    Gameplay(GameplayState),
+    Gameplay(Box<GameplayState>),
     Menu(MenuState),
 }
 
@@ -22,7 +22,7 @@ pub struct Game {
 impl Game {
     pub async fn new() -> Self {
         let state = if should_start_gameplay() {
-            GameStateEnum::Gameplay(GameplayState::new())
+            GameStateEnum::Gameplay(Box::default())
         } else {
             GameStateEnum::Menu(MenuState::new())
         };
@@ -119,7 +119,7 @@ impl Game {
         }
         set_fullscreen(fullscreen);
         request_new_screen_size(width as f32, height as f32);
-        self.state = GameStateEnum::Gameplay(GameplayState::new());
+        self.state = GameStateEnum::Gameplay(Box::default());
     }
 }
 

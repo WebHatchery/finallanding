@@ -131,10 +131,12 @@ impl SummarySystem {
             report.title.clone(),
             report.detail.clone(),
             report.recommendation.clone(),
-            summary.average_mood,
-            summary.average_relationship,
-            summary.close_pairs,
-            summary.strained_pairs,
+            crate::data::event_log::SocialHistoryMetrics {
+                average_mood: summary.average_mood,
+                average_relationship: summary.average_relationship,
+                close_pairs: summary.close_pairs,
+                strained_pairs: summary.strained_pairs,
+            },
         ));
         state.push_log(LogCategory::Colony, report.title, report.detail);
     }

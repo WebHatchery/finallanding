@@ -19,20 +19,33 @@ use crate::game::colonist_ai::REFUSAL_LOG_COOLDOWN_TICKS;
 use crate::systems::job_decision_system::calculate_refusal_chance;
 use std::collections::HashMap;
 
-pub fn update_colonist_ai(
-    colonist: &mut Colonist,
-    scheduled_activity: &ActivityType,
-    occupied: &HashMap<Position, u32>,
-    colonist_names: &HashMap<u32, String>,
-    social_locations: &[SocialLocation],
-    grid: &Grid,
-    rng: &mut SimulationRng,
-    buildings: &[BuildingSnapshot],
-    building_occupancy: &mut HashMap<u32, u32>,
-    habitat_capacity: u32,
-    current_tick: u64,
-    pending_logs: &mut Vec<PendingLog>,
-) {
+pub struct ColonistAiContext<'a> {
+    pub scheduled_activity: &'a ActivityType,
+    pub occupied: &'a HashMap<Position, u32>,
+    pub colonist_names: &'a HashMap<u32, String>,
+    pub social_locations: &'a [SocialLocation],
+    pub grid: &'a Grid,
+    pub rng: &'a mut SimulationRng,
+    pub buildings: &'a [BuildingSnapshot],
+    pub building_occupancy: &'a mut HashMap<u32, u32>,
+    pub habitat_capacity: u32,
+    pub current_tick: u64,
+    pub pending_logs: &'a mut Vec<PendingLog>,
+}
+
+pub fn update_colonist_ai(colonist: &mut Colonist, context: &mut ColonistAiContext<'_>) {
+    let scheduled_activity = context.scheduled_activity;
+    let occupied = context.occupied;
+    let colonist_names = context.colonist_names;
+    let social_locations = context.social_locations;
+    let grid = context.grid;
+    let rng = &mut *context.rng;
+    let buildings = context.buildings;
+    let building_occupancy = &mut *context.building_occupancy;
+    let habitat_capacity = context.habitat_capacity;
+    let current_tick = context.current_tick;
+    let pending_logs = &mut *context.pending_logs;
+
     match colonist.state {
         ColonistState::OnMission { .. } => {
             colonist.activity_location = ActivityLocation::None;

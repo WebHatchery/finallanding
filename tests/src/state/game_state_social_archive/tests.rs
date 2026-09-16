@@ -8,20 +8,24 @@ fn test_social_archive_markdown_exports_latest_report_first() {
             "Early friction",
             "Alice and Fiona need space.",
             "Use Apart before the next work block.",
-            46.0,
-            -8.0,
-            0,
-            1,
+            SocialHistoryMetrics {
+                average_mood: 46.0,
+                average_relationship: -8.0,
+                close_pairs: 0,
+                strained_pairs: 1,
+            },
         ),
         SocialHistoryEntry::new(
             2,
             "Shared meal",
             "Bob and Diana stabilized dinner.",
             "Keep the supportive pair together.",
-            62.0,
-            12.0,
-            1,
-            0,
+            SocialHistoryMetrics {
+                average_mood: 62.0,
+                average_relationship: 12.0,
+                close_pairs: 1,
+                strained_pairs: 0,
+            },
         ),
     ];
 
