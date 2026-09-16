@@ -2,7 +2,7 @@ use super::super::MissionSystem;
 
 fn add_gate(state: &mut GameState) {
     state.building_system.try_place_building(
-        &mut state.grid,
+        &mut state.data.grid,
         BuildingType::ExplorationGate,
         Position::new(0, 0),
     );

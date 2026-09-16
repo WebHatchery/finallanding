@@ -1,4 +1,4 @@
-//! game state domain.
+//! Reusable colony data and clock values, independent of runtime orchestration.
 
 use super::grid::Grid;
 use crate::data::event_log::{ColonyLogEntry, LogCategory, SocialHistoryEntry};
@@ -7,10 +7,7 @@ use crate::data::mission::MissionState;
 use crate::data::priority::PriorityState;
 use crate::data::resources::ResourceState;
 use crate::data::scenario::ScenarioState;
-use crate::data::simulation_rng::SimulationRng;
 use crate::data::technology::TechnologyState;
-use crate::game::building_system::BuildingSystem;
-use crate::systems::time_system::TimeSystem;
 use serde::{Deserialize, Serialize};
 
 const MAX_EVENT_LOG_ENTRIES: usize = 80;
@@ -40,8 +37,7 @@ impl Default for TimeState {
 }
 
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
-pub struct GameState {
-    // Other agents will add fields here (e.g., world map, entities)
+pub struct ColonyData {
     pub tick: u64,
     pub time: TimeState,
     pub grid: Grid,
@@ -55,16 +51,9 @@ pub struct GameState {
     pub priority: PriorityState,
     pub technology: TechnologyState,
     pub scenario: ScenarioState,
-
-    /// Building placement system
-    #[serde(skip)]
-    pub building_system: BuildingSystem,
-    /// Deterministic simulation randomness, kept out of macroquad rendering globals.
-    #[serde(skip)]
-    pub rng: SimulationRng,
 }
 
-impl GameState {
+impl ColonyData {
     pub fn new() -> Self {
         Self {
             tick: 0,
@@ -80,8 +69,6 @@ impl GameState {
             priority: PriorityState::default(),
             technology: TechnologyState::default(),
             scenario: ScenarioState::default(),
-            building_system: BuildingSystem::new(),
-            rng: SimulationRng::default(),
         }
     }
 
@@ -91,7 +78,12 @@ impl GameState {
         title: impl Into<String>,
         detail: impl Into<String>,
     ) {
-        let (day, hour, minute) = TimeSystem::get_time_of_day(self.tick);
+        let ticks_per_day = crate::data::config::game_config().time.ticks_per_day;
+        let ticks_per_hour = crate::data::config::game_config().time.ticks_per_hour;
+        let day = (self.tick / ticks_per_day) as u32 + 1;
+        let tick_in_day = self.tick % ticks_per_day;
+        let hour = (tick_in_day / ticks_per_hour) as u32;
+        let minute = (tick_in_day % ticks_per_hour) as u32;
         self.event_log.push(ColonyLogEntry::new(
             day,
             hour,

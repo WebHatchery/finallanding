@@ -3,8 +3,8 @@
 use crate::data::building::BuildingType;
 use crate::data::colonist::{ActivityLocation, ColonistState, JobPreference};
 use crate::data::event_log::LogCategory;
-use crate::data::game_state::GameState;
 use crate::data::mission::{ActiveMission, MissionType};
+use crate::state::runtime_state::GameState;
 use crate::systems::mission_system::planning::MissionPlanning;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -41,11 +41,13 @@ impl MissionLaunch {
             return Err(LaunchMissionError::NoAvailableColonist);
         };
 
+        let colonist_id = state.colonists[colonist_index].id;
+        let started_tick = state.tick;
         let definition = mission_type.definition();
         let mission_id = state.missions.next_id;
         state.missions.next_id += 1;
         let danger_percent = MissionPlanning::mission_danger_percent(state, mission_type);
-        let completes_at_tick = state.tick + definition.duration_minutes;
+        let completes_at_tick = started_tick + definition.duration_minutes;
         let cooldown_minutes = definition
             .cooldown_minutes
             .saturating_sub(state.technology.mission_cooldown_reduction());
@@ -60,9 +62,9 @@ impl MissionLaunch {
 
         state.missions.active_missions.push(ActiveMission {
             id: mission_id,
-            colonist_id: state.colonists[colonist_index].id,
+            colonist_id,
             mission_type,
-            started_tick: state.tick,
+            started_tick,
             completes_at_tick,
             danger_percent,
             priority,

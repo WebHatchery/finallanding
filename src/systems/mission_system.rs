@@ -4,8 +4,8 @@ pub mod launch;
 pub mod planning;
 pub mod resolution;
 
-use crate::data::game_state::GameState;
 use crate::data::mission::MissionType;
+use crate::state::runtime_state::GameState;
 
 pub use launch::LaunchMissionError;
 pub use planning::MissionPlan;

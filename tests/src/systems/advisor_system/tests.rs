@@ -13,7 +13,7 @@ fn add_colonist(state: &mut GameState, id: u32) {
 fn place(state: &mut GameState, building_type: BuildingType, position: Position) {
     state
         .building_system
-        .try_place_building(&mut state.grid, building_type, position);
+        .try_place_building(&mut state.data.grid, building_type, position);
 }
 
 #[test]
@@ -92,9 +92,10 @@ fn test_advisor_settles_after_victory_requirements_are_met() {
 #[test]
 fn test_active_incident_creates_advisor_priority() {
     let mut state = GameState::new();
+    let tick = state.tick;
     state
         .incidents
-        .activate(IncidentType::ToolBreakage, state.tick, 60);
+        .activate(IncidentType::ToolBreakage, tick, 60);
 
     let plan = AdvisorSystem::plan(&state);
 

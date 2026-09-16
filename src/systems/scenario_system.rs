@@ -1,9 +1,10 @@
 //! scenario system domain.
 
 use crate::data::event_log::LogCategory;
-use crate::data::game_state::{GameState, TimeSpeed};
+use crate::data::game_state::TimeSpeed;
 use crate::data::resources::ColonyCondition;
 use crate::data::scenario::ScenarioOutcome;
+use crate::state::runtime_state::GameState;
 use crate::systems::resource_system::ResourceSystem;
 use crate::systems::time_system::TimeSystem;
 

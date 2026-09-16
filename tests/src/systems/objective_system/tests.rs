@@ -15,7 +15,7 @@ fn add_colonists(state: &mut GameState, count: u32) {
 fn place(state: &mut GameState, building_type: BuildingType, x: i32) {
     state
         .building_system
-        .try_place_building(&mut state.grid, building_type, Position::new(x, 0));
+        .try_place_building(&mut state.data.grid, building_type, Position::new(x, 0));
 }
 
 #[test]

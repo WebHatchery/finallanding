@@ -41,14 +41,14 @@ fn test_invalid_reason_reports_map_and_overlap_blocks() {
         PlanningSystem::invalid_reason(
             &state,
             BuildingType::MessHall,
-            Position::new(state.grid.width as i32 - 1, state.grid.height as i32 - 1)
+            Position::new(state.data.grid.width as i32 - 1, state.data.grid.height as i32 - 1)
         )
         .as_deref(),
         Some("Footprint leaves the map.")
     );
 
     state.building_system.try_place_building(
-        &mut state.grid,
+        &mut state.data.grid,
         BuildingType::Habitat,
         Position::new(2, 2),
     );
@@ -59,7 +59,7 @@ fn test_invalid_reason_reports_map_and_overlap_blocks() {
         Some("Footprint overlaps another building.")
     );
 
-    state.grid.set_cell_type(8, 8, CellType::Wall);
+    state.data.grid.set_cell_type(8, 8, CellType::Wall);
     assert_eq!(
         PlanningSystem::invalid_reason(&state, BuildingType::Storage, Position::new(8, 8))
             .as_deref(),

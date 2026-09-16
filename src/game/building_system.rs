@@ -5,6 +5,7 @@
 use crate::data::building::{Building, BuildingType};
 use crate::data::grid::Grid;
 use crate::data::types::Position;
+use serde::{Deserialize, Serialize};
 
 /// Result of attempting to place a building
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -18,7 +19,7 @@ pub enum PlacementResult {
 }
 
 /// Manages building placement, storage, and undo operations
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
 pub struct BuildingSystem {
     /// All placed buildings
     buildings: Vec<Building>,

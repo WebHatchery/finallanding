@@ -3,8 +3,8 @@
 use super::Layout;
 use crate::data::building::BuildingType;
 use crate::data::colonist::{relationship_label, Colonist};
-use crate::data::game_state::GameState;
 use crate::data::resources::ResourceState;
+use crate::state::runtime_state::GameState;
 use crate::systems::summary_system::ColonyPressureSummary;
 use crate::ui::art::PlaceholderArt;
 use crate::ui::style;

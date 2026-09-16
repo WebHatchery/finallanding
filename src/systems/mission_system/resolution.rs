@@ -2,9 +2,9 @@
 
 use crate::data::colonist::{ActivityLocation, ColonistState};
 use crate::data::event_log::LogCategory;
-use crate::data::game_state::GameState;
 use crate::data::mission::{ActiveMission, MissionItem, MissionType};
 use crate::data::priority::ColonyPriority;
+use crate::state::runtime_state::GameState;
 use crate::systems::resource_system::ResourceSystem;
 
 pub struct MissionResolution;
@@ -15,9 +15,10 @@ impl MissionResolution {
             return;
         }
 
+        let current_tick = state.tick;
         let mut completed = Vec::new();
         state.missions.active_missions.retain(|mission| {
-            if mission.completes_at_tick <= state.tick {
+            if mission.completes_at_tick <= current_tick {
                 completed.push(mission.clone());
                 false
             } else {
@@ -31,13 +32,14 @@ impl MissionResolution {
     }
 
     pub fn recover_injured_colonists(state: &mut GameState) {
+        let current_tick = state.tick;
         let recovered_names = state
             .colonists
             .iter_mut()
             .filter_map(|colonist| {
                 let recovered = colonist
                     .injured_until_tick
-                    .is_some_and(|recovery_tick| recovery_tick <= state.tick);
+                    .is_some_and(|recovery_tick| recovery_tick <= current_tick);
                 if recovered {
                     colonist.injured_until_tick = None;
                     Some(colonist.name.clone())
@@ -60,6 +62,7 @@ impl MissionResolution {
         let item = Self::item_for_mission(&mission);
         let injured = Self::mission_caused_injury(&mission);
         let injury_duration = state.technology.injury_duration_ticks();
+        let current_tick = state.tick;
         let definition = mission.mission_type.definition();
 
         let colonist_name = if let Some(colonist) = state
@@ -72,7 +75,7 @@ impl MissionResolution {
             colonist.state = ColonistState::Idle;
 
             if injured {
-                colonist.injured_until_tick = Some(state.tick + injury_duration);
+                colonist.injured_until_tick = Some(current_tick + injury_duration);
                 colonist.mood = (colonist.mood - 10.0).clamp(0.0, 100.0);
             }
 

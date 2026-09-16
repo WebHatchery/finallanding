@@ -7,9 +7,9 @@ mod social;
 pub mod targeting;
 mod types;
 
-use crate::data::game_state::GameState;
 use crate::data::types::Position;
 use crate::game::colonist_ai::types::{BuildingSnapshot, PendingLog, SocialLocation};
+use crate::state::runtime_state::GameState;
 use crate::systems::mood_system::update_mood;
 use crate::systems::time_system::TimeSystem;
 use std::collections::HashMap;
@@ -21,33 +21,37 @@ pub const SOCIAL_STRAIN_LOG_COOLDOWN_TICKS: u64 = 120;
 
 pub fn update_colonists(state: &mut GameState, elapsed_ticks: u64) {
     if elapsed_ticks == 0 {
-        for colonist in &mut state.colonists {
+        for colonist in &mut state.data.colonists {
             colonist.update_visual_position(VISUAL_MOVE_SPEED);
         }
         return;
     }
 
-    let (_, hour, _) = TimeSystem::get_time_of_day(state.tick);
+    let tick = state.data.tick;
+    let (_, hour, _) = TimeSystem::get_time_of_day(tick);
 
     let occupied: HashMap<Position, u32> = state
+        .data
         .colonists
         .iter()
         .filter(|c| !c.is_on_mission())
         .map(|c| (c.position, c.id))
         .collect();
     let colonist_names: HashMap<u32, String> = state
+        .data
         .colonists
         .iter()
         .map(|colonist| (colonist.id, colonist.name.clone()))
         .collect();
     let social_locations: Vec<SocialLocation> = state
+        .data
         .colonists
         .iter()
         .map(|colonist| (colonist.id, colonist.activity_location.clone()))
         .collect();
 
     let mut building_occupancy: HashMap<u32, u32> = HashMap::new();
-    for c in &state.colonists {
+    for c in &state.data.colonists {
         if c.is_on_mission() {
             continue;
         }
@@ -63,31 +67,31 @@ pub fn update_colonists(state: &mut GameState, elapsed_ticks: u64) {
         .iter()
         .map(|b| (b.id, b.building_type, b.position, b.size()))
         .collect();
-    let habitat_capacity = 2 + state.technology.habitat_capacity_bonus();
-    let priority = state.priority.active;
+    let habitat_capacity = 2 + state.data.technology.habitat_capacity_bonus();
+    let priority = state.data.priority.active;
 
     let mut pending_logs: Vec<PendingLog> = Vec::new();
 
-    for i in 0..state.colonists.len() {
-        let scheduled_activity = state.colonists[i].schedule.get_activity_for_hour(hour);
+    for i in 0..state.data.colonists.len() {
+        let scheduled_activity = state.data.colonists[i].schedule.get_activity_for_hour(hour);
 
         behavior::update_colonist_ai(
-            &mut state.colonists[i],
+            &mut state.data.colonists[i],
             &scheduled_activity,
             &occupied,
             &colonist_names,
             &social_locations,
-            &state.grid,
+            &state.data.grid,
             &mut state.rng,
             &buildings,
             &mut building_occupancy,
             habitat_capacity,
-            state.tick,
+            tick,
             &mut pending_logs,
         );
 
-        state.colonists[i].update_visual_position(VISUAL_MOVE_SPEED);
-        update_mood(&mut state.colonists[i], elapsed_ticks, priority);
+        state.data.colonists[i].update_visual_position(VISUAL_MOVE_SPEED);
+        update_mood(&mut state.data.colonists[i], elapsed_ticks, priority);
     }
 
     for (category, title, detail) in pending_logs {

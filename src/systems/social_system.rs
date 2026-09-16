@@ -3,8 +3,8 @@
 use crate::data::building::BuildingType;
 use crate::data::colonist::{relationship_label, ActivityLocation, ColonistState};
 use crate::data::event_log::LogCategory;
-use crate::data::game_state::GameState;
 use crate::data::priority::ColonyPriority;
+use crate::state::runtime_state::GameState;
 use std::collections::HashMap;
 
 pub struct SocialSystem;

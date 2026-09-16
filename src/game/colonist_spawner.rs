@@ -1,8 +1,8 @@
 //! colonist spawner domain.
 
 use crate::data::colonist::Colonist;
-use crate::data::game_state::GameState;
 use crate::data::types::Position;
+use crate::state::runtime_state::GameState;
 
 pub fn spawn_initial_colonists(state: &mut GameState) {
     for survivor in &crate::data::config::game_config().survivors {

@@ -1,8 +1,8 @@
 //! planning domain.
 
-use crate::data::game_state::GameState;
 use crate::data::mission::{MissionDefinition, MissionType};
 use crate::data::priority::ColonyPriority;
+use crate::state::runtime_state::GameState;
 use crate::systems::resource_system::ResourceSystem;
 
 #[derive(Clone, Debug, PartialEq, Eq)]

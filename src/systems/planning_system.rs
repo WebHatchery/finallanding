@@ -1,8 +1,8 @@
 //! planning system domain.
 
 use crate::data::building::BuildingType;
-use crate::data::game_state::GameState;
 use crate::data::types::Position;
+use crate::state::runtime_state::GameState;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct BuildingPlacementFeedback {

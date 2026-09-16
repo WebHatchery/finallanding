@@ -1,9 +1,9 @@
 //! advisor system domain.
 
 use crate::data::building::BuildingType;
-use crate::data::game_state::GameState;
 use crate::data::priority::ColonyPriority;
 use crate::data::resources::ColonyCondition;
+use crate::state::runtime_state::GameState;
 use crate::systems::resource_system::ResourceSystem;
 use crate::systems::summary_system::SummarySystem;
 use crate::systems::time_system::TimeSystem;

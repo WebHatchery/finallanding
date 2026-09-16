@@ -27,7 +27,7 @@ impl GameplayState {
         if let Some(building_id) = self
             .data
             .building_system
-            .undo_last_placement(&mut self.data.grid)
+            .undo_last_placement(&mut self.data.data.grid)
         {
             let cleared_assignments = self.clear_building_assignments(building_id);
             let assignment_note = if cleared_assignments.is_empty() {
@@ -99,7 +99,7 @@ impl GameplayState {
             }
 
             let result = self.data.building_system.try_place_building(
-                &mut self.data.grid,
+                &mut self.data.data.grid,
                 building_type,
                 pos,
             );

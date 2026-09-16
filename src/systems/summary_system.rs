@@ -2,7 +2,7 @@
 
 use crate::data::colonist::{relationship_label, RelationshipBand};
 use crate::data::event_log::{LogCategory, SocialHistoryEntry};
-use crate::data::game_state::GameState;
+use crate::state::runtime_state::GameState;
 use crate::systems::resource_system::ResourceSystem;
 
 pub struct SummarySystem;

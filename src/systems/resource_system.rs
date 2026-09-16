@@ -2,8 +2,8 @@
 
 use crate::data::building::BuildingType;
 use crate::data::event_log::LogCategory;
-use crate::data::game_state::GameState;
 use crate::data::resources::ColonyCondition;
+use crate::state::runtime_state::GameState;
 
 pub struct ResourceSystem;
 

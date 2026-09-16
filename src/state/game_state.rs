@@ -3,12 +3,12 @@
 use crate::data::building::{Building, BuildingType};
 use crate::data::colonist::{ActivityLocation, Colonist, ColonistState, JobPreference};
 use crate::data::event_log::{LogCategory, SocialHistoryEntry};
-use crate::data::game_state::GameState;
 use crate::data::game_state::TimeSpeed;
 use crate::data::mission::MissionType;
 use crate::data::priority::ColonyPriority;
 use crate::data::types::Position;
 use crate::game::building_system::PlacementResult;
+use crate::state::runtime_state::GameState;
 use crate::state::{State, StateTransition};
 use crate::systems::advisor_system::AdvisorSystem;
 use crate::systems::assignment_system::AssignmentSystem;

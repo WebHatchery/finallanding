@@ -20,7 +20,7 @@ pub mod prelude {
     pub use crate::data::building::*;
     pub use crate::data::colonist::*;
     pub use crate::data::event_log::*;
-    pub use crate::data::game_state::*;
+    pub use crate::data::game_state::{ColonyData, TimeSpeed, TimeState};
     pub use crate::data::grid::*;
     pub use crate::data::incident::*;
     pub use crate::data::mission::*;
@@ -38,6 +38,7 @@ pub mod prelude {
     pub use crate::game::colonist_ai::*;
     pub use crate::game::colonist_spawner::*;
     pub use crate::state::game_state::*;
+    pub use crate::state::runtime_state::GameState;
     pub use crate::systems::advisor_system::*;
     pub use crate::systems::assignment_system::*;
     pub use crate::systems::incident_system::*;

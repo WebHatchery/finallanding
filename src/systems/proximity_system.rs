@@ -2,7 +2,7 @@
 
 use crate::data::building::BuildingType;
 use crate::data::colonist::{ActivityLocation, ColonistState};
-use crate::data::game_state::GameState;
+use crate::state::runtime_state::GameState;
 use crate::systems::social_system::SocialSystem;
 use std::collections::HashMap;
 

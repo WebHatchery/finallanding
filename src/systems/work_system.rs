@@ -3,7 +3,7 @@
 use crate::data::building::BuildingType;
 use crate::data::colonist::{ActivityLocation, ColonistState, JobPreference, Trait};
 use crate::data::event_log::LogCategory;
-use crate::data::game_state::GameState;
+use crate::state::runtime_state::GameState;
 use crate::systems::resource_system::ResourceSystem;
 
 pub struct WorkSystem;

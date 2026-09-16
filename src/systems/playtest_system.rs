@@ -2,12 +2,12 @@
 
 use crate::data::building::BuildingType;
 use crate::data::colonist::{ActivityLocation, ColonistState, JobPreference};
-use crate::data::game_state::GameState;
 use crate::data::mission::MissionType;
 use crate::data::priority::ColonyPriority;
 use crate::data::schedule::ActivityType;
 use crate::data::types::Position;
 use crate::game::building_system::PlacementResult;
+use crate::state::runtime_state::GameState;
 use crate::systems::incident_system::IncidentSystem;
 use crate::systems::mission_system::MissionSystem;
 use crate::systems::mood_system::update_mood;
@@ -244,12 +244,9 @@ impl PlaytestSystem {
         let (_, hour, _) = TimeSystem::get_time_of_day(state.tick);
         Self::assign_colonists_for_hour(state, hour);
 
+        let priority = state.priority.active;
         for colonist in &mut state.colonists {
-            update_mood(
-                colonist,
-                TimeSystem::ticks_per_hour(),
-                state.priority.active,
-            );
+            update_mood(colonist, TimeSystem::ticks_per_hour(), priority);
         }
 
         WorkSystem::process_hourly_work(state);
@@ -364,7 +361,7 @@ impl PlaytestSystem {
             }
 
             match state.building_system.try_place_building(
-                &mut state.grid,
+                &mut state.data.grid,
                 building_type,
                 *position,
             ) {

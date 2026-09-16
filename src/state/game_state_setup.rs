@@ -46,7 +46,7 @@ pub fn seed_assign_spaces_for_capture(data: &mut GameState) {
     for (building_type, position) in placements {
         if let PlacementResult::Success(building_id) =
             data.building_system
-                .try_place_building(&mut data.grid, building_type, position)
+                .try_place_building(&mut data.data.grid, building_type, position)
         {
             if building_type == BuildingType::Habitat && habitat_id.is_none() {
                 habitat_id = Some(building_id);
