@@ -34,7 +34,7 @@ impl Default for TimeState {
     fn default() -> Self {
         Self {
             speed: TimeSpeed::Normal,
-            day_length_ticks: 1440, // 24 hours * 60 minutes
+            day_length_ticks: crate::data::config::game_config().time.ticks_per_day,
         }
     }
 }

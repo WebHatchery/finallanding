@@ -30,8 +30,10 @@ pub struct ScenarioState {
 impl Default for ScenarioState {
     fn default() -> Self {
         Self {
-            target_day: 7,
-            required_tech_unlocks: 3,
+            target_day: crate::data::config::game_config().scenario.target_day,
+            required_tech_unlocks: crate::data::config::game_config()
+                .scenario
+                .required_tech_unlocks,
             outcome: ScenarioOutcome::InProgress,
             outcome_tick: None,
         }

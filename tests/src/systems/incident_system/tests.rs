@@ -3,7 +3,7 @@ use super::*;
 #[test]
 fn test_ration_spoilage_uses_existing_supplies_and_advisor_state() {
     let mut state = GameState::new();
-    state.tick = TimeSystem::TICKS_PER_DAY + TimeSystem::TICKS_PER_HOUR * 12;
+    state.tick = TimeSystem::ticks_per_day() + TimeSystem::ticks_per_hour() * 12;
     state.resources.supplies = 10;
     state.colonists.push(Colonist::new(
         1,

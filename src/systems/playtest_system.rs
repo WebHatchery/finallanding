@@ -39,7 +39,7 @@ impl PlaytestSystem {
 
         let mut strategy = ReferenceStrategy::new(kind);
         let target_tick =
-            state.scenario.target_day.saturating_sub(1) as u64 * TimeSystem::TICKS_PER_DAY;
+            state.scenario.target_day.saturating_sub(1) as u64 * TimeSystem::ticks_per_day();
 
         Self::manage_build_plan(&mut state, kind);
 
@@ -56,14 +56,14 @@ impl PlaytestSystem {
             Self::update_priority(&mut state, kind);
             Self::maybe_launch_mission(&mut state, &mut strategy);
 
-            if state.tick.is_multiple_of(TimeSystem::TICKS_PER_DAY) {
+            if state.tick.is_multiple_of(TimeSystem::ticks_per_day()) {
                 let (day, _, _) = TimeSystem::get_time_of_day(state.tick);
                 SummarySystem::summarize_previous_day(&mut state, day);
                 ResourceSystem::handle_new_day(&mut state);
                 Self::manage_build_plan(&mut state, kind);
             }
 
-            if state.tick.is_multiple_of(TimeSystem::TICKS_PER_HOUR) {
+            if state.tick.is_multiple_of(TimeSystem::ticks_per_hour()) {
                 IncidentSystem::process_hourly_incidents(&mut state);
                 Self::process_hour(&mut state);
                 Self::manage_build_plan(&mut state, kind);
@@ -245,7 +245,11 @@ impl PlaytestSystem {
         Self::assign_colonists_for_hour(state, hour);
 
         for colonist in &mut state.colonists {
-            update_mood(colonist, TimeSystem::TICKS_PER_HOUR, state.priority.active);
+            update_mood(
+                colonist,
+                TimeSystem::ticks_per_hour(),
+                state.priority.active,
+            );
         }
 
         WorkSystem::process_hourly_work(state);

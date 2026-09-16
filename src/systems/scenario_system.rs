@@ -67,7 +67,7 @@ impl ScenarioSystem {
 
     pub fn estimated_real_minutes_to_target(state: &GameState, seconds_per_tick: f32) -> f32 {
         let target_tick =
-            state.scenario.target_day.saturating_sub(1) as u64 * TimeSystem::TICKS_PER_DAY;
+            state.scenario.target_day.saturating_sub(1) as u64 * TimeSystem::ticks_per_day();
         target_tick.saturating_sub(state.tick) as f32 * seconds_per_tick / 60.0
     }
 

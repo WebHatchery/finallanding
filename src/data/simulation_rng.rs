@@ -1,8 +1,9 @@
 //! simulation rng domain.
 
 use macroquad_toolkit::rng::LegacyLcg64;
+use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct SimulationRng {
     stream: LegacyLcg64<1>,
 }
@@ -33,5 +34,15 @@ impl SimulationRng {
 
     pub fn next_u32(&mut self) -> u32 {
         self.stream.next_u32()
+    }
+
+    pub fn state(&self) -> u64 {
+        self.stream.state()
+    }
+
+    pub fn from_state(state: u64) -> Self {
+        Self {
+            stream: LegacyLcg64::from_state(state),
+        }
     }
 }

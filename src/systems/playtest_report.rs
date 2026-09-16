@@ -38,7 +38,7 @@ impl PlaytestReport {
     }
 
     pub fn outcome_band(&self) -> PlaytestOutcomeBand {
-        let reached_target_day = self.end_tick >= TimeSystem::TICKS_PER_DAY * 6;
+        let reached_target_day = self.end_tick >= TimeSystem::ticks_per_day() * 6;
         if self.outcome == ScenarioOutcome::Victory
             && self.condition == ColonyCondition::Stable
             && self.supplies >= self.daily_supply_need.max(1) * 2

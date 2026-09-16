@@ -13,24 +13,36 @@ pub enum MissionItem {
 }
 
 impl MissionItem {
-    pub fn name(&self) -> &'static str {
+    pub fn all() -> &'static [MissionItem] {
+        &[
+            MissionItem::StructuralAlloy,
+            MissionItem::AlienCircuit,
+            MissionItem::MedicinalGel,
+            MissionItem::NutrientPods,
+            MissionItem::SalvageCache,
+        ]
+    }
+
+    pub fn from_id(id: &str) -> Option<Self> {
+        Self::all().iter().copied().find(|item| item.id() == id)
+    }
+
+    pub fn id(&self) -> &'static str {
         match self {
-            MissionItem::StructuralAlloy => "Structural Alloy",
-            MissionItem::AlienCircuit => "Alien Circuit",
-            MissionItem::MedicinalGel => "Medicinal Gel",
-            MissionItem::NutrientPods => "Nutrient Pods",
-            MissionItem::SalvageCache => "Salvage Cache",
+            MissionItem::StructuralAlloy => "structural_alloy",
+            MissionItem::AlienCircuit => "alien_circuit",
+            MissionItem::MedicinalGel => "medicinal_gel",
+            MissionItem::NutrientPods => "nutrient_pods",
+            MissionItem::SalvageCache => "salvage_cache",
         }
     }
 
+    pub fn name(&self) -> &'static str {
+        &crate::data::config::game_config().item(*self).name
+    }
+
     pub fn short_name(&self) -> &'static str {
-        match self {
-            MissionItem::StructuralAlloy => "Alloy",
-            MissionItem::AlienCircuit => "Circuit",
-            MissionItem::MedicinalGel => "Gel",
-            MissionItem::NutrientPods => "Pods",
-            MissionItem::SalvageCache => "Cache",
-        }
+        &crate::data::config::game_config().item(*self).short_name
     }
 
     pub fn contributes_to_technology(&self) -> bool {
@@ -43,6 +55,16 @@ pub enum MissionType {
     SupplyRun,
     PerimeterScan,
     DeepSurvey,
+}
+
+impl MissionType {
+    pub fn id(&self) -> &'static str {
+        match self {
+            MissionType::SupplyRun => "supply_run",
+            MissionType::PerimeterScan => "perimeter_scan",
+            MissionType::DeepSurvey => "deep_survey",
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -67,37 +89,16 @@ impl MissionType {
     }
 
     pub fn definition(&self) -> MissionDefinition {
-        match self {
-            MissionType::SupplyRun => MissionDefinition {
-                mission_type: MissionType::SupplyRun,
-                name: "Supply Run",
-                short_name: "Supply",
-                duration_minutes: 45,
-                danger_percent: 14,
-                cooldown_minutes: 20,
-                description: "A fast salvage loop for food reserves and small wreckage caches.",
-                reward_profile: "Supplies, salvage, low tech chance",
-            },
-            MissionType::PerimeterScan => MissionDefinition {
-                mission_type: MissionType::PerimeterScan,
-                name: "Perimeter Scan",
-                short_name: "Scout",
-                duration_minutes: 90,
-                danger_percent: 22,
-                cooldown_minutes: 35,
-                description: "A cautious sweep that balances resources, mapping, and discoveries.",
-                reward_profile: "Balanced resources and tech",
-            },
-            MissionType::DeepSurvey => MissionDefinition {
-                mission_type: MissionType::DeepSurvey,
-                name: "Deep Survey",
-                short_name: "Tech",
-                duration_minutes: 180,
-                danger_percent: 38,
-                cooldown_minutes: 60,
-                description: "A long push past the wreck perimeter for stronger research finds.",
-                reward_profile: "High tech chance, higher danger",
-            },
+        let config = crate::data::config::game_config().mission(*self);
+        MissionDefinition {
+            mission_type: *self,
+            name: &config.name,
+            short_name: &config.short_name,
+            duration_minutes: config.duration_minutes,
+            danger_percent: config.danger_percent,
+            cooldown_minutes: config.cooldown_minutes,
+            description: &config.description,
+            reward_profile: &config.reward_profile,
         }
     }
 }

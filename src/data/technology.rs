@@ -19,6 +19,25 @@ pub enum TechId {
 }
 
 impl TechId {
+    pub fn id(&self) -> &'static str {
+        match self {
+            TechId::FieldMedicine => "field_medicine",
+            TechId::SurveyScanners => "survey_scanners",
+            TechId::ModularHabitats => "modular_habitats",
+            TechId::HydroponicPlanning => "hydroponic_planning",
+            TechId::StorageLattice => "storage_lattice",
+            TechId::TriageProtocols => "triage_protocols",
+            TechId::DroneSurvey => "drone_survey",
+            TechId::NutrientCulture => "nutrient_culture",
+            TechId::HullRetrofits => "hull_retrofits",
+            TechId::FabricationJigs => "fabrication_jigs",
+        }
+    }
+
+    pub fn from_id(id: &str) -> Option<Self> {
+        Self::all().iter().copied().find(|tech| tech.id() == id)
+    }
+
     pub fn all() -> &'static [TechId] {
         &[
             TechId::FieldMedicine,
@@ -35,89 +54,35 @@ impl TechId {
     }
 
     pub fn name(&self) -> &'static str {
-        match self {
-            TechId::FieldMedicine => "Field Medicine",
-            TechId::SurveyScanners => "Survey Scanners",
-            TechId::ModularHabitats => "Modular Habitats",
-            TechId::HydroponicPlanning => "Hydroponic Planning",
-            TechId::StorageLattice => "Storage Lattice",
-            TechId::TriageProtocols => "Triage Protocols",
-            TechId::DroneSurvey => "Drone Survey",
-            TechId::NutrientCulture => "Nutrient Culture",
-            TechId::HullRetrofits => "Hull Retrofits",
-            TechId::FabricationJigs => "Fabrication Jigs",
-        }
+        &crate::data::config::game_config().technology(*self).name
     }
 
     pub fn effect_text(&self) -> &'static str {
-        match self {
-            TechId::FieldMedicine => "Mission injuries recover faster.",
-            TechId::SurveyScanners => "Mission danger is reduced.",
-            TechId::ModularHabitats => "Each Habitat can support one more sleeper.",
-            TechId::HydroponicPlanning => "Daily supply need is reduced by one.",
-            TechId::StorageLattice => "Storage capacity increases.",
-            TechId::TriageProtocols => "Mission injuries recover even faster.",
-            TechId::DroneSurvey => "Mission danger and regroup time are reduced.",
-            TechId::NutrientCulture => "Daily supply need is reduced further.",
-            TechId::HullRetrofits => "Habitats and storage use wreckage more efficiently.",
-            TechId::FabricationJigs => "Workshop and hauling salvage recovery improves.",
-        }
+        &crate::data::config::game_config().technology(*self).effect
     }
 
     pub fn item_requirements(&self) -> Vec<(MissionItem, u32)> {
-        match self {
-            TechId::FieldMedicine => vec![(MissionItem::MedicinalGel, 1)],
-            TechId::SurveyScanners => vec![(MissionItem::AlienCircuit, 1)],
-            TechId::ModularHabitats => vec![(MissionItem::StructuralAlloy, 1)],
-            TechId::HydroponicPlanning => vec![(MissionItem::NutrientPods, 1)],
-            TechId::StorageLattice => {
-                vec![
-                    (MissionItem::StructuralAlloy, 1),
-                    (MissionItem::AlienCircuit, 1),
-                ]
-            }
-            TechId::TriageProtocols => {
-                vec![
-                    (MissionItem::MedicinalGel, 2),
-                    (MissionItem::AlienCircuit, 1),
-                ]
-            }
-            TechId::DroneSurvey => {
-                vec![
-                    (MissionItem::AlienCircuit, 2),
-                    (MissionItem::StructuralAlloy, 1),
-                ]
-            }
-            TechId::NutrientCulture => {
-                vec![
-                    (MissionItem::NutrientPods, 2),
-                    (MissionItem::MedicinalGel, 1),
-                ]
-            }
-            TechId::HullRetrofits => {
-                vec![
-                    (MissionItem::StructuralAlloy, 2),
-                    (MissionItem::AlienCircuit, 1),
-                ]
-            }
-            TechId::FabricationJigs => {
-                vec![
-                    (MissionItem::StructuralAlloy, 3),
-                    (MissionItem::AlienCircuit, 2),
-                ]
-            }
-        }
+        crate::data::config::game_config()
+            .technology(*self)
+            .items
+            .iter()
+            .filter_map(|requirement| {
+                MissionItem::all()
+                    .iter()
+                    .copied()
+                    .find(|item| item.id() == requirement.id)
+                    .map(|item| (item, requirement.count))
+            })
+            .collect()
     }
 
     pub fn prerequisite_tech(&self) -> Vec<TechId> {
-        match self {
-            TechId::TriageProtocols => vec![TechId::FieldMedicine],
-            TechId::DroneSurvey => vec![TechId::SurveyScanners],
-            TechId::NutrientCulture => vec![TechId::HydroponicPlanning],
-            TechId::HullRetrofits => vec![TechId::ModularHabitats, TechId::StorageLattice],
-            TechId::FabricationJigs => vec![TechId::StorageLattice],
-            _ => Vec::new(),
-        }
+        crate::data::config::game_config()
+            .technology(*self)
+            .prerequisites
+            .iter()
+            .filter_map(|id| TechId::from_id(id))
+            .collect()
     }
 }
 

@@ -32,13 +32,16 @@ impl GameplayState {
         }
 
         self.time_accumulator += get_frame_time() * speed_multiplier;
-        let ticks_to_advance = (self.time_accumulator / SECONDS_PER_GAME_TICK).floor() as u64;
+        let ticks_to_advance = (self.time_accumulator
+            / crate::data::config::game_config().time.seconds_per_tick)
+            .floor() as u64;
 
         if ticks_to_advance == 0 {
             return 0;
         }
 
-        self.time_accumulator -= ticks_to_advance as f32 * SECONDS_PER_GAME_TICK;
+        self.time_accumulator -=
+            ticks_to_advance as f32 * crate::data::config::game_config().time.seconds_per_tick;
         self.prev_tick = self.data.tick;
         self.data.tick += ticks_to_advance;
 

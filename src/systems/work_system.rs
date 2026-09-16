@@ -6,11 +6,6 @@ use crate::data::event_log::LogCategory;
 use crate::data::game_state::GameState;
 use crate::systems::resource_system::ResourceSystem;
 
-const EXPLORATION_THRESHOLD: u32 = 9;
-const WORKSHOP_THRESHOLD: u32 = 7;
-const KITCHEN_THRESHOLD: u32 = 5;
-const HAULING_THRESHOLD: u32 = 5;
-
 pub struct WorkSystem;
 
 impl WorkSystem {
@@ -82,8 +77,11 @@ impl WorkSystem {
         }
 
         state.resources.exploration_progress += output;
-        let completed = state.resources.exploration_progress / EXPLORATION_THRESHOLD;
-        state.resources.exploration_progress %= EXPLORATION_THRESHOLD;
+        let threshold = crate::data::config::game_config()
+            .work_thresholds
+            .exploration;
+        let completed = state.resources.exploration_progress / threshold;
+        state.resources.exploration_progress %= threshold;
 
         if completed == 0 {
             return;
@@ -116,8 +114,9 @@ impl WorkSystem {
         }
 
         state.resources.workshop_progress += output;
-        let completed = state.resources.workshop_progress / WORKSHOP_THRESHOLD;
-        state.resources.workshop_progress %= WORKSHOP_THRESHOLD;
+        let threshold = crate::data::config::game_config().work_thresholds.workshop;
+        let completed = state.resources.workshop_progress / threshold;
+        state.resources.workshop_progress %= threshold;
 
         if completed == 0 {
             return;
@@ -138,8 +137,9 @@ impl WorkSystem {
         }
 
         state.resources.kitchen_progress += output;
-        let completed = state.resources.kitchen_progress / KITCHEN_THRESHOLD;
-        state.resources.kitchen_progress %= KITCHEN_THRESHOLD;
+        let threshold = crate::data::config::game_config().work_thresholds.kitchen;
+        let completed = state.resources.kitchen_progress / threshold;
+        state.resources.kitchen_progress %= threshold;
 
         if completed == 0 {
             return;
@@ -163,8 +163,9 @@ impl WorkSystem {
         }
 
         state.resources.hauling_progress += output;
-        let completed = state.resources.hauling_progress / HAULING_THRESHOLD;
-        state.resources.hauling_progress %= HAULING_THRESHOLD;
+        let threshold = crate::data::config::game_config().work_thresholds.hauling;
+        let completed = state.resources.hauling_progress / threshold;
+        state.resources.hauling_progress %= threshold;
 
         if completed == 0 {
             return;

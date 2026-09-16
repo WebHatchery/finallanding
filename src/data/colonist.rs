@@ -92,6 +92,18 @@ pub enum Trait {
     Gourmet,
 }
 
+impl Trait {
+    pub fn from_id(id: &str) -> Option<Self> {
+        match id {
+            "hard_worker" => Some(Self::HardWorker),
+            "lazy" => Some(Self::Lazy),
+            "fast_walker" => Some(Self::FastWalker),
+            "gourmet" => Some(Self::Gourmet),
+            _ => None,
+        }
+    }
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum JobPreference {
     Explorer,
@@ -102,6 +114,17 @@ pub enum JobPreference {
 }
 
 impl JobPreference {
+    pub fn from_id(id: &str) -> Option<Self> {
+        match id {
+            "explorer" => Some(Self::Explorer),
+            "builder" => Some(Self::Builder),
+            "cook" => Some(Self::Cook),
+            "hauler" => Some(Self::Hauler),
+            "none" => Some(Self::None),
+            _ => None,
+        }
+    }
+
     pub fn all_assignable() -> &'static [JobPreference] {
         &[
             JobPreference::Explorer,

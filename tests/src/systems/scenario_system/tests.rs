@@ -3,7 +3,7 @@ use super::*;
 #[test]
 fn test_victory_requires_day_7_resources_and_tech() {
     let mut state = GameState::new();
-    state.tick = TimeSystem::TICKS_PER_DAY * 6;
+    state.tick = TimeSystem::ticks_per_day() * 6;
     state.resources.condition = ColonyCondition::Stable;
     state.resources.supplies = 20;
     state.technology.add_item(MissionItem::MedicinalGel);
@@ -19,7 +19,7 @@ fn test_victory_requires_day_7_resources_and_tech() {
 #[test]
 fn test_critical_colony_fails_on_target_day() {
     let mut state = GameState::new();
-    state.tick = TimeSystem::TICKS_PER_DAY * 6;
+    state.tick = TimeSystem::ticks_per_day() * 6;
     state.resources.condition = ColonyCondition::Critical;
     state.resources.supplies = 20;
     state.technology.add_item(MissionItem::MedicinalGel);

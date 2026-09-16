@@ -5,14 +5,21 @@ use crate::systems::time_events::{TimeEvent, TimeEventCollector};
 pub struct TimeSystem;
 
 impl TimeSystem {
-    pub const TICKS_PER_DAY: u64 = 1440; // Default
-    pub const TICKS_PER_HOUR: u64 = 60;
+    pub fn ticks_per_day() -> u64 {
+        crate::data::config::game_config().time.ticks_per_day
+    }
+
+    pub fn ticks_per_hour() -> u64 {
+        crate::data::config::game_config().time.ticks_per_hour
+    }
 
     pub fn get_time_of_day(tick: u64) -> (u32, u32, u32) {
-        let day = (tick / Self::TICKS_PER_DAY) as u32 + 1; // Day starts at 1
-        let tick_in_day = tick % Self::TICKS_PER_DAY;
-        let hour = (tick_in_day / Self::TICKS_PER_HOUR) as u32;
-        let minute = (tick_in_day % Self::TICKS_PER_HOUR) as u32;
+        let ticks_per_day = Self::ticks_per_day();
+        let ticks_per_hour = Self::ticks_per_hour();
+        let day = (tick / ticks_per_day) as u32 + 1; // Day starts at 1
+        let tick_in_day = tick % ticks_per_day;
+        let hour = (tick_in_day / ticks_per_hour) as u32;
+        let minute = (tick_in_day % ticks_per_hour) as u32;
         (day, hour, minute)
     }
 

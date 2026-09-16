@@ -44,8 +44,6 @@ use macroquad_toolkit::debug::DebugOverlay;
 use macroquad_toolkit::input::InputState;
 use std::path::PathBuf;
 
-const SECONDS_PER_GAME_TICK: f32 = 0.25;
-
 pub struct GameplayState {
     pub data: GameState,
     pub hovered_cell: Option<Position>,

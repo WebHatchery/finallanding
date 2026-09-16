@@ -5,11 +5,6 @@ use serde::{Deserialize, Serialize};
 
 use super::types::Position;
 
-// Grid configuration constants
-pub const GRID_WIDTH: usize = 26;
-pub const GRID_HEIGHT: usize = 24;
-const CELL_SIZE: f32 = 32.0;
-
 /// Represents the type of terrain in a cell.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub enum CellType {
@@ -53,7 +48,8 @@ pub struct Grid {
 
 impl Default for Grid {
     fn default() -> Self {
-        Self::new(GRID_WIDTH, GRID_HEIGHT)
+        let config = crate::data::config::game_config();
+        Self::new(config.grid.width, config.grid.height)
     }
 }
 
@@ -112,15 +108,17 @@ impl Grid {
 
     /// Converts world (pixel) coordinates to grid coordinates.
     pub fn world_to_grid(world_x: f32, world_y: f32) -> Position {
+        let cell_size = crate::data::config::game_config().grid.cell_size;
         Position::new(
-            (world_x / CELL_SIZE).floor() as i32,
-            (world_y / CELL_SIZE).floor() as i32,
+            (world_x / cell_size).floor() as i32,
+            (world_y / cell_size).floor() as i32,
         )
     }
 
     /// Converts grid coordinates to world (pixel) coordinates (top-left of cell).
     pub fn grid_to_world(grid_x: i32, grid_y: i32) -> (f32, f32) {
-        (grid_x as f32 * CELL_SIZE, grid_y as f32 * CELL_SIZE)
+        let cell_size = crate::data::config::game_config().grid.cell_size;
+        (grid_x as f32 * cell_size, grid_y as f32 * cell_size)
     }
 
     // ----- A* Pathfinding -----

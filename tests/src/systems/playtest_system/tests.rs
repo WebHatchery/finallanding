@@ -6,7 +6,7 @@ fn test_reference_playthrough_reaches_day_7_victory_window() {
 
     assert_eq!(report.start_tick, REFERENCE_START_TICK);
     assert_eq!(report.strategy, PlaytestStrategyKind::Reference);
-    assert_eq!(report.end_tick, TimeSystem::TICKS_PER_DAY * 6);
+    assert_eq!(report.end_tick, TimeSystem::ticks_per_day() * 6);
     assert!(
         report.proves_reference_run(),
         "reference playthrough did not prove a full run: {:?}",

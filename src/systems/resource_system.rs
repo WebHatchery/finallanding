@@ -3,7 +3,7 @@
 use crate::data::building::BuildingType;
 use crate::data::event_log::LogCategory;
 use crate::data::game_state::GameState;
-use crate::data::resources::{ColonyCondition, BASE_STORAGE_CAPACITY, STORAGE_CAPACITY_BONUS};
+use crate::data::resources::ColonyCondition;
 
 pub struct ResourceSystem;
 
@@ -26,8 +26,9 @@ impl ResourceSystem {
     pub fn storage_capacity(state: &GameState) -> i32 {
         let storage_count = Self::building_count(state, BuildingType::Storage) as i32;
 
-        BASE_STORAGE_CAPACITY
-            + storage_count * STORAGE_CAPACITY_BONUS
+        let config = crate::data::config::game_config();
+        config.resources.base_storage_capacity
+            + storage_count * config.resources.storage_capacity_bonus
             + state.technology.storage_capacity_bonus()
     }
 

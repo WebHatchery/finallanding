@@ -7,8 +7,6 @@ use crate::systems::resource_system::ResourceSystem;
 use crate::systems::summary_system::SummarySystem;
 use crate::systems::time_system::TimeSystem;
 
-const INCIDENT_ADVISOR_DURATION: u64 = TimeSystem::TICKS_PER_HOUR * 10;
-
 pub struct IncidentSystem;
 
 impl IncidentSystem {
@@ -27,7 +25,7 @@ impl IncidentSystem {
         state.incidents.mark_triggered(incident_type);
         state
             .incidents
-            .activate(incident_type, state.tick, INCIDENT_ADVISOR_DURATION);
+            .activate(incident_type, state.tick, TimeSystem::ticks_per_hour() * 10);
         Self::apply_incident(state, incident_type);
         ResourceSystem::update_condition(state);
     }

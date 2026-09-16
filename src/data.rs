@@ -6,6 +6,7 @@ pub mod types;
 pub mod assign_roster;
 pub mod building;
 pub mod colonist;
+pub mod config;
 pub mod event_log;
 pub mod game_state;
 pub mod grid;

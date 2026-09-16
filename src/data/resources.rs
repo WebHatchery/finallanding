@@ -2,9 +2,6 @@
 
 use serde::{Deserialize, Serialize};
 
-pub const BASE_STORAGE_CAPACITY: i32 = 36;
-pub const STORAGE_CAPACITY_BONUS: i32 = 18;
-
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ColonyCondition {
     Stable,
@@ -40,8 +37,12 @@ pub struct ResourceState {
 impl Default for ResourceState {
     fn default() -> Self {
         Self {
-            supplies: 30,
-            salvage: 52,
+            supplies: crate::data::config::game_config()
+                .resources
+                .starting_supplies,
+            salvage: crate::data::config::game_config()
+                .resources
+                .starting_salvage,
             prepared_meals: 0,
             exploration_progress: 0,
             workshop_progress: 0,

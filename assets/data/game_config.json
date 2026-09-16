@@ -1,0 +1,172 @@
+{
+  "grid": { "width": 34, "height": 30, "cell_size": 32.0 },
+  "resources": {
+    "starting_supplies": 30,
+    "starting_salvage": 52,
+    "base_storage_capacity": 36,
+    "storage_capacity_bonus": 18
+  },
+  "time": { "ticks_per_day": 1440, "ticks_per_hour": 60, "seconds_per_tick": 0.25 },
+  "scenario": { "target_day": 7, "required_tech_unlocks": 3 },
+  "work_thresholds": {
+    "exploration": 9,
+    "workshop": 7,
+    "kitchen": 5,
+    "hauling": 5
+  },
+  "buildings": [
+    {
+      "id": "habitat",
+      "name": "Habitat",
+      "short_name": "Habitat",
+      "width": 2,
+      "height": 2,
+      "salvage_cost": 8,
+      "planning_role": "Recovery",
+      "purpose": "Beds and recovery space for tired or hurt colonists.",
+      "impact": "Adds 2 recovery beds before technology bonuses.",
+      "color": [100, 149, 237]
+    },
+    {
+      "id": "mess_hall",
+      "name": "Mess Hall",
+      "short_name": "Mess",
+      "width": 3,
+      "height": 2,
+      "salvage_cost": 12,
+      "planning_role": "Food",
+      "purpose": "Meal work that lowers the next daily supply draw.",
+      "impact": "Lets cooks prepare meals and creates meal-time social contact.",
+      "color": [255, 165, 0]
+    },
+    {
+      "id": "workshop",
+      "name": "Workshop",
+      "short_name": "Workshop",
+      "width": 2,
+      "height": 3,
+      "salvage_cost": 10,
+      "planning_role": "Salvage",
+      "purpose": "Builder work that converts wreckage into salvage.",
+      "impact": "Lets builders recover salvage from the crash site.",
+      "color": [139, 69, 19]
+    },
+    {
+      "id": "storage",
+      "name": "Storage",
+      "short_name": "Storage",
+      "width": 2,
+      "height": 2,
+      "salvage_cost": 6,
+      "planning_role": "Storage",
+      "purpose": "Raises the supply cap and organizes hauling work.",
+      "impact": "Adds supply capacity and lets haulers recover salvage.",
+      "color": [128, 128, 128]
+    },
+    {
+      "id": "exploration_gate",
+      "name": "Exploration Gate",
+      "short_name": "Gate",
+      "width": 2,
+      "height": 2,
+      "salvage_cost": 14,
+      "planning_role": "Exploration",
+      "purpose": "Launches scans for tech items and emergency resources.",
+      "impact": "Enables perimeter scans for resources, injuries, and technology items.",
+      "color": [147, 112, 219]
+    }
+  ],
+  "missions": [
+    {
+      "id": "supply_run",
+      "name": "Supply Run",
+      "short_name": "Supply",
+      "duration_minutes": 45,
+      "danger_percent": 14,
+      "cooldown_minutes": 20,
+      "description": "A fast salvage loop for food reserves and small wreckage caches.",
+      "reward_profile": "Supplies, salvage, low tech chance"
+    },
+    {
+      "id": "perimeter_scan",
+      "name": "Perimeter Scan",
+      "short_name": "Scout",
+      "duration_minutes": 90,
+      "danger_percent": 22,
+      "cooldown_minutes": 35,
+      "description": "A cautious sweep that balances resources, mapping, and discoveries.",
+      "reward_profile": "Balanced resources and tech"
+    },
+    {
+      "id": "deep_survey",
+      "name": "Deep Survey",
+      "short_name": "Tech",
+      "duration_minutes": 180,
+      "danger_percent": 38,
+      "cooldown_minutes": 60,
+      "description": "A long push past the wreck perimeter for stronger research finds.",
+      "reward_profile": "High tech chance, higher danger"
+    }
+  ],
+  "mission_items": [
+    { "id": "structural_alloy", "name": "Structural Alloy", "short_name": "Alloy" },
+    { "id": "alien_circuit", "name": "Alien Circuit", "short_name": "Circuit" },
+    { "id": "medicinal_gel", "name": "Medicinal Gel", "short_name": "Gel" },
+    { "id": "nutrient_pods", "name": "Nutrient Pods", "short_name": "Pods" },
+    { "id": "salvage_cache", "name": "Salvage Cache", "short_name": "Cache" }
+  ],
+  "technology": [
+    { "id": "field_medicine", "name": "Field Medicine", "effect": "Mission injuries recover faster.", "prerequisites": [], "items": [{ "id": "medicinal_gel", "count": 1 }] },
+    { "id": "survey_scanners", "name": "Survey Scanners", "effect": "Mission danger is reduced.", "prerequisites": [], "items": [{ "id": "alien_circuit", "count": 1 }] },
+    { "id": "modular_habitats", "name": "Modular Habitats", "effect": "Each Habitat can support one more sleeper.", "prerequisites": [], "items": [{ "id": "structural_alloy", "count": 1 }] },
+    { "id": "hydroponic_planning", "name": "Hydroponic Planning", "effect": "Daily supply need is reduced by one.", "prerequisites": [], "items": [{ "id": "nutrient_pods", "count": 1 }] },
+    { "id": "storage_lattice", "name": "Storage Lattice", "effect": "Storage capacity increases.", "prerequisites": [], "items": [{ "id": "structural_alloy", "count": 1 }, { "id": "alien_circuit", "count": 1 }] },
+    { "id": "triage_protocols", "name": "Triage Protocols", "effect": "Mission injuries recover even faster.", "prerequisites": ["field_medicine"], "items": [{ "id": "medicinal_gel", "count": 2 }, { "id": "alien_circuit", "count": 1 }] },
+    { "id": "drone_survey", "name": "Drone Survey", "effect": "Mission danger and regroup time are reduced.", "prerequisites": ["survey_scanners"], "items": [{ "id": "alien_circuit", "count": 2 }, { "id": "structural_alloy", "count": 1 }] },
+    { "id": "nutrient_culture", "name": "Nutrient Culture", "effect": "Daily supply need is reduced further.", "prerequisites": ["hydroponic_planning"], "items": [{ "id": "nutrient_pods", "count": 2 }, { "id": "medicinal_gel", "count": 1 }] },
+    { "id": "hull_retrofits", "name": "Hull Retrofits", "effect": "Habitats and storage use wreckage more efficiently.", "prerequisites": ["modular_habitats", "storage_lattice"], "items": [{ "id": "structural_alloy", "count": 2 }, { "id": "alien_circuit", "count": 1 }] },
+    { "id": "fabrication_jigs", "name": "Fabrication Jigs", "effect": "Workshop and hauling salvage recovery improves.", "prerequisites": ["storage_lattice"], "items": [{ "id": "structural_alloy", "count": 3 }, { "id": "alien_circuit", "count": 2 }] }
+  ],
+  "survivors": [
+    { "id": 0, "name": "Alice", "trait": "hard_worker", "job": "builder", "position": [5, 5] },
+    { "id": 1, "name": "Bob", "trait": "lazy", "job": "cook", "position": [6, 5] },
+    { "id": 2, "name": "Charlie", "trait": "fast_walker", "job": "explorer", "position": [7, 5] },
+    { "id": 3, "name": "Diana", "trait": "gourmet", "job": "hauler", "position": [8, 5] },
+    { "id": 4, "name": "Evan", "trait": "hard_worker", "job": "explorer", "position": [9, 5] },
+    { "id": 5, "name": "Fiona", "trait": "lazy", "job": "builder", "position": [10, 5] }
+  ],
+  "starting_relationships": [
+    { "first_id": 0, "second_id": 5, "value": -24 },
+    { "first_id": 2, "second_id": 4, "value": 28 },
+    { "first_id": 1, "second_id": 3, "value": 14 }
+  ],
+  "text": {
+    "menu_title": "The Final Landing",
+    "menu_premise": [
+      "Guide six crash survivors through the first week.",
+      "Build shelter, food, storage, repairs, and scouting routes.",
+      "Priorities shape work pressure, recovery, missions, and relationships."
+    ],
+    "menu_controls": [
+      "Tap a control or release the mouse to interact.",
+      "Build, assign, launch missions, and restart from the visible controls.",
+      "Keyboard shortcuts remain available: Q W E R T, Z, Esc, 1 2 3, Space, M."
+    ],
+    "start_game": "Start New Run",
+    "continue_game": "Continue Run",
+    "settings": "Settings",
+    "exit": "Exit",
+    "undo": "Undo",
+    "cancel": "Cancel",
+    "filter_room": "Filter Room",
+    "log_search": "Search archive",
+    "log_export": "Export",
+    "restart": "Restart Run",
+    "back_to_menu": "Return to Menu",
+    "intro_building": "BUILD: choose a room, then tap a clear tile to place it.",
+    "intro_assignments": "ASSIGN: select a survivor and pin a home or work room.",
+    "intro_missions": "MISSIONS: build an Exploration Gate, then launch a safe scan.",
+    "intro_restart": "RESTART: use the visible Restart Run button after a failure or victory.",
+    "intro_continue": "Continue"
+  }
+}
