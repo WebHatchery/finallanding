@@ -123,8 +123,12 @@ pub fn draw_top_bar(
         let hovered = style::button_hovered(action_rect);
         style::draw_button(action_rect, false, hovered);
         let label = match action {
-            TopBarAction::Undo => "UNDO",
-            TopBarAction::Cancel => "CANCEL",
+            TopBarAction::Undo => crate::data::config::game_config()
+                .text
+                .label("toolbar_undo"),
+            TopBarAction::Cancel => crate::data::config::game_config()
+                .text
+                .label("toolbar_cancel"),
         };
         let label_width = measure_ui_text(label, None, 12, 1.0).width;
         draw_ui_text(

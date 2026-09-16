@@ -50,8 +50,9 @@ pub fn draw_right_rail(
 }
 
 fn draw_minimap(rect: Rect, state: &GameState) {
+    let text = &crate::data::config::game_config().text;
     style::draw_panel(rect);
-    style::draw_section_title("LOCAL MAP", rect.x + 16.0, rect.y + 29.0);
+    style::draw_section_title(text.label("right_local_map"), rect.x + 16.0, rect.y + 29.0);
 
     let map = Rect::new(rect.x + 14.0, rect.y + 42.0, rect.w - 28.0, rect.h - 56.0);
     draw_rectangle(map.x, map.y, map.w, map.h, Color::new(0.13, 0.16, 0.1, 1.0));
@@ -127,8 +128,9 @@ fn draw_minimap(rect: Rect, state: &GameState) {
 }
 
 fn draw_resources(rect: Rect, resources: &ResourceState, storage_capacity: i32, daily_need: i32) {
+    let text = &crate::data::config::game_config().text;
     style::draw_panel(rect);
-    style::draw_section_title("RESOURCES", rect.x + 16.0, rect.y + 29.0);
+    style::draw_section_title(text.label("right_resources"), rect.x + 16.0, rect.y + 29.0);
     let rows = resource_rows(resources, storage_capacity, daily_need);
 
     for (index, row) in rows.iter().enumerate() {
@@ -177,12 +179,13 @@ pub fn resource_rows(
     storage_capacity: i32,
     daily_need: i32,
 ) -> Vec<ResourceRow> {
+    let text = &crate::data::config::game_config().text;
     let daily_need = daily_need.max(1);
     let food_days = resources.supplies as f32 / daily_need as f32;
     let food_alert = resources.supplies < daily_need * 2;
     vec![
         ResourceRow {
-            label: "Food",
+            label: text.label("right_food"),
             value_text: format!("{}", resources.supplies),
             detail: format!("{:.1} days", food_days),
             progress: resources.supplies as f32 / storage_capacity.max(1) as f32,
@@ -190,7 +193,7 @@ pub fn resource_rows(
             alert: food_alert,
         },
         ResourceRow {
-            label: "Salvage",
+            label: text.label("right_salvage"),
             value_text: format!("{}", resources.salvage),
             detail: "build stock".to_string(),
             progress: resources.salvage as f32 / 120.0,
@@ -238,9 +241,10 @@ fn draw_colonist_list(
     summary: &ColonyPressureSummary,
     art: &PlaceholderArt,
 ) {
+    let text = &crate::data::config::game_config().text;
     style::draw_panel(rect);
     let capacity = 10;
-    style::draw_section_title("COLONISTS", rect.x + 16.0, rect.y + 29.0);
+    style::draw_section_title(text.label("right_colonists"), rect.x + 16.0, rect.y + 29.0);
     let count_label = format!("{} / {}", colonists.len(), capacity);
     let count_width = measure_ui_text(&count_label, None, style::SMALL_SIZE as u16, 1.0).width;
     draw_ui_text(
@@ -255,7 +259,7 @@ fn draw_colonist_list(
     for (index, colonist) in colonists.iter().take(visible_count).enumerate() {
         let y = rect.y + 59.0 + index as f32 * 33.0;
         let portrait = Rect::new(rect.x + 16.0, y - 22.0, 25.0, 25.0);
-        if let Some(texture) = art.colonist_portrait(colonist.id) {
+        if let Some((texture, source)) = art.colonist_portrait(colonist.id) {
             draw_texture_ex(
                 texture,
                 portrait.x,
@@ -263,6 +267,7 @@ fn draw_colonist_list(
                 WHITE,
                 DrawTextureParams {
                     dest_size: Some(vec2(portrait.w, portrait.h)),
+                    source: Some(source),
                     ..Default::default()
                 },
             );

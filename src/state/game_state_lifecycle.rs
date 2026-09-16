@@ -7,6 +7,7 @@ use crate::ui::introduction_continue_rect;
 
 impl State for GameplayState {
     fn update(&mut self) -> StateTransition {
+        self.layout.refresh();
         let mut input = InputState::capture();
         let pointer = Pointer::read(|position| position);
         if pointer.released {
@@ -88,6 +89,7 @@ impl State for GameplayState {
             self.update_building_selection();
         }
         self.update_building_placement(&input);
+        self.refresh_render_caches();
         self.maybe_autosave();
 
         StateTransition::None
@@ -124,14 +126,13 @@ impl State for GameplayState {
             self.data.priority.active,
         );
 
-        let colony_summary = SummarySystem::colony_pressure_summary(&self.data);
         let mission_plans = MissionSystem::mission_plans(&self.data);
         draw_right_rail(
             &self.layout,
             &self.data,
             ResourceSystem::storage_capacity(&self.data),
             ResourceSystem::daily_supply_need(&self.data),
-            &colony_summary,
+            &self.cached_colony_summary,
             &self.art,
         );
         draw_toolbar_context_panel(
@@ -166,7 +167,9 @@ impl State for GameplayState {
                     query: &self.social_history_query,
                     search_active: self.social_history_search_active,
                     selected_day: self.selected_social_history_day,
-                    colony_summary: &colony_summary,
+                    colony_summary: &self.cached_colony_summary,
+                    timeline_rows: &self.cached_log_rows,
+                    page_count: self.cached_log_page_count,
                 },
             },
         );

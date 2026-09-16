@@ -36,6 +36,7 @@ async fn main() {
         for mut config in configs {
             config.frames = capture::env_u32("TFL_CAPTURE_FRAMES", 8).max(1);
             game.begin_capture_scene(&config.scene);
+            next_frame().await;
             capture::run_capture_once(&config, |_dt| {
                 clear_background(BLACK);
                 game.update();

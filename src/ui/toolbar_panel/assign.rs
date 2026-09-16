@@ -179,7 +179,9 @@ pub fn draw_assign_context(view: AssignContext<'_>) {
         style::button_hovered(room_filter),
     );
     draw_ui_text(
-        "FILTER ROOM",
+        crate::data::config::game_config()
+            .text
+            .label("assign_filter_room"),
         room_filter.x + 8.0,
         room_filter.y + 15.0,
         style::TINY_SIZE,

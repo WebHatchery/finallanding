@@ -53,7 +53,12 @@ impl MenuState {
                     crate::state::game_state::GameplayState::from_saved(game),
                 )),
                 Err(error) => {
-                    self.status_message = Some(format!("Continue unavailable: {}", error));
+                    self.status_message = Some(
+                        crate::data::config::game_config()
+                            .text
+                            .label("continue_unavailable")
+                            .replace("{}", &error),
+                    );
                     StateTransition::None
                 }
             };
@@ -69,7 +74,12 @@ impl MenuState {
             std::process::exit(0);
             #[cfg(target_arch = "wasm32")]
             {
-                self.status_message = Some("Close this browser tab to exit.".to_string());
+                self.status_message = Some(
+                    crate::data::config::game_config()
+                        .text
+                        .label("browser_exit")
+                        .to_string(),
+                );
             }
         }
 
@@ -172,21 +182,21 @@ impl MenuState {
             );
             style::draw_deep_panel(modal);
             draw_ui_text(
-                "SETTINGS",
+                text.label("menu_settings_title"),
                 modal.x + 18.0,
                 modal.y + 28.0,
                 18.0,
                 style::TEXT_PRIMARY,
             );
             draw_ui_text(
-                "UI scale follows the viewport automatically.",
+                text.label("menu_settings_scale"),
                 modal.x + 18.0,
                 modal.y + 62.0,
                 14.0,
                 style::TEXT_BODY,
             );
             draw_ui_text(
-                "Tap Settings again to close this panel.",
+                text.label("menu_settings_close"),
                 modal.x + 18.0,
                 modal.y + 88.0,
                 14.0,

@@ -71,6 +71,9 @@ mod state_social_archive {
     use finallanding::state::game_state::game_state_social_archive::*;
     include!("src/state/game_state_social_archive/tests.rs");
 }
+mod state_persistence {
+    include!("src/state/persistence/tests.rs");
+}
 
 mod systems_advisor {
     include!("src/systems/advisor_system/tests.rs");

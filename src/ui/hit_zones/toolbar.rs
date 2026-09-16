@@ -31,15 +31,16 @@ impl ToolbarMode {
     }
 
     pub fn label(self) -> &'static str {
-        match self {
-            ToolbarMode::Build => "Build",
-            ToolbarMode::Rooms => "Rooms",
-            ToolbarMode::Objects => "Objects",
-            ToolbarMode::Colony => "Colony",
-            ToolbarMode::Research => "Research",
-            ToolbarMode::Assign => "Assign",
-            ToolbarMode::Log => "Log",
-        }
+        let key = match self {
+            ToolbarMode::Build => "toolbar_mode_build",
+            ToolbarMode::Rooms => "toolbar_mode_rooms",
+            ToolbarMode::Objects => "toolbar_mode_objects",
+            ToolbarMode::Colony => "toolbar_mode_colony",
+            ToolbarMode::Research => "toolbar_mode_research",
+            ToolbarMode::Assign => "toolbar_mode_assign",
+            ToolbarMode::Log => "toolbar_mode_log",
+        };
+        crate::data::config::game_config().text.label(key)
     }
 
     pub fn icon(self) -> &'static str {
@@ -55,15 +56,16 @@ impl ToolbarMode {
     }
 
     pub fn tooltip(self) -> &'static str {
-        match self {
-            ToolbarMode::Build => "All construction plans.",
-            ToolbarMode::Rooms => "Living, meal, and storage rooms.",
-            ToolbarMode::Objects => "Work structures for salvage and survey.",
-            ToolbarMode::Colony => "Settlement-wide work priority.",
-            ToolbarMode::Research => "Field missions and technology recovery.",
-            ToolbarMode::Assign => "Retask survivor work roles.",
-            ToolbarMode::Log => "Recent colony events.",
-        }
+        let key = match self {
+            ToolbarMode::Build => "toolbar_tip_build",
+            ToolbarMode::Rooms => "toolbar_tip_rooms",
+            ToolbarMode::Objects => "toolbar_tip_objects",
+            ToolbarMode::Colony => "toolbar_tip_colony",
+            ToolbarMode::Research => "toolbar_tip_research",
+            ToolbarMode::Assign => "toolbar_tip_assign",
+            ToolbarMode::Log => "toolbar_tip_log",
+        };
+        crate::data::config::game_config().text.label(key)
     }
 
     pub fn uses_building_choices(self) -> bool {

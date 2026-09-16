@@ -6,12 +6,12 @@
   },
   "canvas_rendering": "pixelated",
   "about": [
-    "Build a home for crash survivors. Place living and working spaces, balance their needs, and help relationships grow through each decision."
+    "Read the four-step arrival briefing, then build a home for crash survivors. Place living and working spaces, balance their needs, and help relationships grow through each decision."
   ],
   "controls": [
     {
       "key": "Mouse",
-      "desc": "Place buildings and use UI controls"
+      "desc": "Release to activate buttons, place buildings, select survivors, and use UI controls"
     },
     {
       "key": "Q-W-E-R-T",
@@ -32,6 +32,14 @@
     {
       "key": "Esc",
       "desc": "Cancel current tool"
+    },
+    {
+      "key": "Visible controls",
+      "desc": "Undo, Cancel, Filter Room, Search archive, Export, and Restart Run"
+    },
+    {
+      "key": "Touch",
+      "desc": "Tap Continue through arrival, use the on-screen Log keyboard, and tap Filter Room before a map room"
     }
   ],
   "details": [

@@ -5,6 +5,7 @@ use crate::data::colonist::{JobPreference, Trait};
 use crate::data::mission::{MissionItem, MissionType};
 use crate::data::technology::TechId;
 use serde::Deserialize;
+use std::collections::BTreeMap;
 use std::sync::OnceLock;
 
 #[derive(Clone, Debug, Deserialize)]
@@ -145,6 +146,22 @@ pub struct GameText {
     pub intro_missions: String,
     pub intro_restart: String,
     pub intro_continue: String,
+    #[serde(default)]
+    pub labels: BTreeMap<String, String>,
+}
+
+impl GameText {
+    pub fn label<'a>(&'a self, key: &'a str) -> &'a str {
+        self.labels.get(key).map(String::as_str).unwrap_or(key)
+    }
+
+    pub fn fill(&self, key: &str, values: &[String]) -> String {
+        let mut text = self.label(key).to_string();
+        for value in values {
+            text = text.replacen("{}", value, 1);
+        }
+        text
+    }
 }
 
 pub fn game_config() -> &'static GameConfig {

@@ -6,7 +6,6 @@ pub mod portrait;
 pub mod profiles;
 pub mod sprite;
 
-use portrait::generate_portrait;
 use profiles::SURVIVOR_ART_PROFILES;
 use sprite::generate_sprite;
 
@@ -55,7 +54,9 @@ impl SpritePose {
 
 pub struct PlaceholderArt {
     colonist_sprites: Vec<Texture2D>,
-    colonist_portraits: Vec<Texture2D>,
+    production_portraits: Texture2D,
+    building_atlas: Texture2D,
+    crash_site_backdrop: Texture2D,
 }
 
 impl Default for PlaceholderArt {
@@ -76,17 +77,27 @@ impl PlaceholderArt {
             })
             .collect();
 
-        let colonist_portraits = SURVIVOR_ART_PROFILES
-            .iter()
-            .enumerate()
-            .map(|(index, profile)| {
-                texture_from_image(generate_portrait(*profile, index), FilterMode::Linear)
-            })
-            .collect();
+        let production_portraits = Texture2D::from_file_with_format(
+            include_bytes!("../../assets/art/survivor_portraits.png"),
+            Some(ImageFormat::Png),
+        );
+        production_portraits.set_filter(FilterMode::Linear);
+        let crash_site_backdrop = Texture2D::from_file_with_format(
+            include_bytes!("../../assets/art/crash_site_backdrop.png"),
+            Some(ImageFormat::Png),
+        );
+        crash_site_backdrop.set_filter(FilterMode::Linear);
+        let building_atlas = Texture2D::from_file_with_format(
+            include_bytes!("../../assets/art/building_atlas.png"),
+            Some(ImageFormat::Png),
+        );
+        building_atlas.set_filter(FilterMode::Linear);
 
         Self {
             colonist_sprites,
-            colonist_portraits,
+            production_portraits,
+            building_atlas,
+            crash_site_backdrop,
         }
     }
 
@@ -105,13 +116,40 @@ impl PlaceholderArt {
             .get(profile_index * pose_count + pose.index())
     }
 
-    pub fn colonist_portrait(&self, colonist_id: u32) -> Option<&Texture2D> {
-        if self.colonist_portraits.is_empty() {
-            return None;
-        }
+    pub fn colonist_portrait(&self, colonist_id: u32) -> Option<(&Texture2D, Rect)> {
+        let index = colonist_id as usize % 6;
+        let column = index % 3;
+        let row = index / 3;
+        Some((
+            &self.production_portraits,
+            Rect::new(
+                column as f32 * self.production_portraits.width() / 3.0,
+                row as f32 * self.production_portraits.height() / 2.0,
+                self.production_portraits.width() / 3.0,
+                self.production_portraits.height() / 2.0,
+            ),
+        ))
+    }
 
-        self.colonist_portraits
-            .get(colonist_id as usize % self.colonist_portraits.len())
+    pub fn crash_site_backdrop(&self) -> &Texture2D {
+        &self.crash_site_backdrop
+    }
+
+    pub fn building_icon(&self, building_type: crate::data::building::BuildingType) -> Rect {
+        let index = crate::data::building::BuildingType::all()
+            .iter()
+            .position(|candidate| *candidate == building_type)
+            .unwrap_or(0);
+        Rect::new(
+            index as f32 * self.building_atlas.width() / 5.0,
+            0.0,
+            self.building_atlas.width() / 5.0,
+            self.building_atlas.height(),
+        )
+    }
+
+    pub fn building_atlas(&self) -> &Texture2D {
+        &self.building_atlas
     }
 }
 

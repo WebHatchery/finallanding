@@ -17,6 +17,8 @@ Playable alpha loop:
 - Research missions that return supplies, salvage, and technology progress.
 - Daily social history, searchable Log mode, report drilldowns, and Markdown export.
 - Day 7 victory/failure scenario checks backed by headless playthrough tests.
+- Four-step arrival briefing, versioned autosave/Continue flow, and platform-aware exit/settings controls.
+- Production crash-site, survivor, and building-atlas art layered with deterministic support/tension poses.
 
 ## Quick Start
 
@@ -49,17 +51,19 @@ Goal: keep the settlement alive after the crash, stabilize food and shelter, rec
 
 Core loop:
 
-1. Place essential rooms and work objects.
-2. Set the colony priority to match the current pressure.
-3. Launch missions from Research once the Exploration Gate exists.
-4. Use Assign mode to separate tense colonists or protect supportive pairs.
-5. Watch the daily reports and adjust the plan before pressure becomes failure.
+1. Tap or click through the arrival briefing to learn the four decisions that shape the colony.
+2. Place essential rooms and work objects.
+3. Set the colony priority to match the current pressure.
+4. Launch missions from Research once the Exploration Gate exists.
+5. Use Assign mode to separate tense colonists or protect supportive pairs.
+6. Watch the daily reports and adjust the plan before pressure becomes failure.
 
 The settlement can limp or fail if it has no food plan, no habitats, or no mission/technology progress.
 
 ## Controls
 
-- Mouse: use UI buttons, select colonists, place buildings, and pin compatible rooms/workspaces in Assign mode.
+- Mouse or touch: release/click UI buttons, select colonists, place buildings, and pin compatible rooms/workspaces in Assign mode.
+- Arrival briefing: use the visible Continue / Enter Colony button; the final step autosaves the new run.
 - Bottom toolbar: switch between Build, Rooms, Objects, Colony, Research, Assign, and Log.
 - `Q`, `W`, `E`, `R`, `T`: select Habitat, Mess Hall, Workshop, Storage, or Exploration Gate.
 - `1`, `2`, `3`: set Recovery, Stockpile, or Survey priority.
@@ -69,13 +73,14 @@ The settlement can limp or fail if it has no food plan, no habitats, or no missi
 - `Esc`: cancel the current building/search interaction.
 - `M`: launch the recommended mission when possible.
 - `F3`: toggle debug overlay.
-- After victory/failure, `Enter`, `R`, or the restart button starts another run.
+- Visible Undo and Cancel buttons mirror `Z` and `Esc`; the menu also exposes Continue, Settings, and Exit where supported.
+- After victory/failure, `Enter`, `R`, or the visible Restart Run button starts another run.
 
 Assign mode:
 
 - Click a survivor card to cycle their work role.
 - Click a compatible map building to pin or clear a selected survivor's recovery/work space.
-- Right-click a room or work building to filter the roster to survivors pinned there.
+- Right-click a room or work building, or arm the visible Filter Room control and tap a room, to filter the roster to survivors pinned there.
 - Use relationship filters, role filters, sorting, and page controls to inspect pressure.
 - Use `P-H`, `P-W`, `ALL-H`, and `ALL-W` to copy home/work pins across visible or full compatible rosters.
 - Use pair/separate directives to encourage supportive pairs or keep tense colonists apart.
@@ -84,7 +89,7 @@ Log mode:
 
 - Search, filter, and page daily social reports.
 - Click a report row for a recommendation drilldown.
-- Export the social archive to `docs\exports\social_archive.md`.
+- On Windows, export the social archive to `docs\exports\social_archive.md`; in the browser, Export downloads `social_archive.md`.
 
 ## Major Systems
 
@@ -94,11 +99,14 @@ Log mode:
 - **Missions:** field missions have duration, danger, cooldown, rewards, and technology chances.
 - **Scenario:** the colony is evaluated around Day 7 for supplies, shelter, technology, and condition.
 - **Advisor/objectives:** the left rail surfaces active risks and next priorities.
+- **Arrival and persistence:** a guided first-run briefing precedes the six-survivor roster; Continue restores the latest versioned autosave.
 
 ## Implementation Notes
 
 - Runtime and rendering use `macroquad`.
 - `macroquad-toolkit` is used for pathfinding and toolkit colors.
+- JSON balance, labels, and scenario content are loaded through toolkit configuration helpers and validated before play.
+- Save slots use a versioned DTO that preserves runtime state, buildings, assignments, social history, and deterministic RNG state.
 - Colonist movement uses `Grid::find_path`, not direct coordinate stepping.
 - Simulation randomness is routed through deterministic `SimulationRng`, keeping domain behavior independent of `macroquad::rand`.
 - UI rendering is split across focused modules:
@@ -107,7 +115,9 @@ Log mode:
   - `src\ui\toolbar_panel.rs`
   - `src\ui\toolbar_panel\assign.rs`
   - `src\ui\toolbar_panel\log.rs`
+  - `src\ui\introduction.rs`
 - Gameplay orchestration remains in `src\state\game_state.rs`, with pure helper logic kept in focused sibling modules.
+- `Layout::responsive` and `IsoView` are refreshed from the live viewport so desktop resizing and touch-sized captures retain reachable controls and map cells.
 
 ## Verification
 
@@ -123,7 +133,7 @@ Visual smoke captures:
 .\scripts\capture_ui_smoke.ps1
 ```
 
-This captures gameplay screenshots at multiple resolutions and key modes into `docs\verification\`.
+This captures gameplay screenshots at 1280x720, 1920x1080, and 720x480 touch-sized layouts plus key modes into `docs\verification\`.
 
 Headless playthrough matrix:
 
@@ -157,6 +167,7 @@ The native game supports deterministic capture helpers used by scripts:
 ## Playtest Checklist
 
 - Start from the main menu without developer guidance.
+- Read and complete the four-step arrival briefing; confirm Continue restores the active run from the menu afterward.
 - Place at least one Habitat, Mess Hall, Workshop, Storage, and Exploration Gate.
 - Change priorities after an incident and confirm the advisor/objective state responds.
 - Launch at least two mission types from Research mode.
@@ -164,10 +175,11 @@ The native game supports deterministic capture helpers used by scripts:
 - Confirm tense/supportive survivors show visible map markers and useful inspector details.
 - Open Log mode after several day summaries; search, filter, page, select a report, and export the archive.
 - Reach victory or failure, then restart and confirm the new run does not leak old selection/log state.
+- Repeat the first-frame, Assign, and Log checks at 720x480 using taps and the visible controls.
 
 ## Documentation
 
 - `tfl_mvp.md` — the design document: the single pillar, MVP scope, and the loop the game is built around.
 - `docs/verification/manual_relationship_playtest.md` — focused manual QA pass.
 - `docs/verification/playthrough_report.md` — generated headless strategy matrix.
-- `TODO.md` — open playtest, art, and engineering work.
+- `TODO.md` — only remaining AI-agent tasks, if any.

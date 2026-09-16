@@ -34,6 +34,7 @@ impl AdvisorSystem {
     pub fn plan(state: &GameState) -> AdvisorPlan {
         let mut lines = Vec::new();
         let (day, _, _) = TimeSystem::get_time_of_day(state.tick);
+        let text = &crate::data::config::game_config().text;
 
         Self::add_incident_guidance(state, &mut lines);
         Self::add_pressure_warnings(state, &mut lines);
@@ -42,10 +43,10 @@ impl AdvisorSystem {
 
         if lines.is_empty() {
             lines.push(AdvisorLine {
-                title: "Hold the landing site".to_string(),
-                detail: format!(
-                    "Day {} of {}; keep supplies above daily need and relationships stable.",
-                    day, state.scenario.target_day
+                title: text.label("advisor_hold_title").to_string(),
+                detail: text.fill(
+                    "advisor_hold_detail",
+                    &[day.to_string(), state.scenario.target_day.to_string()],
                 ),
                 severity: AdvisorSeverity::Stable,
             });
@@ -58,15 +59,18 @@ impl AdvisorSystem {
     }
 
     fn headline(state: &GameState, day: u32) -> String {
-        format!(
-            "Advisor | Day {}/{} | {}",
-            day,
-            state.scenario.target_day,
-            state.priority.active.label()
+        crate::data::config::game_config().text.fill(
+            "advisor_headline",
+            &[
+                day.to_string(),
+                state.scenario.target_day.to_string(),
+                state.priority.active.label().to_string(),
+            ],
         )
     }
 
     fn add_pressure_warnings(state: &GameState, lines: &mut Vec<AdvisorLine>) {
+        let text = &crate::data::config::game_config().text;
         let daily_need = ResourceSystem::daily_supply_need(state).max(1);
         let summary = SummarySystem::colony_pressure_summary(state);
 
@@ -74,16 +78,16 @@ impl AdvisorSystem {
             || state.resources.condition == ColonyCondition::Collapsed
         {
             lines.push(AdvisorLine {
-                title: "Stabilize the colony".to_string(),
-                detail: "Prioritize food, recovery space, and safer mission timing.".to_string(),
+                title: text.label("advisor_stabilize_title").to_string(),
+                detail: text.label("advisor_stabilize_detail").to_string(),
                 severity: AdvisorSeverity::Warning,
             });
         } else if state.resources.supplies < daily_need * 2 {
             lines.push(AdvisorLine {
-                title: "Raise the supply buffer".to_string(),
-                detail: format!(
-                    "{} supplies against {} daily need is a thin reserve.",
-                    state.resources.supplies, daily_need
+                title: text.label("advisor_supply_title").to_string(),
+                detail: text.fill(
+                    "advisor_supply_detail",
+                    &[state.resources.supplies.to_string(), daily_need.to_string()],
                 ),
                 severity: AdvisorSeverity::Warning,
             });
@@ -91,16 +95,16 @@ impl AdvisorSystem {
 
         if summary.average_mood < 35.0 {
             lines.push(AdvisorLine {
-                title: "Give people recovery time".to_string(),
-                detail: "Low mood increases refusals and can push the colony critical.".to_string(),
+                title: text.label("advisor_recovery_title").to_string(),
+                detail: text.label("advisor_recovery_detail").to_string(),
                 severity: AdvisorSeverity::Warning,
             });
         } else if summary.strained_pairs > 1 {
             lines.push(AdvisorLine {
-                title: "Ease social strain".to_string(),
-                detail: format!(
-                    "{} tense pairs are adding pressure to daily work.",
-                    summary.strained_pairs
+                title: text.label("advisor_strain_title").to_string(),
+                detail: text.fill(
+                    "advisor_strain_detail",
+                    &[summary.strained_pairs.to_string()],
                 ),
                 severity: AdvisorSeverity::Action,
             });
@@ -118,45 +122,48 @@ impl AdvisorSystem {
     }
 
     fn add_building_guidance(state: &GameState, lines: &mut Vec<AdvisorLine>) {
+        let text = &crate::data::config::game_config().text;
         let habitat_capacity = ResourceSystem::habitat_capacity(state);
         if habitat_capacity < state.colonists.len() as u32 {
             lines.push(AdvisorLine {
-                title: "Shelter every survivor".to_string(),
-                detail: format!(
-                    "{} sleeper slots for {} colonists.",
-                    habitat_capacity,
-                    state.colonists.len()
+                title: text.label("advisor_shelter_title").to_string(),
+                detail: text.fill(
+                    "advisor_shelter_detail",
+                    &[
+                        habitat_capacity.to_string(),
+                        state.colonists.len().to_string(),
+                    ],
                 ),
                 severity: AdvisorSeverity::Action,
             });
         }
 
-        for (building_type, title, detail) in [
+        for (building_type, title_key, detail_key) in [
             (
                 BuildingType::MessHall,
-                "Open a meal point",
-                "Cook labor creates meals that reduce the daily supply draw.",
+                "advisor_meal_title",
+                "advisor_meal_detail",
             ),
             (
                 BuildingType::Workshop,
-                "Recover repair stock",
-                "Builder labor turns wreckage into usable salvage.",
+                "advisor_workshop_title",
+                "advisor_workshop_detail",
             ),
             (
                 BuildingType::Storage,
-                "Secure storage",
-                "Storage raises the supply cap before survey finds overflow.",
+                "advisor_storage_title",
+                "advisor_storage_detail",
             ),
             (
                 BuildingType::ExplorationGate,
-                "Mark a survey route",
-                "Survey missions bring tech items and emergency resources.",
+                "advisor_gate_title",
+                "advisor_gate_detail",
             ),
         ] {
             if Self::building_count(state, building_type) == 0 {
                 lines.push(AdvisorLine {
-                    title: title.to_string(),
-                    detail: detail.to_string(),
+                    title: text.label(title_key).to_string(),
+                    detail: text.label(detail_key).to_string(),
                     severity: AdvisorSeverity::Action,
                 });
             }
@@ -164,25 +171,30 @@ impl AdvisorSystem {
     }
 
     fn add_progress_guidance(state: &GameState, lines: &mut Vec<AdvisorLine>) {
+        let text = &crate::data::config::game_config().text;
         if state.technology.unlocked_count() < state.scenario.required_tech_unlocks {
             let detail = if state.missions.active_count() > 0 {
-                format!(
-                    "Survey team away; tech progress {}/{}.",
-                    state.technology.unlocked_count(),
-                    state.scenario.required_tech_unlocks
+                text.fill(
+                    "advisor_tech_away",
+                    &[
+                        state.technology.unlocked_count().to_string(),
+                        state.scenario.required_tech_unlocks.to_string(),
+                    ],
                 )
             } else if Self::building_count(state, BuildingType::ExplorationGate) > 0 {
-                format!(
-                    "Launch scans until tech reaches {}/{}.",
-                    state.technology.unlocked_count(),
-                    state.scenario.required_tech_unlocks
+                text.fill(
+                    "advisor_tech_launch",
+                    &[
+                        state.technology.unlocked_count().to_string(),
+                        state.scenario.required_tech_unlocks.to_string(),
+                    ],
                 )
             } else {
-                "Build an Exploration Gate before Day 7 tech falls behind.".to_string()
+                text.label("advisor_tech_build").to_string()
             };
 
             lines.push(AdvisorLine {
-                title: "Push toward field tech".to_string(),
+                title: text.label("advisor_tech_title").to_string(),
                 detail,
                 severity: AdvisorSeverity::Action,
             });
@@ -192,8 +204,8 @@ impl AdvisorSystem {
             && state.technology.unlocked_count() < state.scenario.required_tech_unlocks
         {
             lines.push(AdvisorLine {
-                title: "Use Survey priority".to_string(),
-                detail: "Survey boosts exploration output and research-item returns.".to_string(),
+                title: text.label("advisor_survey_title").to_string(),
+                detail: text.label("advisor_survey_detail").to_string(),
                 severity: AdvisorSeverity::Action,
             });
         }

@@ -46,12 +46,12 @@ pub fn draw_bottom_toolbar(
     }
 
     if let Some(building) = selected_building {
-        let helper = format!(
-            "Placing {} | {} salvage | {}",
-            building.name(),
-            building.salvage_cost(),
-            building.planning_role()
-        );
+        let helper = crate::data::config::game_config()
+            .text
+            .label("toolbar_placing")
+            .replacen("{}", building.name(), 1)
+            .replacen("{}", &building.salvage_cost().to_string(), 1)
+            .replacen("{}", building.planning_role(), 1);
         let helper_width = measure_ui_text(&helper, None, style::TINY_SIZE as u16, 1.0).width;
         draw_ui_text(
             &helper,

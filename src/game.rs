@@ -112,6 +112,16 @@ impl Game {
                     ("TFL_SEED_ACTIVITY_POSES", "1"),
                 ],
             ),
+            "smoke_touch_720x480" => (
+                720,
+                480,
+                false,
+                vec![
+                    ("TFL_START_TOOLBAR_MODE", "assign"),
+                    ("TFL_START_SELECTED_COLONIST", "0"),
+                    ("TFL_SEED_ASSIGN_SPACES", "1"),
+                ],
+            ),
             _ => (1280, 720, false, vec![("TFL_START_TOOLBAR_MODE", "build")]),
         };
         for (key, value) in values {

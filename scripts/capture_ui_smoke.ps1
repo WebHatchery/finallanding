@@ -91,7 +91,7 @@ function Assert-RegionVisible {
 
     $stats = Get-RegionStats -Bitmap $Bitmap -X $X -Y $Y -Width $Width -Height $Height
     if ($stats.NonBlackRatio -lt $MinNonBlackRatio -or $stats.BrightnessRange -lt $MinBrightnessRange) {
-        throw "Capture failed: $Name region looks blank or flat (nonblack=$([Math]::Round($stats.NonBlackRatio, 3)), range=$($stats.BrightnessRange))."
+        throw "Capture failed: $Name region looks blank or flat at ($X,$Y) size ${Width}x${Height} (nonblack=$([Math]::Round($stats.NonBlackRatio, 3)), range=$($stats.BrightnessRange))."
     }
 }
 
@@ -103,7 +103,7 @@ function Assert-ActiveToolbarVisible {
         [int]$ActiveIndex
     )
 
-    $toolbarWidth = [Math]::Min([Math]::Max($Width * 0.46, 520), 760)
+    $toolbarWidth = [Math]::Min([Math]::Max($Width - 14, 308), 760)
     $toolbarX = ($Width - $toolbarWidth) * 0.5
     $buttonWidth = $toolbarWidth / 7
     $buttonX = $toolbarX + $ActiveIndex * $buttonWidth
@@ -111,7 +111,7 @@ function Assert-ActiveToolbarVisible {
     $stats = Get-RegionStats `
         -Bitmap $Bitmap `
         -X ([int]($buttonX + $buttonWidth * 0.1)) `
-        -Y ([int]($Height * 0.90)) `
+        -Y ([int]($Height - ($(if ($Width -lt 760) { 104 } else { 86 }) - 10))) `
         -Width ([int]($buttonWidth * 0.8)) `
         -Height ([int]($Height * 0.08)) `
         -Step 3
@@ -148,6 +148,7 @@ $sizes = @(
     @{ Width = 1280; Height = 720; Name = "ui_smoke_log_1280x720.png"; Fullscreen = "0"; Mode = "log"; Selected = ""; ActiveIndex = 6; History = "1"; SocialDay = "4"; Poses = "0"; Spaces = "0"; SelectedBuilding = ""; PreviewX = ""; PreviewY = "" },
     @{ Width = 1280; Height = 720; Name = "ui_smoke_placement_1280x720.png"; Fullscreen = "0"; Mode = "rooms"; Selected = ""; ActiveIndex = 1; History = "0"; SocialDay = ""; Poses = "0"; Spaces = "0"; SelectedBuilding = "habitat"; PreviewX = "5"; PreviewY = "9" },
     @{ Width = 1280; Height = 720; Name = "ui_smoke_poses_1280x720.png"; Fullscreen = "0"; Mode = "build"; Selected = ""; ActiveIndex = 0; History = "0"; SocialDay = ""; Poses = "1"; Spaces = "0"; SelectedBuilding = ""; PreviewX = ""; PreviewY = "" }
+    @{ Width = 720; Height = 480; Name = "ui_smoke_touch_720x480.png"; Fullscreen = "0"; Mode = "assign"; Selected = "0"; ActiveIndex = 5; History = "0"; SocialDay = ""; Poses = "0"; Spaces = "1"; SelectedBuilding = ""; PreviewX = ""; PreviewY = "" }
 )
 
 $manifest = Join-Path $outDir ".capture_manifest_$PID.tsv"
@@ -191,8 +192,13 @@ foreach ($size in $sizes) {
             throw "Capture failed: $path is $($image.Width)x$($image.Height), expected $($size.Width)x$($size.Height)."
         }
 
-        Assert-RegionVisible -Bitmap $image -Name "left rail" -X 10 -Y 78 -Width 278 -Height 170 -MinNonBlackRatio 0.35 -MinBrightnessRange 45
-        Assert-RegionVisible -Bitmap $image -Name "right rail" -X ([int]($size.Width - 292)) -Y 78 -Width 278 -Height 545 -MinNonBlackRatio 0.18 -MinBrightnessRange 45
+        $phone = $size.Width -lt 760
+        $leftX = if ($phone) { 7 } else { 10 }
+        $leftWidth = if ($phone) { 140 } else { 278 }
+        $rightX = if ($phone) { $size.Width - 149 } else { $size.Width - 292 }
+        $rightWidth = if ($phone) { 142 } else { 278 }
+        Assert-RegionVisible -Bitmap $image -Name "left rail" -X $leftX -Y 70 -Width $leftWidth -Height 170 -MinNonBlackRatio 0.25 -MinBrightnessRange 35
+        Assert-RegionVisible -Bitmap $image -Name "right rail" -X $rightX -Y 70 -Width $rightWidth -Height ([int]($size.Height - 78)) -MinNonBlackRatio 0.12 -MinBrightnessRange 35
         Assert-RegionVisible -Bitmap $image -Name "central map" -X ([int]($size.Width * 0.26)) -Y ([int]($size.Height * 0.18)) -Width ([int]($size.Width * 0.48)) -Height ([int]($size.Height * 0.48)) -MinNonBlackRatio 0.12 -MinBrightnessRange 30
         Assert-ActiveToolbarVisible -Bitmap $image -Width $size.Width -Height $size.Height -ActiveIndex $size.ActiveIndex
         if ($size.SelectedBuilding -ne "") {

@@ -44,6 +44,7 @@ impl ObjectiveSystem {
     }
 
     fn landing_card(state: &GameState) -> ObjectiveCard {
+        let text = &crate::data::config::game_config().text;
         let (day, _, _) = TimeSystem::get_time_of_day(state.tick);
         let target_day = state.scenario.target_day.max(1);
         let progress = day as f32 / target_day as f32;
@@ -58,12 +59,14 @@ impl ObjectiveSystem {
         };
 
         ObjectiveCard {
-            title: "Secure stable landing".to_string(),
-            detail: format!(
-                "Day {} of {} | {}",
-                day,
-                target_day,
-                state.resources.condition.label()
+            title: text.label("objective_landing_title").to_string(),
+            detail: text.fill(
+                "objective_landing_detail",
+                &[
+                    day.to_string(),
+                    target_day.to_string(),
+                    state.resources.condition.label().to_string(),
+                ],
             ),
             progress,
             status,
@@ -71,14 +74,18 @@ impl ObjectiveSystem {
     }
 
     fn shelter_card(state: &GameState) -> ObjectiveCard {
+        let text = &crate::data::config::game_config().text;
         let needed = state.colonists.len().max(1) as u32;
         let capacity = ResourceSystem::habitat_capacity(state);
         let progress = capacity as f32 / needed as f32;
         let complete = capacity >= state.colonists.len() as u32;
 
         ObjectiveCard {
-            title: "Shelter every survivor".to_string(),
-            detail: format!("{} beds for {} colonists", capacity, state.colonists.len()),
+            title: text.label("objective_shelter_title").to_string(),
+            detail: text.fill(
+                "objective_shelter_detail",
+                &[capacity.to_string(), state.colonists.len().to_string()],
+            ),
             progress,
             status: if complete {
                 ObjectiveStatus::Complete
@@ -89,6 +96,7 @@ impl ObjectiveSystem {
     }
 
     fn food_card(state: &GameState) -> ObjectiveCard {
+        let text = &crate::data::config::game_config().text;
         let daily_need = ResourceSystem::daily_supply_need(state).max(1);
         let target_buffer = (daily_need * 2).max(1);
         let progress = state.resources.supplies as f32 / target_buffer as f32;
@@ -101,10 +109,10 @@ impl ObjectiveSystem {
         };
 
         ObjectiveCard {
-            title: "Hold a food buffer".to_string(),
-            detail: format!(
-                "{} food vs {} daily need",
-                state.resources.supplies, daily_need
+            title: text.label("objective_food_title").to_string(),
+            detail: text.fill(
+                "objective_food_detail",
+                &[state.resources.supplies.to_string(), daily_need.to_string()],
             ),
             progress,
             status,
@@ -112,6 +120,7 @@ impl ObjectiveSystem {
     }
 
     pub fn core_rooms_card(state: &GameState) -> ObjectiveCard {
+        let text = &crate::data::config::game_config().text;
         let placed = BuildingType::all()
             .iter()
             .filter(|building_type| Self::has_building(state, **building_type))
@@ -119,8 +128,11 @@ impl ObjectiveSystem {
         let total = BuildingType::all().len();
 
         ObjectiveCard {
-            title: "Establish core rooms".to_string(),
-            detail: format!("{} of {} room types placed", placed, total),
+            title: text.label("objective_rooms_title").to_string(),
+            detail: text.fill(
+                "objective_rooms_detail",
+                &[placed.to_string(), total.to_string()],
+            ),
             progress: placed as f32 / total as f32,
             status: if placed == total {
                 ObjectiveStatus::Complete
@@ -131,13 +143,17 @@ impl ObjectiveSystem {
     }
 
     pub fn technology_card(state: &GameState) -> ObjectiveCard {
+        let text = &crate::data::config::game_config().text;
         let required = state.scenario.required_tech_unlocks.max(1);
         let unlocked = state.technology.unlocked_count();
         let has_gate = Self::has_building(state, BuildingType::ExplorationGate);
 
         ObjectiveCard {
-            title: "Recover field technology".to_string(),
-            detail: format!("{} of {} tech unlocked", unlocked, required),
+            title: text.label("objective_technology_title").to_string(),
+            detail: text.fill(
+                "objective_technology_detail",
+                &[unlocked.to_string(), required.to_string()],
+            ),
             progress: unlocked as f32 / required as f32,
             status: if unlocked >= required {
                 ObjectiveStatus::Complete

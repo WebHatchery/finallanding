@@ -7,6 +7,7 @@ Use this checklist after relationship, Assign-mode, Log-mode, or character-visua
 - Run `cargo test`.
 - Run `.\scripts\capture_ui_smoke.ps1`.
 - Start a fresh game from the main menu at 1280x720 or larger.
+- Repeat the readable-control checks at 720x480 with taps instead of hover/right-click actions.
 - Keep time paused while checking UI affordances, then run at normal speed for daily-routine checks.
 
 ## First Frame Readability
@@ -15,16 +16,17 @@ Use this checklist after relationship, Assign-mode, Log-mode, or character-visua
 - Confirm the right rail shows every survivor with a portrait and Friendly/Tense relationship chip where relevant.
 - Select each starting survivor and confirm the inspector shows portrait, job, activity, bars, and relationship line.
 - Confirm support/tension markers and body-language frames are visible on the map before opening Log mode.
+- Complete the four-step arrival briefing with Continue / Enter Colony and confirm the active colony opens with the configured roster.
 
 ## Assign Mode Decisions
 
 - Open Assign mode and confirm the selected survivor stays pinned at the start of the roster.
-- Cycle filters through ALL, RISK, SUP, PIN, and at least one role filter; confirm visible rows match the selected filter.
+- Cycle filters through ALL, RISK, TENSE, PLUS, PIN, and at least one role filter; confirm visible rows match the selected filter.
 - Cycle sorting through ORD, MOOD, BOND, and R-ALL; confirm low-mood or high-pressure survivors move as expected.
 - Hover survivor cards and confirm relationship-preview text explains the expected impact before retasking.
 - Click survivor cards to change work role, then confirm future work-space compatibility changes.
 - Click a compatible Habitat and work room on the map for the selected survivor; confirm HOME/WORK map labels and warnings update.
-- Right-click a room or work space and confirm the roster filters to survivors pinned to that specific building instance.
+- Right-click a room or work space, then repeat with Filter Room armed and a map tap, and confirm the roster filters to survivors pinned to that specific building instance.
 - Use `P-H`, `P-W`, `ALL-H`, and `ALL-W`; confirm capacity and compatibility warnings prevent bad silent assignments.
 
 ## Relationship Pressure Loop
@@ -39,14 +41,14 @@ Use this checklist after relationship, Assign-mode, Log-mode, or character-visua
 
 - Advance through at least three daily summaries.
 - Open Log mode and confirm the social brief names mood, close/tense pair counts, and strongest signal.
-- Filter the social archive by ALL, TENSE, and SUP; confirm only matching reports remain.
+- Filter the social archive by ALL, TENSE, and PLUS; confirm only matching reports remain.
 - Search by survivor name, relationship wording, recommendation text, and day number.
 - Open a report drilldown and confirm detail plus recommendation are visible without layout overflow.
-- Export the archive and confirm `docs\exports\social_archive.md` contains newest reports first.
+- Use the touch keyboard to enter a search, then export the archive and confirm `docs\exports\social_archive.md` contains newest reports first (or confirm the browser downloads `social_archive.md`).
 
 ## End-To-End Outcome
 
 - Launch at least two mission types from Research mode.
 - Reach Day 7 victory or trigger a failure case.
 - Confirm the final outcome is understandable from objectives, alerts, resources, and social history.
-- Restart and confirm Assign/Log state does not leak from the previous run.
+- Restart, then use Continue from the menu and confirm Assign/Log state does not leak from the previous run.

@@ -27,11 +27,12 @@ impl LogFilter {
     }
 
     pub fn label(self) -> &'static str {
-        match self {
-            LogFilter::All => "ALL",
-            LogFilter::Tense => "TENSE",
-            LogFilter::Support => "PLUS",
-        }
+        let key = match self {
+            LogFilter::All => "log_filter_all",
+            LogFilter::Tense => "log_filter_tense",
+            LogFilter::Support => "log_filter_support",
+        };
+        crate::data::config::game_config().text.label(key)
     }
 }
 

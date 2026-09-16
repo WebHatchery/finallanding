@@ -13,7 +13,9 @@ pub fn draw_advisor_overlay(layout: &Layout, objectives: &[ObjectiveCard], plan:
     style::draw_panel(objective_rect);
 
     style::draw_section_title(
-        "OBJECTIVES",
+        crate::data::config::game_config()
+            .text
+            .label("objectives_heading"),
         objective_rect.x + 18.0,
         objective_rect.y + 31.0,
     );

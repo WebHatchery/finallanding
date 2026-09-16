@@ -13,6 +13,8 @@ pub struct LogContext<'a> {
     pub social_history_search_active: bool,
     pub selected_social_history_day: Option<u32>,
     pub summary: &'a ColonyPressureSummary,
+    pub timeline_rows: &'a [SocialTimelineRow],
+    pub page_count: usize,
 }
 
 pub fn draw_log_context(view: LogContext<'_>) {
@@ -26,7 +28,10 @@ pub fn draw_log_context(view: LogContext<'_>) {
         social_history_search_active,
         selected_social_history_day,
         summary,
+        timeline_rows,
+        page_count,
     } = view;
+    let text = &crate::data::config::game_config().text;
     let mut hovered_history = None;
     draw_log_search_control(context, social_history_query, social_history_search_active);
     if social_history_search_active {
@@ -48,15 +53,8 @@ pub fn draw_log_context(view: LogContext<'_>) {
         style::TEXT_BODY,
     );
 
-    let page_count =
-        social_history_page_count(social_history, social_history_filter, social_history_query);
     let current_page = social_history_page.min(page_count.saturating_sub(1));
-    let timeline = social_timeline_rows(
-        social_history,
-        social_history_filter,
-        social_history_query,
-        current_page,
-    );
+    let timeline = timeline_rows;
     if !social_history.is_empty() {
         draw_ui_text(
             "SOCIAL TIMELINE",
@@ -72,7 +70,7 @@ pub fn draw_log_context(view: LogContext<'_>) {
 
         if timeline.is_empty() {
             draw_ui_text(
-                "No matching daily reports in this archive.",
+                text.label("log_no_matching"),
                 context.x + 18.0,
                 context.y + 102.0,
                 style::TINY_SIZE,
@@ -179,6 +177,7 @@ pub fn draw_log_context(view: LogContext<'_>) {
 }
 
 fn draw_touch_keyboard(context: Rect) {
+    let text = &crate::data::config::game_config().text;
     style::draw_deep_panel(log_keyboard_bounds(context));
     let keys: &[char] = &[
         'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K',
@@ -210,14 +209,14 @@ fn draw_touch_keyboard(context: Rect) {
     style::draw_button(backspace, false, style::button_hovered(backspace));
     style::draw_button(done, false, style::button_hovered(done));
     draw_ui_text(
-        "BACKSPACE",
+        text.label("log_backspace"),
         backspace.x + 10.0,
         backspace.y + 27.0,
         style::TINY_SIZE,
         style::TEXT_PRIMARY,
     );
     draw_ui_text(
-        "DONE",
+        text.label("log_done"),
         done.x + done.w * 0.5 - 14.0,
         done.y + 27.0,
         style::TINY_SIZE,
@@ -226,6 +225,7 @@ fn draw_touch_keyboard(context: Rect) {
 }
 
 pub fn draw_log_search_control(context: Rect, query: &str, active: bool) {
+    let text = &crate::data::config::game_config().text;
     let search = log_search_rect(context);
     let clear = log_search_clear_rect(context);
     let export = log_search_export_rect(context);
@@ -238,7 +238,7 @@ pub fn draw_log_search_control(context: Rect, query: &str, active: bool) {
     style::draw_button(export, false, style::button_hovered(export));
 
     let mut label = if query.is_empty() {
-        "SEARCH REPORTS".to_string()
+        text.label("log_search_placeholder").to_string()
     } else {
         style::fit_text(query, search.w - 22.0, style::TINY_SIZE)
     };
@@ -258,7 +258,7 @@ pub fn draw_log_search_control(context: Rect, query: &str, active: bool) {
         },
     );
     draw_ui_text(
-        "CLR",
+        text.label("log_clear"),
         clear.x + 8.0,
         clear.y + 12.0,
         style::TINY_SIZE,
@@ -269,7 +269,7 @@ pub fn draw_log_search_control(context: Rect, query: &str, active: bool) {
         },
     );
     draw_ui_text(
-        "EXP",
+        text.label("log_export_button"),
         export.x + 9.0,
         export.y + 12.0,
         style::TINY_SIZE,
@@ -287,10 +287,12 @@ pub fn draw_social_report_drilldown(context: Rect, entry: &SocialHistoryEntry) {
     style::draw_deep_panel(rect);
     draw_rectangle(rect.x, rect.y, 4.0, rect.h, social_history_color(entry));
     draw_ui_text(
-        &format!(
-            "DAY {}: {}",
-            entry.day,
-            style::fit_text(&entry.title, rect.w - 85.0, style::TINY_SIZE)
+        &crate::data::config::game_config().text.fill(
+            "log_day",
+            &[
+                entry.day.to_string(),
+                style::fit_text(&entry.title, rect.w - 85.0, style::TINY_SIZE),
+            ],
         ),
         rect.x + 12.0,
         rect.y + 17.0,

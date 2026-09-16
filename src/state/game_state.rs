@@ -38,14 +38,24 @@ use crate::ui::{
     toolbar_colonist_index_at, toolbar_context_rect, toolbar_mission_at, toolbar_mode_at,
     toolbar_priority_at, top_bar_action_at, top_bar_priority_at_for, top_bar_speed_at_for,
     AssignBatchAction, AssignRosterFilter, AssignRosterSort, DebugOverlayContext, IsoView, Layout,
-    LogFilter, LogSearchAction, PageAction, PlaceholderArt, ToolbarAssignData, ToolbarLogData,
-    ToolbarMode, ToolbarPanelData, ToolbarResearchData, TopBarAction,
+    LogFilter, LogSearchAction, PageAction, PlaceholderArt, SocialTimelineRow, ToolbarAssignData,
+    ToolbarLogData, ToolbarMode, ToolbarPanelData, ToolbarResearchData, TopBarAction,
 };
 use macroquad::prelude::*;
 use macroquad_toolkit::debug::DebugOverlay;
 use macroquad_toolkit::input::InputState;
 use macroquad_toolkit::ui::Pointer;
 use std::path::PathBuf;
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+struct LogCacheKey {
+    history_len: usize,
+    latest_day: Option<u32>,
+    filter: LogFilter,
+    query: String,
+    page: usize,
+    selected_day: Option<u32>,
+}
 
 pub struct GameplayState {
     pub data: GameState,
@@ -92,12 +102,19 @@ pub struct GameplayState {
     pub social_history_search_active: bool,
     /// Selected daily social report for persistent Log drilldown.
     pub selected_social_history_day: Option<u32>,
-    /// Placeholder visual assets extracted from the rebuild reference.
+    /// Production visual assets plus deterministic pose overlays for the colony.
     pub art: PlaceholderArt,
     /// Seconds since the last durable autosave.
     pub autosave_elapsed: f32,
     /// Prevents a storage failure from flooding the event log every frame.
     pub save_error_reported: bool,
+    /// Cached summary input fingerprint used to avoid repeated relationship scans during draw.
+    pub cached_summary_key: u64,
+    pub cached_colony_summary: crate::systems::summary_system::ColonyPressureSummary,
+    /// Cached Log rows and pagination for the current filter/search/page selection.
+    cached_log_key: Option<LogCacheKey>,
+    pub cached_log_rows: Vec<SocialTimelineRow>,
+    pub cached_log_page_count: usize,
 }
 
 impl Default for GameplayState {
@@ -132,7 +149,7 @@ impl GameplayState {
         let capture_preview_position = initial_capture_preview_position();
         let selected_social_history_day = initial_selected_social_history_day(&data);
 
-        Self {
+        let mut state = Self {
             prev_tick: data.tick,
             data,
             arrival_stage,
@@ -159,7 +176,76 @@ impl GameplayState {
             art: PlaceholderArt::new(),
             autosave_elapsed: 0.0,
             save_error_reported: false,
+            cached_summary_key: 0,
+            cached_colony_summary: crate::systems::summary_system::ColonyPressureSummary {
+                average_mood: 0.0,
+                average_relationship: 0.0,
+                close_pairs: 0,
+                strained_pairs: 0,
+                connected_pairs: Vec::new(),
+                tense_pairs: Vec::new(),
+                strongest_pair: None,
+                weakest_pair: None,
+            },
+            cached_log_key: None,
+            cached_log_rows: Vec::new(),
+            cached_log_page_count: 1,
+        };
+        state.refresh_render_caches();
+        state
+    }
+
+    pub fn refresh_render_caches(&mut self) {
+        let summary_key = self.summary_input_key();
+        if summary_key != self.cached_summary_key {
+            self.cached_colony_summary = SummarySystem::colony_pressure_summary(&self.data);
+            self.cached_summary_key = summary_key;
         }
+
+        let log_key = LogCacheKey {
+            history_len: self.data.social_history.len(),
+            latest_day: self.data.social_history.last().map(|entry| entry.day),
+            filter: self.social_history_filter,
+            query: self.social_history_query.clone(),
+            page: self.social_history_page,
+            selected_day: self.selected_social_history_day,
+        };
+        if self.cached_log_key.as_ref() != Some(&log_key) {
+            self.cached_log_page_count = social_history_page_count(
+                &self.data.social_history,
+                self.social_history_filter,
+                &self.social_history_query,
+            );
+            self.cached_log_rows = crate::ui::toolbar_panel::log_model::social_timeline_rows(
+                &self.data.social_history,
+                self.social_history_filter,
+                &self.social_history_query,
+                self.social_history_page,
+            );
+            self.cached_log_key = Some(log_key);
+        }
+    }
+
+    fn summary_input_key(&self) -> u64 {
+        let mut key = self.data.tick;
+        for colonist in &self.data.colonists {
+            key = key
+                .wrapping_mul(31)
+                .wrapping_add(colonist.id as u64)
+                .wrapping_add(colonist.mood.to_bits() as u64);
+            for value in colonist.relationships.values() {
+                key = key.wrapping_mul(31).wrapping_add(*value as u64);
+            }
+        }
+        let priority_key = match self.data.priority.active {
+            ColonyPriority::Recovery => 1,
+            ColonyPriority::Stockpile => 2,
+            ColonyPriority::Survey => 3,
+        };
+        key.wrapping_add(self.data.building_system.building_count() as u64)
+            .wrapping_add(self.data.resources.supplies as u64)
+            .wrapping_add(self.data.resources.salvage as u64)
+            .wrapping_add(priority_key)
     }
 
     /// Materialize the configured survivor roster and arrival-day capture fixtures once the
@@ -197,6 +283,7 @@ impl GameplayState {
             );
             self.save_error_reported = true;
         }
+        self.refresh_render_caches();
     }
 }
 

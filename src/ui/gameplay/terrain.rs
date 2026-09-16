@@ -5,6 +5,17 @@ use super::*;
 impl GameplayState {
     pub fn draw_grid_with_offset(&self) {
         let iso = self.iso_view();
+        let area = self.layout.game_area();
+        draw_texture_ex(
+            self.art.crash_site_backdrop(),
+            area.x,
+            area.y,
+            Color::new(0.82, 0.88, 0.82, 0.28),
+            DrawTextureParams {
+                dest_size: Some(vec2(area.w, area.h)),
+                ..Default::default()
+            },
+        );
 
         for y in 0..self.data.grid.height {
             for x in 0..self.data.grid.width {

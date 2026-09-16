@@ -8,6 +8,7 @@ use crate::ui::hit_zones::LogFilter;
 use crate::ui::style;
 use macroquad::prelude::Color;
 
+#[derive(Clone, Debug)]
 pub struct SocialTimelineRow {
     pub day: u32,
     pub title: String,
@@ -130,6 +131,7 @@ pub struct SocialBriefLines {
 }
 
 pub fn social_brief_lines(summary: &ColonyPressureSummary) -> SocialBriefLines {
+    let text = &crate::data::config::game_config().text;
     let color = if summary.strained_pairs > 0 {
         style::ALERT_RED
     } else if summary.close_pairs > 0 {
@@ -138,24 +140,28 @@ pub fn social_brief_lines(summary: &ColonyPressureSummary) -> SocialBriefLines {
         style::HEADING_BLUE
     };
 
-    let header = format!(
-        "Social pressure: mood {:.0} | close {} | tense {}",
-        summary.average_mood, summary.close_pairs, summary.strained_pairs
+    let header = text.fill(
+        "log_pressure",
+        &[
+            format!("{:.0}", summary.average_mood),
+            summary.close_pairs.to_string(),
+            summary.strained_pairs.to_string(),
+        ],
     );
     let detail = if let Some(pair) = summary
         .weakest_pair
         .as_ref()
         .filter(|pair| RelationshipBand::from_value(pair.value).is_risk())
     {
-        pair_line("Watch", pair)
+        pair_line(text.label("log_watch"), pair)
     } else if let Some(pair) = summary
         .strongest_pair
         .as_ref()
         .filter(|pair| RelationshipBand::from_value(pair.value).is_support())
     {
-        pair_line("Protect", pair)
+        pair_line(text.label("log_protect"), pair)
     } else {
-        "No strong social signal yet; routine will shape the first bonds.".to_string()
+        text.label("log_no_signal").to_string()
     };
 
     SocialBriefLines {

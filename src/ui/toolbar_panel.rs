@@ -38,7 +38,7 @@ use log::*;
 use log_model::*;
 use shared::*;
 
-pub use log_model::{social_history_page_count, social_timeline_day_at};
+pub use log_model::{social_history_page_count, social_timeline_day_at, SocialTimelineRow};
 
 pub struct ToolbarPanelData<'a> {
     pub mode: ToolbarMode,
@@ -78,6 +78,8 @@ pub struct ToolbarLogData<'a> {
     pub search_active: bool,
     pub selected_day: Option<u32>,
     pub colony_summary: &'a ColonyPressureSummary,
+    pub timeline_rows: &'a [SocialTimelineRow],
+    pub page_count: usize,
 }
 
 pub fn draw_toolbar_context_panel(layout: &Layout, panel: ToolbarPanelData<'_>) {
@@ -126,6 +128,8 @@ pub fn draw_toolbar_context_panel(layout: &Layout, panel: ToolbarPanelData<'_>) 
             social_history_search_active: panel.log.search_active,
             selected_social_history_day: panel.log.selected_day,
             summary: panel.log.colony_summary,
+            timeline_rows: panel.log.timeline_rows,
+            page_count: panel.log.page_count,
         }),
     }
 }
@@ -136,6 +140,7 @@ fn draw_build_context(
     selected_building: Option<BuildingType>,
     resources: &ResourceState,
 ) {
+    let text = &crate::data::config::game_config().text;
     let mut hovered_building = None;
     for (index, building_type) in toolbar_buildings_for_mode(mode).iter().enumerate() {
         let rect = toolbar_context_item_rect(context, index);
@@ -166,7 +171,9 @@ fn draw_build_context(
             },
         );
         draw_ui_text(
-            &format!("{} salvage", building_type.salvage_cost()),
+            &text
+                .label("toolbar_cost")
+                .replace("{}", &building_type.salvage_cost().to_string()),
             rect.x + 30.0,
             rect.y + 34.0,
             style::TINY_SIZE,
@@ -179,9 +186,9 @@ fn draw_build_context(
     }
 
     let helper = match mode {
-        ToolbarMode::Rooms => "Room plans shape sleep, meals, and storage pressure.",
-        ToolbarMode::Objects => "Work objects produce salvage and survey returns.",
-        _ => "Plans reserve salvage and define colony space.",
+        ToolbarMode::Rooms => text.label("toolbar_rooms_helper"),
+        ToolbarMode::Objects => text.label("toolbar_objects_helper"),
+        _ => text.label("toolbar_build_helper"),
     };
     draw_ui_text(
         helper,
@@ -310,17 +317,22 @@ fn draw_research_context(
     let tech_label = technology
         .next_research_target()
         .map(|tech| tech.name())
-        .unwrap_or("All field tech unlocked");
+        .unwrap_or_else(|| {
+            crate::data::config::game_config()
+                .text
+                .label("toolbar_all_tech")
+        });
+    let research_status = crate::data::config::game_config()
+        .text
+        .label("toolbar_research_status")
+        .replacen("{}", &active_mission_count.to_string(), 1)
+        .replacen("{}", &technology.unlocked_count().to_string(), 1)
+        .replacen("{}", &required_unlocks.to_string(), 1)
+        .replacen("{}", &technology.unlocked_count().to_string(), 1)
+        .replacen("{}", &TechId::all().len().to_string(), 1)
+        .replacen("{}", tech_label, 1);
     draw_ui_text(
-        &format!(
-            "Away {} | Goal tech {}/{} | Tree {}/{} | Next: {}",
-            active_mission_count,
-            technology.unlocked_count(),
-            required_unlocks,
-            technology.unlocked_count(),
-            TechId::all().len(),
-            tech_label
-        ),
+        &research_status,
         context.x + 18.0,
         context.y + 109.0,
         style::TINY_SIZE,

@@ -155,6 +155,17 @@ impl GameplayState {
             front,
             side,
         );
+        draw_texture_ex(
+            self.art.building_atlas(),
+            center.x - shell_width * 0.2,
+            roof_center.y - shell_height * 0.28,
+            Color::new(1.0, 1.0, 1.0, 0.78),
+            DrawTextureParams {
+                dest_size: Some(vec2(shell_width * 0.4, shell_height * 0.5)),
+                source: Some(self.art.building_icon(building_type)),
+                ..Default::default()
+            },
+        );
         draw_building_shell_detail(building_type, roof_center, shell_width, shell_height);
         if let Some((outline_color, thickness)) = outline_style {
             draw_iso_diamond_lines(

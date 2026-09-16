@@ -47,7 +47,7 @@ pub fn draw_colonist_inspector(
         portrait_rect.h,
         Color::new(0.09, 0.1, 0.095, 1.0),
     );
-    if let Some(texture) = art.colonist_portrait(colonist.id) {
+    if let Some((texture, source)) = art.colonist_portrait(colonist.id) {
         draw_texture_ex(
             texture,
             portrait_rect.x,
@@ -55,6 +55,7 @@ pub fn draw_colonist_inspector(
             WHITE,
             DrawTextureParams {
                 dest_size: Some(vec2(portrait_rect.w, portrait_rect.h)),
+                source: Some(source),
                 ..Default::default()
             },
         );
@@ -168,7 +169,7 @@ fn draw_relationship_portraits(x: f32, y: f32, colonist: &Colonist, art: &Placeh
     for (index, (other_id, value)) in relationships.into_iter().take(5).enumerate() {
         let px = x + index as f32 * 43.0;
         let rect = Rect::new(px, y, 34.0, 34.0);
-        if let Some(texture) = art.colonist_portrait(*other_id) {
+        if let Some((texture, source)) = art.colonist_portrait(*other_id) {
             draw_texture_ex(
                 texture,
                 rect.x,
@@ -176,6 +177,7 @@ fn draw_relationship_portraits(x: f32, y: f32, colonist: &Colonist, art: &Placeh
                 WHITE,
                 DrawTextureParams {
                     dest_size: Some(vec2(rect.w, rect.h)),
+                    source: Some(source),
                     ..Default::default()
                 },
             );
