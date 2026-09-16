@@ -1,3 +1,5 @@
+//! playtest report domain.
+
 use crate::data::resources::ColonyCondition;
 use crate::data::scenario::ScenarioOutcome;
 use crate::systems::playtest_strategy::PlaytestStrategyKind;

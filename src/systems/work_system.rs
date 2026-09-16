@@ -1,3 +1,5 @@
+//! work system domain.
+
 use crate::data::building::BuildingType;
 use crate::data::colonist::{ActivityLocation, ColonistState, JobPreference, Trait};
 use crate::data::event_log::LogCategory;
@@ -180,6 +182,3 @@ impl WorkSystem {
         );
     }
 }
-
-#[cfg(test)]
-mod tests;

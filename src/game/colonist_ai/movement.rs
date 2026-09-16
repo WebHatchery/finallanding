@@ -1,3 +1,5 @@
+//! movement domain.
+
 use crate::data::colonist::Colonist;
 use crate::data::grid::Grid;
 use crate::data::simulation_rng::SimulationRng;
@@ -6,7 +8,7 @@ use crate::game::colonist_ai::social::log_social_strain;
 use crate::game::colonist_ai::types::PendingLog;
 use std::collections::HashMap;
 
-pub(super) fn find_wander_target(
+pub fn find_wander_target(
     current: Position,
     occupied: &HashMap<Position, u32>,
     grid: &Grid,
@@ -23,7 +25,7 @@ pub(super) fn find_wander_target(
     current
 }
 
-pub(super) fn get_next_move_position(
+pub fn get_next_move_position(
     colonist: &mut Colonist,
     target: Position,
     occupied: &HashMap<Position, u32>,
@@ -89,16 +91,9 @@ pub(super) fn get_next_move_position(
     next
 }
 
-pub(super) fn is_step_open(
-    position: Position,
-    occupied: &HashMap<Position, u32>,
-    grid: &Grid,
-) -> bool {
+pub fn is_step_open(position: Position, occupied: &HashMap<Position, u32>, grid: &Grid) -> bool {
     !occupied.contains_key(&position)
         && grid
             .get_cell(position.x, position.y)
             .is_some_and(|cell| cell.is_walkable())
 }
-
-#[cfg(test)]
-mod tests;

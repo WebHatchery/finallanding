@@ -1,8 +1,10 @@
+//! colonists domain.
+
 use super::*;
 use macroquad_toolkit::ui::{draw_ui_text, measure_ui_text};
 
 impl GameplayState {
-    pub(crate) fn draw_colonists_with_offset(&self, hovered_colonist_id: Option<u32>) {
+    pub fn draw_colonists_with_offset(&self, hovered_colonist_id: Option<u32>) {
         let iso = self.iso_view();
 
         self.draw_social_links(hovered_colonist_id);
@@ -156,7 +158,7 @@ impl GameplayState {
         }
     }
 
-    pub(crate) fn draw_hover_colonist_card(&self, hovered_colonist_id: Option<u32>) {
+    pub fn draw_hover_colonist_card(&self, hovered_colonist_id: Option<u32>) {
         let Some(colonist) = hovered_colonist_id.and_then(|id| self.colonist_by_id(id)) else {
             return;
         };

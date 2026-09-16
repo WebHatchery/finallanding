@@ -1,3 +1,5 @@
+//! behavior domain.
+
 use crate::data::building::BuildingType;
 use crate::data::colonist::{ActivityLocation, Colonist, ColonistState};
 use crate::data::event_log::LogCategory;
@@ -17,7 +19,7 @@ use crate::game::colonist_ai::REFUSAL_LOG_COOLDOWN_TICKS;
 use crate::systems::job_decision_system::calculate_refusal_chance;
 use std::collections::HashMap;
 
-pub(super) fn update_colonist_ai(
+pub fn update_colonist_ai(
     colonist: &mut Colonist,
     scheduled_activity: &ActivityType,
     occupied: &HashMap<Position, u32>,

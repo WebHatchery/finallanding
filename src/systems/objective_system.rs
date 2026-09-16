@@ -1,3 +1,5 @@
+//! objective system domain.
+
 use crate::data::building::BuildingType;
 use crate::data::game_state::GameState;
 use crate::data::resources::ColonyCondition;
@@ -109,7 +111,7 @@ impl ObjectiveSystem {
         }
     }
 
-    fn core_rooms_card(state: &GameState) -> ObjectiveCard {
+    pub fn core_rooms_card(state: &GameState) -> ObjectiveCard {
         let placed = BuildingType::all()
             .iter()
             .filter(|building_type| Self::has_building(state, **building_type))
@@ -128,7 +130,7 @@ impl ObjectiveSystem {
         }
     }
 
-    fn technology_card(state: &GameState) -> ObjectiveCard {
+    pub fn technology_card(state: &GameState) -> ObjectiveCard {
         let required = state.scenario.required_tech_unlocks.max(1);
         let unlocked = state.technology.unlocked_count();
         let has_gate = Self::has_building(state, BuildingType::ExplorationGate);
@@ -155,6 +157,3 @@ impl ObjectiveSystem {
             .any(|building| building.building_type == building_type)
     }
 }
-
-#[cfg(test)]
-mod tests;

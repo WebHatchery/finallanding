@@ -1,3 +1,5 @@
+//! summary system domain.
+
 use crate::data::colonist::{relationship_label, RelationshipBand};
 use crate::data::event_log::{LogCategory, SocialHistoryEntry};
 use crate::data::game_state::GameState;
@@ -219,6 +221,3 @@ impl SummarySystem {
         "maintain the supply buffer and protect the strongest social bonds.".to_string()
     }
 }
-
-#[cfg(test)]
-mod tests;

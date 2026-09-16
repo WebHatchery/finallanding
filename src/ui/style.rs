@@ -1,3 +1,5 @@
+//! style domain.
+
 use crate::data::colonist::{MoodBand, RelationshipBand};
 use macroquad::prelude::*;
 use macroquad_toolkit::colors::with_alpha;

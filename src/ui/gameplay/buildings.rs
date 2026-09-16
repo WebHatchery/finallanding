@@ -1,8 +1,10 @@
+//! buildings domain.
+
 use super::*;
 use macroquad_toolkit::ui::{draw_ui_text, measure_ui_text};
 
 impl GameplayState {
-    pub(crate) fn draw_buildings(&self) {
+    pub fn draw_buildings(&self) {
         let iso = self.iso_view();
         let hovered_building_id = self.building_at_mouse().map(|building| building.id);
         for building in self.data.building_system.buildings() {
@@ -91,7 +93,7 @@ impl GameplayState {
         }
     }
 
-    pub(crate) fn draw_building_footprint_outline(
+    pub fn draw_building_footprint_outline(
         &self,
         building: &Building,
         iso: &IsoView,
@@ -104,7 +106,7 @@ impl GameplayState {
         }
     }
 
-    pub(crate) fn assignment_marker_for_building(
+    pub fn assignment_marker_for_building(
         &self,
         building_id: u32,
     ) -> Option<(&'static str, Color)> {
@@ -125,7 +127,7 @@ impl GameplayState {
         }
     }
 
-    pub(crate) fn draw_building_shell(
+    pub fn draw_building_shell(
         &self,
         building_type: BuildingType,
         position: Position,

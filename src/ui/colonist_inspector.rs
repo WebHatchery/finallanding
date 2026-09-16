@@ -1,3 +1,5 @@
+//! colonist inspector domain.
+
 use super::Layout;
 use crate::data::colonist::{
     relationship_label, ActivityLocation, Colonist, ColonistState, JobPreference,

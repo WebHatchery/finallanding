@@ -107,16 +107,14 @@ Log mode:
   - `src\ui\toolbar_panel.rs`
   - `src\ui\toolbar_panel\assign.rs`
   - `src\ui\toolbar_panel\log.rs`
-- Gameplay orchestration remains in `src\state\game_state.rs`, with pure helper logic moved to `src\state\game_state_helpers.rs`.
+- Gameplay orchestration remains in `src\state\game_state.rs`, with pure helper logic kept in focused sibling modules.
 
 ## Verification
 
 Primary checks:
 
 ```powershell
-cargo fmt --check
-cargo test
-cargo build
+.\publish.ps1
 ```
 
 Visual smoke captures:
@@ -173,4 +171,3 @@ The native game supports deterministic capture helpers used by scripts:
 - `docs/verification/manual_relationship_playtest.md` — focused manual QA pass.
 - `docs/verification/playthrough_report.md` — generated headless strategy matrix.
 - `TODO.md` — open playtest, art, and engineering work.
-

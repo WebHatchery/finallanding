@@ -1,3 +1,5 @@
+//! colonist spawner domain.
+
 use crate::data::colonist::{Colonist, JobPreference, Trait};
 use crate::data::game_state::GameState;
 use crate::data::types::Position;
@@ -41,6 +43,3 @@ fn set_pair_relationship(state: &mut GameState, first_id: u32, second_id: u32, v
         }
     }
 }
-
-#[cfg(test)]
-mod tests;

@@ -1,9 +1,9 @@
-pub(crate) use crate::data::assign_roster::{
-    assign_roster_page_count, assign_visible_colonist_indices,
-};
+//! game state assignment roster domain.
+
+pub use crate::data::assign_roster::{assign_roster_page_count, assign_visible_colonist_indices};
 use crate::data::colonist::JobPreference;
 
-pub(crate) fn next_assign_role_filter(current: Option<JobPreference>) -> Option<JobPreference> {
+pub fn next_assign_role_filter(current: Option<JobPreference>) -> Option<JobPreference> {
     match current {
         None => Some(JobPreference::Explorer),
         Some(JobPreference::Explorer) => Some(JobPreference::Builder),
@@ -12,7 +12,3 @@ pub(crate) fn next_assign_role_filter(current: Option<JobPreference>) -> Option<
         Some(JobPreference::Hauler) | Some(JobPreference::None) => None,
     }
 }
-
-#[cfg(test)]
-#[path = "game_state_assignment_roster/tests.rs"]
-mod tests;

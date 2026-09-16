@@ -1,3 +1,5 @@
+//! grid domain.
+
 use macroquad_toolkit::pathfinding::{find_path_with, Heuristic, Pos};
 use serde::{Deserialize, Serialize};
 
@@ -6,7 +8,6 @@ use super::types::Position;
 // Grid configuration constants
 pub const GRID_WIDTH: usize = 26;
 pub const GRID_HEIGHT: usize = 24;
-#[cfg(test)]
 const CELL_SIZE: f32 = 32.0;
 
 /// Represents the type of terrain in a cell.
@@ -101,7 +102,6 @@ impl Grid {
     }
 
     /// Sets the cell type at the given grid coordinates.
-    #[cfg(test)]
     pub fn set_cell_type(&mut self, x: i32, y: i32, cell_type: CellType) {
         if let Some(cell) = self.get_cell_mut(x, y) {
             cell.cell_type = cell_type;
@@ -111,7 +111,6 @@ impl Grid {
     // ----- Coordinate Conversion -----
 
     /// Converts world (pixel) coordinates to grid coordinates.
-    #[cfg(test)]
     pub fn world_to_grid(world_x: f32, world_y: f32) -> Position {
         Position::new(
             (world_x / CELL_SIZE).floor() as i32,
@@ -120,7 +119,6 @@ impl Grid {
     }
 
     /// Converts grid coordinates to world (pixel) coordinates (top-left of cell).
-    #[cfg(test)]
     pub fn grid_to_world(grid_x: i32, grid_y: i32) -> (f32, f32) {
         (grid_x as f32 * CELL_SIZE, grid_y as f32 * CELL_SIZE)
     }
@@ -200,6 +198,3 @@ impl Grid {
         }
     }
 }
-
-#[cfg(test)]
-mod tests;

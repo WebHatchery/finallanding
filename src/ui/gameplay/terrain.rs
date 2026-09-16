@@ -1,7 +1,9 @@
+//! terrain domain.
+
 use super::*;
 
 impl GameplayState {
-    pub(crate) fn draw_grid_with_offset(&self) {
+    pub fn draw_grid_with_offset(&self) {
         let iso = self.iso_view();
 
         for y in 0..self.data.grid.height {

@@ -1,3 +1,5 @@
+//! game state domain.
+
 use crate::data::building::{Building, BuildingType};
 use crate::data::colonist::{ActivityLocation, Colonist, ColonistState, JobPreference};
 use crate::data::event_log::{LogCategory, SocialHistoryEntry};
@@ -46,47 +48,47 @@ const SECONDS_PER_GAME_TICK: f32 = 0.25;
 
 pub struct GameplayState {
     pub data: GameState,
-    pub(crate) hovered_cell: Option<Position>,
+    pub hovered_cell: Option<Position>,
     /// Currently selected building type for placement (None = not in build mode)
-    pub(crate) selected_building: Option<BuildingType>,
+    pub selected_building: Option<BuildingType>,
     /// Fixed preview grid position used only by screenshot verification captures.
-    pub(crate) capture_preview_position: Option<Position>,
+    pub capture_preview_position: Option<Position>,
     /// Selected colonist for relationship inspection.
-    pub(crate) selected_colonist_id: Option<u32>,
+    pub selected_colonist_id: Option<u32>,
     /// Time event collector for processing time-based events
-    pub(crate) time_events: TimeEventCollector,
+    pub time_events: TimeEventCollector,
     /// Previous tick for event detection
-    pub(crate) prev_tick: u64,
+    pub prev_tick: u64,
     /// Accumulates real time before advancing the simulation by game ticks
-    pub(crate) time_accumulator: f32,
+    pub time_accumulator: f32,
     /// UI layout configuration
-    pub(crate) layout: Layout,
+    pub layout: Layout,
     /// Smoothed FPS/frame-time overlay with colony stat lines, toggled by F3.
-    pub(crate) debug_overlay: DebugOverlay,
+    pub debug_overlay: DebugOverlay,
     /// Active bottom-toolbar mode.
-    pub(crate) toolbar_mode: ToolbarMode,
+    pub toolbar_mode: ToolbarMode,
     /// Current page in the Assign mode roster.
-    pub(crate) assign_roster_page: usize,
+    pub assign_roster_page: usize,
     /// Active filter in the Assign mode roster.
-    pub(crate) assign_roster_filter: AssignRosterFilter,
+    pub assign_roster_filter: AssignRosterFilter,
     /// Active sort in the Assign mode roster.
-    pub(crate) assign_roster_sort: AssignRosterSort,
+    pub assign_roster_sort: AssignRosterSort,
     /// Optional work-role filter in the Assign mode roster.
-    pub(crate) assign_role_filter: Option<JobPreference>,
+    pub assign_role_filter: Option<JobPreference>,
     /// Optional room/work-space instance filter in the Assign mode roster.
-    pub(crate) assign_building_filter: Option<u32>,
+    pub assign_building_filter: Option<u32>,
     /// Current page in the Log mode social archive.
-    pub(crate) social_history_page: usize,
+    pub social_history_page: usize,
     /// Active filter in the Log mode social archive.
-    pub(crate) social_history_filter: LogFilter,
+    pub social_history_filter: LogFilter,
     /// Search query for the Log mode social archive.
-    pub(crate) social_history_query: String,
+    pub social_history_query: String,
     /// Whether typed keys should edit the Log mode social archive search.
-    pub(crate) social_history_search_active: bool,
+    pub social_history_search_active: bool,
     /// Selected daily social report for persistent Log drilldown.
-    pub(crate) selected_social_history_day: Option<u32>,
+    pub selected_social_history_day: Option<u32>,
     /// Placeholder visual assets extracted from the rebuild reference.
-    pub(crate) art: PlaceholderArt,
+    pub art: PlaceholderArt,
 }
 
 impl GameplayState {
@@ -145,8 +147,8 @@ impl GameplayState {
 #[path = "game_state_assign_batch_commands.rs"]
 mod game_state_assign_batch_commands;
 #[path = "game_state_assignment_batch_rules.rs"]
-mod game_state_assignment_batch_rules;
-pub(crate) use game_state_assignment_batch_rules::*;
+pub mod game_state_assignment_batch_rules;
+pub use game_state_assignment_batch_rules::*;
 #[path = "game_state_assign_filter_commands.rs"]
 mod game_state_assign_filter_commands;
 #[path = "game_state_assign_roster_commands.rs"]
@@ -154,11 +156,11 @@ mod game_state_assign_roster_commands;
 #[path = "game_state_assign_space_commands.rs"]
 mod game_state_assign_space_commands;
 #[path = "game_state_assignment_roster.rs"]
-mod game_state_assignment_roster;
-pub(crate) use game_state_assignment_roster::*;
+pub mod game_state_assignment_roster;
+pub use game_state_assignment_roster::*;
 #[path = "game_state_assignment_space_rules.rs"]
-mod game_state_assignment_space_rules;
-pub(crate) use game_state_assignment_space_rules::*;
+pub mod game_state_assignment_space_rules;
+pub use game_state_assignment_space_rules::*;
 #[path = "game_state_building_commands.rs"]
 mod game_state_building_commands;
 #[path = "game_state_keyboard_input.rs"]
@@ -173,7 +175,7 @@ mod game_state_map_selection;
 mod game_state_mission_commands;
 #[path = "game_state_placement_results.rs"]
 mod game_state_placement_results;
-pub(crate) use game_state_placement_results::*;
+pub use game_state_placement_results::*;
 #[path = "game_state_pointer_bounds.rs"]
 mod game_state_pointer_bounds;
 #[path = "game_state_priority_commands.rs"]
@@ -183,21 +185,21 @@ mod game_state_queries;
 #[path = "game_state_relationship_commands.rs"]
 mod game_state_relationship_commands;
 #[path = "game_state_relationship_contact.rs"]
-mod game_state_relationship_contact;
-pub(crate) use game_state_relationship_contact::*;
+pub mod game_state_relationship_contact;
+pub use game_state_relationship_contact::*;
 #[path = "game_state_relationship_directive_logs.rs"]
 mod game_state_relationship_directive_logs;
-pub(crate) use game_state_relationship_directive_logs::*;
+pub use game_state_relationship_directive_logs::*;
 #[path = "game_state_setup.rs"]
-mod game_state_setup;
-pub(crate) use game_state_setup::*;
+pub mod game_state_setup;
+pub use game_state_setup::*;
 #[path = "game_state_simulation.rs"]
 mod game_state_simulation;
 #[path = "game_state_social_archive.rs"]
-mod game_state_social_archive;
-pub(crate) use game_state_social_archive::*;
+pub mod game_state_social_archive;
+pub use game_state_social_archive::*;
 #[path = "game_state_text.rs"]
 mod game_state_text;
-pub(crate) use game_state_text::*;
+pub use game_state_text::*;
 #[path = "game_state_toolbar_input.rs"]
 mod game_state_toolbar_input;

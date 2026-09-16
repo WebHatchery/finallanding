@@ -1,3 +1,5 @@
+//! playtest strategy domain.
+
 use crate::data::schedule::ActivityType;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -38,14 +40,14 @@ impl PlaytestStrategyKind {
 }
 
 #[derive(Clone, Debug)]
-pub(super) struct ReferenceStrategy {
-    pub(super) kind: PlaytestStrategyKind,
-    pub(super) missions_completed: u32,
-    pub(super) next_mission_tick: u64,
+pub struct ReferenceStrategy {
+    pub kind: PlaytestStrategyKind,
+    pub missions_completed: u32,
+    pub next_mission_tick: u64,
 }
 
 impl ReferenceStrategy {
-    pub(super) fn new(kind: PlaytestStrategyKind) -> Self {
+    pub fn new(kind: PlaytestStrategyKind) -> Self {
         Self {
             kind,
             missions_completed: 0,
@@ -54,7 +56,7 @@ impl ReferenceStrategy {
     }
 }
 
-pub(super) fn activity_for_hour(hour: u32) -> ActivityType {
+pub fn activity_for_hour(hour: u32) -> ActivityType {
     match hour {
         6 | 20 | 21 => ActivityType::Eat,
         7..=17 => ActivityType::Work,

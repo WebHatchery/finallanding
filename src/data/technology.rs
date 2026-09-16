@@ -1,3 +1,5 @@
+//! technology domain.
+
 use crate::data::mission::MissionItem;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -292,6 +294,3 @@ impl TechnologyState {
         self.item_counts.get(&item).copied().unwrap_or(0)
     }
 }
-
-#[cfg(test)]
-mod tests;

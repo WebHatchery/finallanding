@@ -1,3 +1,5 @@
+//! incident system domain.
+
 use crate::data::event_log::LogCategory;
 use crate::data::game_state::GameState;
 use crate::data::incident::IncidentType;
@@ -157,6 +159,3 @@ fn scheduled_incident(day: u32, hour: u32) -> Option<IncidentType> {
         _ => None,
     }
 }
-
-#[cfg(test)]
-mod tests;

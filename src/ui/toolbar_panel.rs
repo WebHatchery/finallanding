@@ -1,3 +1,5 @@
+//! toolbar panel domain.
+
 use super::Layout;
 use crate::data::building::BuildingType;
 use crate::data::colonist::{Colonist, JobPreference};
@@ -24,9 +26,9 @@ use macroquad_toolkit::ui::draw_ui_text;
 pub const SOCIAL_TIMELINE_PAGE_SIZE: usize = 3;
 
 mod assign;
-mod assign_model;
+pub mod assign_model;
 mod log;
-mod log_model;
+pub mod log_model;
 mod shared;
 
 use assign::*;

@@ -1,3 +1,5 @@
+//! resource system domain.
+
 use crate::data::building::BuildingType;
 use crate::data::event_log::LogCategory;
 use crate::data::game_state::GameState;
@@ -167,6 +169,3 @@ impl ResourceSystem {
         );
     }
 }
-
-#[cfg(test)]
-mod tests;

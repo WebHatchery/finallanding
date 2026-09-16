@@ -1,3 +1,5 @@
+//! game state domain.
+
 use super::grid::Grid;
 use crate::data::event_log::{ColonyLogEntry, LogCategory, SocialHistoryEntry};
 use crate::data::incident::IncidentState;

@@ -1,6 +1,8 @@
+//! building visuals domain.
+
 use super::*;
 
-pub(crate) fn building_wall_height(building_type: BuildingType, tile_h: f32) -> f32 {
+pub fn building_wall_height(building_type: BuildingType, tile_h: f32) -> f32 {
     let multiplier = match building_type {
         BuildingType::Habitat => 0.95,
         BuildingType::MessHall => 0.78,
@@ -11,7 +13,7 @@ pub(crate) fn building_wall_height(building_type: BuildingType, tile_h: f32) -> 
     tile_h * multiplier
 }
 
-pub(crate) fn building_outline_style(
+pub fn building_outline_style(
     hovered: bool,
     assignment_color: Option<Color>,
 ) -> Option<(Color, f32)> {
@@ -22,14 +24,14 @@ pub(crate) fn building_outline_style(
     }
 }
 
-pub(crate) fn assignment_marker_with_filter(
+pub fn assignment_marker_with_filter(
     assignment_marker: Option<(&'static str, Color)>,
     filter_match: bool,
 ) -> Option<(&'static str, Color)> {
     assignment_marker.or_else(|| filter_match.then_some(("FILTER", style::ACCENT_GOLD)))
 }
 
-pub(crate) fn building_outline_style_for_assign_filter(
+pub fn building_outline_style_for_assign_filter(
     hovered: bool,
     assignment_color: Option<Color>,
     filter_match: bool,
@@ -41,7 +43,7 @@ pub(crate) fn building_outline_style_for_assign_filter(
     }
 }
 
-pub(crate) fn building_shell_colors(building_type: BuildingType) -> (Color, Color, Color) {
+pub fn building_shell_colors(building_type: BuildingType) -> (Color, Color, Color) {
     match building_type {
         BuildingType::Habitat => (
             Color::new(0.24, 0.34, 0.42, 1.0),
@@ -71,7 +73,7 @@ pub(crate) fn building_shell_colors(building_type: BuildingType) -> (Color, Colo
     }
 }
 
-pub(crate) fn draw_building_shell_detail(
+pub fn draw_building_shell_detail(
     building_type: BuildingType,
     center: Vec2,
     width: f32,
@@ -334,6 +336,3 @@ pub(crate) fn draw_building_shell_detail(
         }
     }
 }
-
-#[cfg(test)]
-mod tests;

@@ -1,3 +1,5 @@
+//! schedule domain.
+
 use crate::data::simulation_rng::SimulationRng;
 use serde::{Deserialize, Serialize};
 

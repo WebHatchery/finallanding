@@ -1,3 +1,5 @@
+//! assign roster domain.
+
 use crate::data::colonist::{Colonist, JobPreference, RelationshipBand};
 
 pub const ASSIGN_ROSTER_SLOT_COUNT: usize = 5;
@@ -251,6 +253,3 @@ pub fn assign_building_filter_matches(colonist: &Colonist, building_id: Option<u
         colonist.assigned_habitat == Some(id) || colonist.assigned_workplace == Some(id)
     })
 }
-
-#[cfg(test)]
-mod tests;

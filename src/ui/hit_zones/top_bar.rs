@@ -1,3 +1,5 @@
+//! top bar domain.
+
 use crate::data::game_state::TimeSpeed;
 use crate::data::priority::ColonyPriority;
 use macroquad::prelude::{vec2, Rect};
@@ -55,6 +57,3 @@ pub fn top_bar_priority_at(x: f32, y: f32) -> Option<ColonyPriority> {
         vec2(x, y),
     )
 }
-
-#[cfg(test)]
-mod tests;

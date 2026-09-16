@@ -1,11 +1,13 @@
+//! foundation domain.
+
 use super::*;
 
-pub(super) fn draw_ship_underlay(iso: IsoView) {
+pub fn draw_ship_underlay(iso: IsoView) {
     draw_impact_shadow(iso);
     draw_fuselage_keel(iso);
 }
 
-pub(super) fn draw_ship_landmarks(iso: IsoView, tick: u64) {
+pub fn draw_ship_landmarks(iso: IsoView, tick: u64) {
     draw_open_deck(iso);
     draw_bow_section(iso, tick);
     draw_engine_section(iso, tick);

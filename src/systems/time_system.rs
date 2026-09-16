@@ -1,3 +1,5 @@
+//! time system domain.
+
 use crate::systems::time_events::{TimeEvent, TimeEventCollector};
 
 pub struct TimeSystem;
@@ -56,6 +58,3 @@ impl TimeSystem {
         }
     }
 }
-
-#[cfg(test)]
-mod tests;

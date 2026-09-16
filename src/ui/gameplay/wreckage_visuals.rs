@@ -1,12 +1,14 @@
+//! wreckage visuals domain.
+
 use super::*;
 
 mod foundation;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub(crate) struct CrashSmokeVent {
-    pub(crate) cell: Position,
-    pub(crate) strength: f32,
-    pub(crate) seed: u64,
+pub struct CrashSmokeVent {
+    pub cell: Position,
+    pub strength: f32,
+    pub seed: u64,
 }
 
 const SMOKE_VENTS: [CrashSmokeVent; 5] = [
@@ -37,7 +39,7 @@ const SMOKE_VENTS: [CrashSmokeVent; 5] = [
     },
 ];
 
-pub(crate) fn draw_crash_site_context(iso: IsoView, tick: u64) {
+pub fn draw_crash_site_context(iso: IsoView, tick: u64) {
     draw_crash_scar(iso);
     foundation::draw_ship_underlay(iso);
     draw_hull_section(iso, Position::new(2, 2), 12.0, 6.0, HullMood::Main);
@@ -52,7 +54,7 @@ pub(crate) fn draw_crash_site_context(iso: IsoView, tick: u64) {
     draw_smoke_vents(iso, tick);
 }
 
-pub(crate) fn crash_scorch_intensity(x: i32, y: i32) -> f32 {
+pub fn crash_scorch_intensity(x: i32, y: i32) -> f32 {
     let anchors = [
         (8.0_f32, 5.0_f32, 7.0_f32),
         (15.0, 8.0, 7.5),
@@ -69,7 +71,7 @@ pub(crate) fn crash_scorch_intensity(x: i32, y: i32) -> f32 {
         .fold(0.0, f32::max)
 }
 
-pub(crate) fn flicker_alpha(tick: u64, seed: u64) -> f32 {
+pub fn flicker_alpha(tick: u64, seed: u64) -> f32 {
     let phase = ((tick.wrapping_add(seed) / 9) % 5) as f32;
     0.42 + phase * 0.12
 }
@@ -463,6 +465,3 @@ fn draw_smoke_vents(iso: IsoView, tick: u64) {
         }
     }
 }
-
-#[cfg(test)]
-mod tests;

@@ -1,7 +1,9 @@
+//! log domain.
+
 use super::*;
 use macroquad_toolkit::ui::{draw_ui_text, format_clock};
 
-pub(super) fn draw_log_context(
+pub fn draw_log_context(
     context: Rect,
     logs: &[ColonyLogEntry],
     social_history: &[SocialHistoryEntry],
@@ -160,7 +162,7 @@ pub(super) fn draw_log_context(
     }
 }
 
-pub(super) fn draw_log_search_control(context: Rect, query: &str, active: bool) {
+pub fn draw_log_search_control(context: Rect, query: &str, active: bool) {
     let search = log_search_rect(context);
     let clear = log_search_clear_rect(context);
     let export = log_search_export_rect(context);
@@ -212,7 +214,7 @@ pub(super) fn draw_log_search_control(context: Rect, query: &str, active: bool) 
     );
 }
 
-pub(super) fn draw_social_report_drilldown(context: Rect, entry: &SocialHistoryEntry) {
+pub fn draw_social_report_drilldown(context: Rect, entry: &SocialHistoryEntry) {
     let rect = Rect::new(
         context.x + context.w - 330.0,
         (context.y - 78.0).max(70.0),
@@ -248,7 +250,7 @@ pub(super) fn draw_social_report_drilldown(context: Rect, entry: &SocialHistoryE
     );
 }
 
-pub(super) fn draw_log_filter_controls(context: Rect, active_filter: LogFilter) {
+pub fn draw_log_filter_controls(context: Rect, active_filter: LogFilter) {
     for (index, filter) in LogFilter::all().iter().enumerate() {
         let rect = log_filter_rect(context, index);
         let active = *filter == active_filter;
@@ -267,7 +269,7 @@ pub(super) fn draw_log_filter_controls(context: Rect, active_filter: LogFilter) 
     }
 }
 
-pub(super) fn draw_log_page_controls(context: Rect, current_page: usize, page_count: usize) {
+pub fn draw_log_page_controls(context: Rect, current_page: usize, page_count: usize) {
     let previous = log_page_previous_rect(context);
     let next = log_page_next_rect(context);
     let can_go_previous = current_page > 0;
@@ -310,7 +312,7 @@ pub(super) fn draw_log_page_controls(context: Rect, current_page: usize, page_co
     );
 }
 
-pub(super) fn category_prefix(category: LogCategory) -> &'static str {
+pub fn category_prefix(category: LogCategory) -> &'static str {
     match category {
         LogCategory::Time => "TIME",
         LogCategory::Social => "SOC",

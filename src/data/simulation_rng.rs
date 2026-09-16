@@ -1,3 +1,5 @@
+//! simulation rng domain.
+
 use macroquad_toolkit::rng::LegacyLcg64;
 
 #[derive(Clone, Debug)]
@@ -29,10 +31,7 @@ impl SimulationRng {
         min + (max - min) * unit
     }
 
-    fn next_u32(&mut self) -> u32 {
+    pub fn next_u32(&mut self) -> u32 {
         self.stream.next_u32()
     }
 }
-
-#[cfg(test)]
-mod tests;

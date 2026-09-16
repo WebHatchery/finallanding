@@ -1,8 +1,10 @@
+//! placement preview domain.
+
 use super::*;
 use macroquad_toolkit::ui::{draw_ui_text, truncate_text_to_width};
 
 impl GameplayState {
-    pub(crate) fn draw_ghost_preview(&self) {
+    pub fn draw_ghost_preview(&self) {
         if let Some(building_type) = self.selected_building {
             let mouse = mouse_position_vec2();
             let mouse_x = mouse.x;
@@ -65,7 +67,7 @@ impl GameplayState {
         }
     }
 
-    pub(crate) fn draw_placement_feedback_panel(
+    pub fn draw_placement_feedback_panel(
         &self,
         feedback: &BuildingPlacementFeedback,
         anchor: Vec2,

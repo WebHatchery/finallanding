@@ -1,3 +1,5 @@
+//! advisor system domain.
+
 use crate::data::building::BuildingType;
 use crate::data::game_state::GameState;
 use crate::data::priority::ColonyPriority;
@@ -206,6 +208,3 @@ impl AdvisorSystem {
             .count()
     }
 }
-
-#[cfg(test)]
-mod tests;

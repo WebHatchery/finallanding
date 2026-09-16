@@ -1,6 +1,8 @@
+//! game state relationship directive logs domain.
+
 use super::*;
 
-pub(crate) fn directive_log_detail(
+pub fn directive_log_detail(
     directive: PairDirective,
     first_name: &str,
     second_name: &str,

@@ -1,7 +1,9 @@
+//! game state map selection domain.
+
 use super::*;
 
 impl GameplayState {
-    pub(super) fn update_colonist_selection(&mut self, input: &InputState) {
+    pub fn update_colonist_selection(&mut self, input: &InputState) {
         if self.selected_building.is_some() || !input.left_pressed {
             return;
         }

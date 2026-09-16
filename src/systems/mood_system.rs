@@ -1,3 +1,5 @@
+//! mood system domain.
+
 use crate::data::colonist::{Colonist, ColonistState};
 use crate::data::priority::ColonyPriority;
 

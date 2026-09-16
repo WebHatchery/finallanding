@@ -1,7 +1,9 @@
+//! game state building commands domain.
+
 use super::*;
 
 impl GameplayState {
-    pub(super) fn toggle_building(&mut self, building_type: BuildingType) {
+    pub fn toggle_building(&mut self, building_type: BuildingType) {
         if self.selected_building == Some(building_type) {
             self.selected_building = None;
         } else {
@@ -9,7 +11,7 @@ impl GameplayState {
         }
     }
 
-    pub(super) fn undo_last_building(&mut self) {
+    pub fn undo_last_building(&mut self) {
         let refund = self
             .data
             .building_system
@@ -66,7 +68,7 @@ impl GameplayState {
         }
     }
 
-    pub(super) fn update_building_placement(&mut self, input: &InputState) {
+    pub fn update_building_placement(&mut self, input: &InputState) {
         if !self.pointer_inside_playable_map(input) {
             return;
         }
@@ -129,7 +131,7 @@ impl GameplayState {
         }
     }
 
-    pub(super) fn handle_build_toolbar_click(&mut self, context: Rect, mouse_x: f32, mouse_y: f32) {
+    pub fn handle_build_toolbar_click(&mut self, context: Rect, mouse_x: f32, mouse_y: f32) {
         if let Some(building_type) =
             toolbar_building_at_for_mode(context, self.toolbar_mode, mouse_x, mouse_y)
         {

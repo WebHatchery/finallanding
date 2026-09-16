@@ -1,7 +1,9 @@
+//! game state pointer bounds domain.
+
 use super::*;
 
 impl GameplayState {
-    pub(super) fn pointer_inside_playable_map(&self, input: &InputState) -> bool {
+    pub fn pointer_inside_playable_map(&self, input: &InputState) -> bool {
         input.hovered_rect(self.layout.game_area()) && !self.pointer_over_blocking_ui(input)
     }
 

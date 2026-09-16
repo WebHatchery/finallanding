@@ -1,3 +1,5 @@
+//! right rail domain.
+
 use super::Layout;
 use crate::data::building::BuildingType;
 use crate::data::colonist::{relationship_label, Colonist};
@@ -9,13 +11,13 @@ use crate::ui::style;
 use macroquad::prelude::*;
 use macroquad_toolkit::ui::{draw_ui_text, measure_ui_text};
 
-struct ResourceRow {
-    label: &'static str,
-    value_text: String,
-    detail: String,
-    progress: f32,
-    color: Color,
-    alert: bool,
+pub struct ResourceRow {
+    pub label: &'static str,
+    pub value_text: String,
+    pub detail: String,
+    pub progress: f32,
+    pub color: Color,
+    pub alert: bool,
 }
 
 pub fn draw_right_rail(
@@ -170,7 +172,7 @@ fn draw_resources(rect: Rect, resources: &ResourceState, storage_capacity: i32, 
     }
 }
 
-fn resource_rows(
+pub fn resource_rows(
     resources: &ResourceState,
     storage_capacity: i32,
     daily_need: i32,
@@ -347,7 +349,7 @@ fn mood_color(mood: f32) -> Color {
     style::mood_color(mood)
 }
 
-fn strongest_relationship_value(colonist: &Colonist) -> Option<i32> {
+pub fn strongest_relationship_value(colonist: &Colonist) -> Option<i32> {
     colonist
         .relationships
         .values()
@@ -355,11 +357,11 @@ fn strongest_relationship_value(colonist: &Colonist) -> Option<i32> {
         .copied()
 }
 
-fn relationship_color(value: i32) -> Color {
+pub fn relationship_color(value: i32) -> Color {
     style::relationship_color(value)
 }
 
-fn social_footer(summary: &ColonyPressureSummary) -> String {
+pub fn social_footer(summary: &ColonyPressureSummary) -> String {
     if let Some(pair) = summary.tense_pairs.first() {
         return format!(
             "Mood {:.0} | tense {} / {} {:+}",
@@ -379,6 +381,3 @@ fn social_footer(summary: &ColonyPressureSummary) -> String {
         summary.average_mood, summary.close_pairs, summary.strained_pairs
     )
 }
-
-#[cfg(test)]
-mod tests;

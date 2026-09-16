@@ -1,3 +1,5 @@
+//! social system domain.
+
 use crate::data::building::BuildingType;
 use crate::data::colonist::{relationship_label, ActivityLocation, ColonistState};
 use crate::data::event_log::LogCategory;
@@ -320,6 +322,3 @@ fn relationship_detail_index(old_value: i32, new_value: i32, len: usize) -> usiz
 
     (old_value.unsigned_abs() as usize + new_value.unsigned_abs() as usize) % len
 }
-
-#[cfg(test)]
-mod tests;

@@ -6,12 +6,16 @@ param(
 $ErrorActionPreference = "Stop"
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
-$workspaceRoot = Split-Path -Parent (Split-Path -Parent $repoRoot)
-$exe = Join-Path $workspaceRoot ".cargo-target\debug\finallanding.exe"
 $outDir = Join-Path $repoRoot $OutputDir
 
 Set-Location $repoRoot
+$targetDir = (cargo metadata --format-version 1 --no-deps | ConvertFrom-Json).target_directory
+$exe = Join-Path $targetDir "debug\finallanding.exe"
 cargo build
+
+if ($LASTEXITCODE -ne 0) {
+    throw "Capture build failed with exit code $LASTEXITCODE."
+}
 
 if (!(Test-Path -LiteralPath $exe)) {
     throw "Missing executable: $exe"

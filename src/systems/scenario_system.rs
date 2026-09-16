@@ -1,3 +1,5 @@
+//! scenario system domain.
+
 use crate::data::event_log::LogCategory;
 use crate::data::game_state::{GameState, TimeSpeed};
 use crate::data::resources::ColonyCondition;
@@ -63,7 +65,6 @@ impl ScenarioSystem {
         )
     }
 
-    #[cfg(test)]
     pub fn estimated_real_minutes_to_target(state: &GameState, seconds_per_tick: f32) -> f32 {
         let target_tick =
             state.scenario.target_day.saturating_sub(1) as u64 * TimeSystem::TICKS_PER_DAY;
@@ -82,6 +83,3 @@ impl ScenarioSystem {
         state.push_log(LogCategory::Colony, title, detail);
     }
 }
-
-#[cfg(test)]
-mod tests;

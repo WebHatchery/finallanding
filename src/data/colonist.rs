@@ -1,3 +1,5 @@
+//! colonist domain.
+
 use crate::data::building::BuildingType;
 use crate::data::schedule::{ActivityType, Schedule};
 use crate::data::types::Position;
@@ -289,6 +291,3 @@ impl MoodBand {
 pub fn relationship_label(value: i32) -> &'static str {
     RelationshipBand::from_value(value).label()
 }
-
-#[cfg(test)]
-mod tests;

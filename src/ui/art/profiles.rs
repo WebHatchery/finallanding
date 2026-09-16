@@ -1,14 +1,16 @@
+//! profiles domain.
+
 use macroquad::prelude::Color;
 
 #[derive(Clone, Copy)]
-pub(super) struct SurvivorArtProfile {
-    pub(super) skin: Color,
-    pub(super) hair: Color,
-    pub(super) suit: Color,
-    pub(super) accent: Color,
+pub struct SurvivorArtProfile {
+    pub skin: Color,
+    pub hair: Color,
+    pub suit: Color,
+    pub accent: Color,
 }
 
-pub(super) const SURVIVOR_ART_PROFILES: &[SurvivorArtProfile] = &[
+pub const SURVIVOR_ART_PROFILES: &[SurvivorArtProfile] = &[
     SurvivorArtProfile {
         skin: Color::new(0.67, 0.47, 0.33, 1.0),
         hair: Color::new(0.08, 0.06, 0.05, 1.0),
@@ -46,6 +48,3 @@ pub(super) const SURVIVOR_ART_PROFILES: &[SurvivorArtProfile] = &[
         accent: Color::new(0.72, 0.40, 0.48, 1.0),
     },
 ];
-
-#[cfg(test)]
-mod tests;

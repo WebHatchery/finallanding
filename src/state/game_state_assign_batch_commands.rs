@@ -1,7 +1,9 @@
+//! game state assign batch commands domain.
+
 use super::*;
 
 impl GameplayState {
-    pub(super) fn apply_assign_batch_action(&mut self, action: AssignBatchAction) {
+    pub fn apply_assign_batch_action(&mut self, action: AssignBatchAction) {
         let Some(selected_id) = self.selected_colonist_id else {
             return;
         };
@@ -86,7 +88,7 @@ impl GameplayState {
         self.data.push_log(LogCategory::Social, title, detail);
     }
 
-    pub(super) fn log_batch_assignment_unavailable(&mut self, pin_kind: &str, selected_name: &str) {
+    pub fn log_batch_assignment_unavailable(&mut self, pin_kind: &str, selected_name: &str) {
         self.data.push_log(
             LogCategory::Social,
             "Batch assignment unavailable",

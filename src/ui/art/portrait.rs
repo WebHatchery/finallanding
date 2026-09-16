@@ -1,3 +1,5 @@
+//! portrait domain.
+
 use super::profiles::SurvivorArtProfile;
 use macroquad::prelude::{Color, Image, BLANK};
 use macroquad_toolkit::colors::{mix, shade, tint};
@@ -5,10 +7,10 @@ use macroquad_toolkit::raster::{
     add_noise, draw_line_pixels, fill_circle, fill_ellipse, fill_rect,
 };
 
-const PORTRAIT_SIZE: u16 = 128;
+pub const PORTRAIT_SIZE: u16 = 128;
 const PORTRAIT_SCALE: i32 = PORTRAIT_SIZE as i32 / 64;
 
-pub(super) fn generate_portrait(profile: SurvivorArtProfile, index: usize) -> Image {
+pub fn generate_portrait(profile: SurvivorArtProfile, index: usize) -> Image {
     let mut image = Image::gen_image_color(PORTRAIT_SIZE, PORTRAIT_SIZE, BLANK);
     let bg = Color::new(0.05, 0.065, 0.065, 1.0);
     fill_rect(
@@ -107,6 +109,3 @@ fn fill_ellipse_scaled(image: &mut Image, cx: i32, cy: i32, rx: i32, ry: i32, co
         color,
     );
 }
-
-#[cfg(test)]
-mod tests;

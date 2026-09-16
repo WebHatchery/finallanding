@@ -1,8 +1,10 @@
+//! overlay domain.
+
 use super::*;
 use macroquad_toolkit::ui::{draw_ui_text, measure_ui_text};
 
 impl GameplayState {
-    pub(crate) fn draw_scenario_overlay(&self) {
+    pub fn draw_scenario_overlay(&self) {
         if !self.data.scenario.is_finished() {
             return;
         }

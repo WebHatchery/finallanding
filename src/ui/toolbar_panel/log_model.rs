@@ -1,3 +1,5 @@
+//! log model domain.
+
 use super::SOCIAL_TIMELINE_PAGE_SIZE;
 use crate::data::colonist::RelationshipBand;
 use crate::data::event_log::SocialHistoryEntry;
@@ -6,12 +8,12 @@ use crate::ui::hit_zones::LogFilter;
 use crate::ui::style;
 use macroquad::prelude::Color;
 
-pub(super) struct SocialTimelineRow {
-    pub(super) day: u32,
-    pub(super) title: String,
-    pub(super) detail: String,
-    pub(super) metrics: String,
-    pub(super) color: Color,
+pub struct SocialTimelineRow {
+    pub day: u32,
+    pub title: String,
+    pub detail: String,
+    pub metrics: String,
+    pub color: Color,
 }
 
 pub fn social_history_page_count(
@@ -27,7 +29,7 @@ pub fn social_history_page_count(
     count.div_ceil(SOCIAL_TIMELINE_PAGE_SIZE).max(1)
 }
 
-pub(super) fn social_timeline_rows(
+pub fn social_timeline_rows(
     history: &[SocialHistoryEntry],
     filter: LogFilter,
     query: &str,
@@ -66,7 +68,7 @@ pub fn social_timeline_day_at(
         .map(|row| row.day)
 }
 
-pub(super) fn selected_social_history_entry(
+pub fn selected_social_history_entry(
     history: &[SocialHistoryEntry],
     selected_day: Option<u32>,
 ) -> Option<&SocialHistoryEntry> {
@@ -74,7 +76,7 @@ pub(super) fn selected_social_history_entry(
     history.iter().find(|entry| entry.day == day)
 }
 
-pub(super) fn social_history_matches_filter(entry: &SocialHistoryEntry, filter: LogFilter) -> bool {
+pub fn social_history_matches_filter(entry: &SocialHistoryEntry, filter: LogFilter) -> bool {
     match filter {
         LogFilter::All => true,
         LogFilter::Tense => social_history_signal(entry) == SocialHistorySignal::Tense,
@@ -82,7 +84,7 @@ pub(super) fn social_history_matches_filter(entry: &SocialHistoryEntry, filter: 
     }
 }
 
-pub(super) fn social_history_matches_query(entry: &SocialHistoryEntry, query: &str) -> bool {
+pub fn social_history_matches_query(entry: &SocialHistoryEntry, query: &str) -> bool {
     let query = query.trim();
     if query.is_empty() {
         return true;
@@ -96,7 +98,7 @@ pub(super) fn social_history_matches_query(entry: &SocialHistoryEntry, query: &s
         || entry.day.to_string().contains(&needle)
 }
 
-pub(super) fn social_history_color(entry: &SocialHistoryEntry) -> Color {
+pub fn social_history_color(entry: &SocialHistoryEntry) -> Color {
     match social_history_signal(entry) {
         SocialHistorySignal::Tense => style::ALERT_RED,
         SocialHistorySignal::Support => style::BAR_GREEN,
@@ -121,13 +123,13 @@ fn social_history_signal(entry: &SocialHistoryEntry) -> SocialHistorySignal {
     }
 }
 
-pub(super) struct SocialBriefLines {
-    pub(super) header: String,
-    pub(super) detail: String,
-    pub(super) color: Color,
+pub struct SocialBriefLines {
+    pub header: String,
+    pub detail: String,
+    pub color: Color,
 }
 
-pub(super) fn social_brief_lines(summary: &ColonyPressureSummary) -> SocialBriefLines {
+pub fn social_brief_lines(summary: &ColonyPressureSummary) -> SocialBriefLines {
     let color = if summary.strained_pairs > 0 {
         style::ALERT_RED
     } else if summary.close_pairs > 0 {
@@ -163,12 +165,9 @@ pub(super) fn social_brief_lines(summary: &ColonyPressureSummary) -> SocialBrief
     }
 }
 
-pub(super) fn pair_line(prefix: &str, pair: &RelationshipPairSummary) -> String {
+pub fn pair_line(prefix: &str, pair: &RelationshipPairSummary) -> String {
     format!(
         "{} {} / {}: {} {:+}",
         prefix, pair.first_name, pair.second_name, pair.label, pair.value
     )
 }
-
-#[cfg(test)]
-mod tests;

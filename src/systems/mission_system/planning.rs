@@ -1,3 +1,5 @@
+//! planning domain.
+
 use crate::data::game_state::GameState;
 use crate::data::mission::{MissionDefinition, MissionType};
 use crate::data::priority::ColonyPriority;
@@ -13,10 +15,10 @@ pub struct MissionPlan {
     pub cooldown_remaining: u64,
 }
 
-pub(super) struct MissionPlanning;
+pub struct MissionPlanning;
 
 impl MissionPlanning {
-    pub(super) fn mission_plans(state: &GameState) -> Vec<MissionPlan> {
+    pub fn mission_plans(state: &GameState) -> Vec<MissionPlan> {
         let recommended_type = Self::recommended_mission_type(state);
         let recommendation_reason = Self::recommendation_reason(state, recommended_type);
         let cooldown_remaining = state.missions.cooldown_remaining(state.tick);
@@ -34,7 +36,7 @@ impl MissionPlanning {
             .collect()
     }
 
-    pub(super) fn recommended_mission_type(state: &GameState) -> MissionType {
+    pub fn recommended_mission_type(state: &GameState) -> MissionType {
         let daily_need = ResourceSystem::daily_supply_need(state).max(1);
         if state.resources.supplies < daily_need * 2 {
             return MissionType::SupplyRun;
@@ -53,7 +55,7 @@ impl MissionPlanning {
         MissionType::PerimeterScan
     }
 
-    pub(super) fn recommendation_reason(state: &GameState, mission_type: MissionType) -> String {
+    pub fn recommendation_reason(state: &GameState, mission_type: MissionType) -> String {
         match mission_type {
             MissionType::SupplyRun => {
                 let daily_need = ResourceSystem::daily_supply_need(state).max(1);
@@ -76,7 +78,7 @@ impl MissionPlanning {
         }
     }
 
-    pub(super) fn mission_danger_percent(state: &GameState, mission_type: MissionType) -> u32 {
+    pub fn mission_danger_percent(state: &GameState, mission_type: MissionType) -> u32 {
         let definition = mission_type.definition();
         let technology_adjusted = definition
             .danger_percent
@@ -87,6 +89,3 @@ impl MissionPlanning {
             .adjust_mission_danger(technology_adjusted)
     }
 }
-
-#[cfg(test)]
-mod tests;

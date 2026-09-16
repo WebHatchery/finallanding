@@ -1,3 +1,5 @@
+//! isometric domain.
+
 use crate::data::types::Position;
 use macroquad::prelude::*;
 
@@ -125,6 +127,3 @@ fn draw_quad(a: Vec2, b: Vec2, c: Vec2, d: Vec2, color: Color) {
     draw_triangle(a, b, c, color);
     draw_triangle(a, c, d, color);
 }
-
-#[cfg(test)]
-mod tests;

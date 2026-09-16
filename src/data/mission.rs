@@ -1,3 +1,5 @@
+//! mission domain.
+
 use crate::data::priority::ColonyPriority;
 use serde::{Deserialize, Serialize};
 
@@ -112,7 +114,6 @@ pub struct ActiveMission {
 }
 
 impl ActiveMission {
-    #[cfg(test)]
     pub fn remaining_ticks(&self, current_tick: u64) -> u64 {
         self.completes_at_tick.saturating_sub(current_tick)
     }

@@ -1,15 +1,7 @@
-#![allow(clippy::large_enum_variant, clippy::too_many_arguments)]
-
+use finallanding::game::Game;
+use finallanding::ui;
 use macroquad::prelude::*;
 use macroquad_toolkit::capture;
-
-mod data;
-mod game;
-mod state;
-mod systems;
-mod ui;
-
-use game::Game;
 
 fn window_conf() -> Conf {
     // Hand-built Conf means no automatic arming: without this the capture run
@@ -78,9 +70,11 @@ fn export_playthrough_report_if_requested() -> bool {
             return false;
         };
 
-        let reports = systems::playtest_system::PlaytestSystem::capture_report_set();
+        let reports = finallanding::systems::playtest_system::PlaytestSystem::capture_report_set();
         let markdown =
-            systems::playtest_system::PlaytestSystem::playthrough_report_markdown(&reports);
+            finallanding::systems::playtest_system::PlaytestSystem::playthrough_report_markdown(
+                &reports,
+            );
         if let Some(parent) = std::path::Path::new(&path).parent() {
             std::fs::create_dir_all(parent).expect("failed to create playthrough report directory");
         }

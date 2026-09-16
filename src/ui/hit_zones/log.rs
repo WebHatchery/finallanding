@@ -1,3 +1,5 @@
+//! log domain.
+
 use super::PageAction;
 use macroquad::prelude::{vec2, Rect};
 use macroquad_toolkit::input::{hit_test, HitTarget};
@@ -102,6 +104,3 @@ pub fn log_timeline_row_at(context: Rect, row_count: usize, x: f32, y: f32) -> O
         vec2(x, y),
     )
 }
-
-#[cfg(test)]
-mod tests;

@@ -1,6 +1,8 @@
+//! game state assignment batch rules domain.
+
 use super::*;
 
-pub(crate) fn apply_batch_home_pin(
+pub fn apply_batch_home_pin(
     colonists: &mut [Colonist],
     selected_id: u32,
     habitat_id: u32,
@@ -33,7 +35,7 @@ pub(crate) fn apply_batch_home_pin(
     assigned
 }
 
-pub(crate) fn apply_batch_work_pin(
+pub fn apply_batch_work_pin(
     colonists: &mut [Colonist],
     selected_id: u32,
     workplace_id: u32,
@@ -68,7 +70,7 @@ pub(crate) fn apply_batch_work_pin(
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum BatchAssignmentScope {
+pub enum BatchAssignmentScope {
     Page,
     All,
 }
@@ -82,7 +84,7 @@ impl BatchAssignmentScope {
     }
 }
 
-pub(crate) fn batch_assignment_log(
+pub fn batch_assignment_log(
     title: &'static str,
     source_name: &str,
     pin_prefix: &str,
@@ -111,7 +113,3 @@ pub(crate) fn batch_assignment_log(
 
     (title.to_string(), detail)
 }
-
-#[cfg(test)]
-#[path = "game_state_assignment_batch_rules/tests.rs"]
-mod tests;

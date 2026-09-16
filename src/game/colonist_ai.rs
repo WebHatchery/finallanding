@@ -1,8 +1,10 @@
-mod assignment;
+//! colonist ai domain.
+
+pub mod assignment;
 mod behavior;
-mod movement;
+pub mod movement;
 mod social;
-mod targeting;
+pub mod targeting;
 mod types;
 
 use crate::data::game_state::GameState;
@@ -14,8 +16,8 @@ use std::collections::HashMap;
 
 /// Movement speed for visual interpolation (pixels per frame)
 const VISUAL_MOVE_SPEED: f32 = 2.0;
-pub(super) const REFUSAL_LOG_COOLDOWN_TICKS: u64 = 60;
-pub(super) const SOCIAL_STRAIN_LOG_COOLDOWN_TICKS: u64 = 120;
+pub const REFUSAL_LOG_COOLDOWN_TICKS: u64 = 60;
+pub const SOCIAL_STRAIN_LOG_COOLDOWN_TICKS: u64 = 120;
 
 pub fn update_colonists(state: &mut GameState, elapsed_ticks: u64) {
     if elapsed_ticks == 0 {
@@ -92,6 +94,3 @@ pub fn update_colonists(state: &mut GameState, elapsed_ticks: u64) {
         state.push_log(category, title, detail);
     }
 }
-
-#[cfg(test)]
-mod tests;

@@ -127,7 +127,6 @@ impl BuildingSystem {
     }
 
     /// Check if a placement would be valid (for preview)
-    #[cfg(test)]
     pub fn can_place_building(
         &self,
         grid: &Grid,
@@ -151,6 +150,3 @@ impl BuildingSystem {
         grid.is_area_free_for_building(position, width, height)
     }
 }
-
-#[cfg(test)]
-mod tests;

@@ -1,7 +1,9 @@
+//! assign domain.
+
 use super::*;
 use macroquad_toolkit::ui::draw_ui_text;
 
-pub(super) fn draw_assign_context(
+pub fn draw_assign_context(
     context: Rect,
     colonists: &[Colonist],
     selected_colonist_id: Option<u32>,
@@ -209,7 +211,7 @@ pub(super) fn draw_assign_context(
     }
 }
 
-pub(super) fn draw_assign_roster_controls(
+pub fn draw_assign_roster_controls(
     context: Rect,
     active_filter: AssignRosterFilter,
     active_sort: AssignRosterSort,
@@ -277,7 +279,7 @@ pub(super) fn draw_assign_roster_controls(
     );
 }
 
-pub(super) fn draw_assign_batch_controls(context: Rect, selected_colonist: &Colonist) {
+pub fn draw_assign_batch_controls(context: Rect, selected_colonist: &Colonist) {
     let home_enabled = selected_colonist.assigned_habitat.is_some();
     let work_enabled = selected_colonist.assigned_workplace.is_some();
     let mut hovered_action = None;
@@ -316,7 +318,7 @@ pub(super) fn draw_assign_batch_controls(context: Rect, selected_colonist: &Colo
     }
 }
 
-pub(super) fn draw_assign_page_controls(context: Rect, current_page: usize, page_count: usize) {
+pub fn draw_assign_page_controls(context: Rect, current_page: usize, page_count: usize) {
     let previous = assign_page_previous_rect(context);
     let next = assign_page_next_rect(context);
     let can_go_previous = current_page > 0;

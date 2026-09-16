@@ -1,3 +1,5 @@
+//! advisor overlay domain.
+
 use super::Layout;
 use crate::systems::advisor_system::{AdvisorPlan, AdvisorSeverity};
 use crate::systems::objective_system::{ObjectiveCard, ObjectiveStatus};

@@ -1,7 +1,9 @@
+//! terrain visuals domain.
+
 use super::*;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum TerrainDetail {
+pub enum TerrainDetail {
     None,
     Scrap,
     Brush,
@@ -15,7 +17,7 @@ pub(crate) enum TerrainDetail {
     FuelDrum,
 }
 
-pub(crate) fn terrain_color(cell_type: Option<CellType>, x: i32, y: i32) -> Color {
+pub fn terrain_color(cell_type: Option<CellType>, x: i32, y: i32) -> Color {
     let seed = terrain_seed(x, y);
     let tint = ((seed % 9) as f32 - 4.0) * 0.006;
 
@@ -27,7 +29,7 @@ pub(crate) fn terrain_color(cell_type: Option<CellType>, x: i32, y: i32) -> Colo
     }
 }
 
-pub(crate) fn terrain_detail(cell_type: Option<CellType>, x: i32, y: i32) -> TerrainDetail {
+pub fn terrain_detail(cell_type: Option<CellType>, x: i32, y: i32) -> TerrainDetail {
     if cell_type.is_none() {
         return TerrainDetail::None;
     }
@@ -52,7 +54,7 @@ pub(crate) fn terrain_detail(cell_type: Option<CellType>, x: i32, y: i32) -> Ter
     }
 }
 
-pub(crate) fn crash_site_detail(x: i32, y: i32) -> Option<TerrainDetail> {
+pub fn crash_site_detail(x: i32, y: i32) -> Option<TerrainDetail> {
     if (10..=12).contains(&x) && y == 10 {
         return Some(TerrainDetail::SupplyCrate);
     }
@@ -84,7 +86,7 @@ pub(crate) fn crash_site_detail(x: i32, y: i32) -> Option<TerrainDetail> {
     None
 }
 
-pub(crate) fn draw_terrain_detail(center: Vec2, tile_w: f32, tile_h: f32, detail: TerrainDetail) {
+pub fn draw_terrain_detail(center: Vec2, tile_w: f32, tile_h: f32, detail: TerrainDetail) {
     match detail {
         TerrainDetail::None => {}
         TerrainDetail::Scrap => {
@@ -277,11 +279,8 @@ pub(crate) fn draw_terrain_detail(center: Vec2, tile_w: f32, tile_h: f32, detail
     }
 }
 
-pub(crate) fn terrain_seed(x: i32, y: i32) -> u32 {
+pub fn terrain_seed(x: i32, y: i32) -> u32 {
     let x = x as u32;
     let y = y as u32;
     x.wrapping_mul(73_856_093) ^ y.wrapping_mul(19_349_663) ^ 0x9E37_79B9
 }
-
-#[cfg(test)]
-mod tests;

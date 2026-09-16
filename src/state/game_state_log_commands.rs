@@ -1,7 +1,9 @@
+//! game state log commands domain.
+
 use super::*;
 
 impl GameplayState {
-    pub(super) fn update_social_history_search_input(&mut self) -> bool {
+    pub fn update_social_history_search_input(&mut self) -> bool {
         if self.toolbar_mode != ToolbarMode::Log {
             self.social_history_search_active = false;
             return false;
@@ -40,7 +42,7 @@ impl GameplayState {
         true
     }
 
-    pub(super) fn handle_log_toolbar_click(&mut self, context: Rect, mouse_x: f32, mouse_y: f32) {
+    pub fn handle_log_toolbar_click(&mut self, context: Rect, mouse_x: f32, mouse_y: f32) {
         if let Some(action) = log_search_action_at(context, mouse_x, mouse_y) {
             match action {
                 LogSearchAction::Focus => {
@@ -87,7 +89,7 @@ impl GameplayState {
         }
     }
 
-    pub(super) fn update_log_page(&mut self, action: PageAction) {
+    pub fn update_log_page(&mut self, action: PageAction) {
         let page_count = social_history_page_count(
             &self.data.social_history,
             self.social_history_filter,
@@ -107,7 +109,7 @@ impl GameplayState {
         self.social_history_page = self.social_history_page.min(page_count.saturating_sub(1));
     }
 
-    pub(super) fn export_social_archive(&mut self) {
+    pub fn export_social_archive(&mut self) {
         if self.data.social_history.is_empty() {
             self.data.push_log(
                 LogCategory::Social,

@@ -1,3 +1,5 @@
+//! relationship directive system domain.
+
 use crate::data::colonist::{relationship_label, Colonist, RelationshipBand};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -180,6 +182,3 @@ fn apply_directive(
         }
     }
 }
-
-#[cfg(test)]
-mod tests;

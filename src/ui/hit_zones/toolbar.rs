@@ -1,3 +1,5 @@
+//! toolbar domain.
+
 use crate::data::building::BuildingType;
 use crate::data::mission::MissionType;
 use crate::data::priority::ColonyPriority;
@@ -179,6 +181,3 @@ pub fn toolbar_mission_at(context: Rect, x: f32, y: f32) -> Option<MissionType> 
         vec2(x, y),
     )
 }
-
-#[cfg(test)]
-mod tests;

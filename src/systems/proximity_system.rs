@@ -1,3 +1,5 @@
+//! proximity system domain.
+
 use crate::data::building::BuildingType;
 use crate::data::colonist::{ActivityLocation, ColonistState};
 use crate::data::game_state::GameState;

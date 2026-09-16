@@ -1,3 +1,5 @@
+//! tooltip domain.
+
 use crate::ui::style;
 use macroquad::prelude::*;
 use macroquad_toolkit::input::mouse_position_vec2;
@@ -55,6 +57,3 @@ pub fn tooltip_rect(anchor: Vec2, bounds: Rect, width: f32, height: f32) -> Rect
         height,
     )
 }
-
-#[cfg(test)]
-mod tests;

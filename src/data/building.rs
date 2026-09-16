@@ -1,3 +1,5 @@
+//! building domain.
+
 use crate::data::types::Position;
 use serde::{Deserialize, Serialize};
 
@@ -146,6 +148,3 @@ impl Building {
         cells
     }
 }
-
-#[cfg(test)]
-mod tests;

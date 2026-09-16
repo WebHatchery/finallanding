@@ -1,3 +1,5 @@
+//! job decision system domain.
+
 use crate::data::colonist::{Colonist, JobPreference};
 
 pub fn calculate_refusal_chance(colonist: &Colonist, _job_type: JobPreference) -> f32 {

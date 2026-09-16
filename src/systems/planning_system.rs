@@ -1,3 +1,5 @@
+//! planning system domain.
+
 use crate::data::building::BuildingType;
 use crate::data::game_state::GameState;
 use crate::data::types::Position;
@@ -96,6 +98,3 @@ impl PlanningSystem {
         )
     }
 }
-
-#[cfg(test)]
-mod tests;

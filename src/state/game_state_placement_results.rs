@@ -1,6 +1,8 @@
+//! game state placement results domain.
+
 use super::*;
 
-pub(crate) fn placement_result_reason(result: &PlacementResult) -> &'static str {
+pub fn placement_result_reason(result: &PlacementResult) -> &'static str {
     match result {
         PlacementResult::Success(_) => "Placement succeeded.",
         PlacementResult::OutOfBounds => "Footprint leaves the map.",

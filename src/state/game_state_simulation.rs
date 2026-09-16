@@ -1,10 +1,9 @@
+//! game state simulation domain.
+
 use super::*;
 
 impl GameplayState {
-    pub(super) fn scenario_restart_transition(
-        &self,
-        input: &InputState,
-    ) -> Option<StateTransition> {
+    pub fn scenario_restart_transition(&self, input: &InputState) -> Option<StateTransition> {
         if !self.data.scenario.is_finished() {
             return None;
         }
@@ -19,7 +18,7 @@ impl GameplayState {
         }
     }
 
-    pub(super) fn advance_time(&mut self) -> u64 {
+    pub fn advance_time(&mut self) -> u64 {
         let speed_multiplier = match self.data.time.speed {
             TimeSpeed::Paused => 0.0,
             TimeSpeed::Normal => 1.0,
@@ -48,7 +47,7 @@ impl GameplayState {
         ticks_to_advance
     }
 
-    pub(super) fn process_time_events(&mut self) {
+    pub fn process_time_events(&mut self) {
         let events = self.time_events.events.clone();
 
         for event in events {
@@ -82,7 +81,7 @@ impl GameplayState {
         }
     }
 
-    pub(super) fn average_mood(&self) -> f32 {
+    pub fn average_mood(&self) -> f32 {
         if self.data.colonists.is_empty() {
             return 0.0;
         }

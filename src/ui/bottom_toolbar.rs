@@ -1,3 +1,5 @@
+//! bottom toolbar domain.
+
 use super::Layout;
 use crate::data::building::BuildingType;
 use crate::ui::hit_zones::{toolbar_button_rect, ToolbarMode};

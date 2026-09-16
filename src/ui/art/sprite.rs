@@ -1,17 +1,15 @@
+//! sprite domain.
+
 use super::profiles::SurvivorArtProfile;
 use super::SpritePose;
 use macroquad::prelude::{Color, Image, BLANK};
 use macroquad_toolkit::colors::shade;
 use macroquad_toolkit::raster::{draw_line_pixels, fill_circle, fill_ellipse, fill_rect};
 
-const SPRITE_WIDTH: u16 = 32;
-const SPRITE_HEIGHT: u16 = 64;
+pub const SPRITE_WIDTH: u16 = 32;
+pub const SPRITE_HEIGHT: u16 = 64;
 
-pub(super) fn generate_sprite(
-    profile: SurvivorArtProfile,
-    index: usize,
-    pose: SpritePose,
-) -> Image {
+pub fn generate_sprite(profile: SurvivorArtProfile, index: usize, pose: SpritePose) -> Image {
     let mut image = Image::gen_image_color(SPRITE_WIDTH, SPRITE_HEIGHT, BLANK);
 
     if pose == SpritePose::Sleeping {
@@ -181,6 +179,3 @@ pub(super) fn generate_sprite(
     );
     image
 }
-
-#[cfg(test)]
-mod tests;

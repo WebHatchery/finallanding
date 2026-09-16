@@ -1,7 +1,9 @@
+//! game state assign space commands domain.
+
 use super::*;
 
 impl GameplayState {
-    pub(super) fn update_assign_space_click(&mut self) {
+    pub fn update_assign_space_click(&mut self) {
         let Some(building) = self.building_at_mouse().cloned() else {
             return;
         };
@@ -13,11 +15,7 @@ impl GameplayState {
         self.assign_selected_colonist_to_building(colonist_id, &building);
     }
 
-    pub(super) fn assign_selected_colonist_to_building(
-        &mut self,
-        colonist_id: u32,
-        building: &Building,
-    ) {
+    pub fn assign_selected_colonist_to_building(&mut self, colonist_id: u32, building: &Building) {
         let Some(colonist_index) = self
             .data
             .colonists
@@ -101,7 +99,7 @@ impl GameplayState {
         self.data.push_log(LogCategory::Social, title, detail);
     }
 
-    pub(super) fn clear_building_assignments(&mut self, building_id: u32) -> Vec<String> {
+    pub fn clear_building_assignments(&mut self, building_id: u32) -> Vec<String> {
         let mut cleared = Vec::new();
         if self.assign_building_filter == Some(building_id) {
             self.assign_building_filter = None;

@@ -1,3 +1,5 @@
+//! priority domain.
+
 use super::building::BuildingType;
 use serde::{Deserialize, Serialize};
 

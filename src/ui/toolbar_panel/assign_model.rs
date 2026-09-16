@@ -1,16 +1,18 @@
+//! assign model domain.
+
 use crate::data::assign_roster;
 use crate::data::colonist::{relationship_label, Colonist, JobPreference, RelationshipBand};
 use crate::data::technology::TechnologyState;
 use crate::systems::relationship_directive_system::{PairDirective, RelationshipDirectiveSystem};
 use crate::ui::hit_zones::{AssignRosterFilter, AssignRosterSort};
 
-pub(super) struct AssignPairAction {
-    pub(super) label: String,
-    pub(super) detail: String,
-    pub(super) directive: PairDirective,
+pub struct AssignPairAction {
+    pub label: String,
+    pub detail: String,
+    pub directive: PairDirective,
 }
 
-pub(super) fn assign_roster_page_count(
+pub fn assign_roster_page_count(
     colonists: &[Colonist],
     selected_colonist_id: Option<u32>,
     active_filter: AssignRosterFilter,
@@ -26,7 +28,7 @@ pub(super) fn assign_roster_page_count(
     )
 }
 
-pub(super) fn assign_visible_colonists(
+pub fn assign_visible_colonists(
     colonists: &[Colonist],
     selected_colonist_id: Option<u32>,
     page: usize,
@@ -46,7 +48,7 @@ pub(super) fn assign_visible_colonists(
     )
 }
 
-pub(super) fn assign_role_filter_label(role: Option<JobPreference>) -> &'static str {
+pub fn assign_role_filter_label(role: Option<JobPreference>) -> &'static str {
     match role {
         None => "ALL",
         Some(JobPreference::Explorer) => "EXP",
@@ -57,7 +59,7 @@ pub(super) fn assign_role_filter_label(role: Option<JobPreference>) -> &'static 
     }
 }
 
-pub(super) fn assign_pair_action(
+pub fn assign_pair_action(
     colonists: &[Colonist],
     selected_id: u32,
     target_id: u32,
@@ -83,7 +85,7 @@ pub(super) fn assign_pair_action(
     })
 }
 
-pub(super) fn selected_assignment_label(colonist: &Colonist) -> String {
+pub fn selected_assignment_label(colonist: &Colonist) -> String {
     let home = colonist
         .assigned_habitat
         .map(|id| format!("H#{}", id))
@@ -95,7 +97,7 @@ pub(super) fn selected_assignment_label(colonist: &Colonist) -> String {
     format!("{} {}", home, work)
 }
 
-pub(super) fn selected_assignment_detail(
+pub fn selected_assignment_detail(
     colonist: &Colonist,
     colonists: &[Colonist],
     technology: &TechnologyState,
@@ -110,12 +112,12 @@ pub(super) fn selected_assignment_detail(
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub(super) struct AssignmentPinWarning {
-    pub(super) label: String,
-    pub(super) detail: String,
+pub struct AssignmentPinWarning {
+    pub label: String,
+    pub detail: String,
 }
 
-pub(super) fn assignment_pin_warning(
+pub fn assignment_pin_warning(
     colonist: &Colonist,
     colonists: &[Colonist],
     technology: &TechnologyState,
@@ -177,12 +179,12 @@ pub(super) fn assignment_pin_warning(
 }
 
 #[derive(Clone, Copy)]
-pub(super) enum AssignmentPinLocation {
+pub enum AssignmentPinLocation {
     Habitat(u32),
     Work(u32),
 }
 
-pub(super) fn first_assignment_conflict(
+pub fn first_assignment_conflict(
     colonist: &Colonist,
     colonists: &[Colonist],
     location: AssignmentPinLocation,
@@ -207,6 +209,3 @@ pub(super) fn first_assignment_conflict(
         })
         .min_by_key(|(_, value)| *value)
 }
-
-#[cfg(test)]
-mod tests;

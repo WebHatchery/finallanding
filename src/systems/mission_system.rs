@@ -1,6 +1,8 @@
-mod launch;
-mod planning;
-mod resolution;
+//! mission system domain.
+
+pub mod launch;
+pub mod planning;
+pub mod resolution;
 
 use crate::data::game_state::GameState;
 use crate::data::mission::MissionType;

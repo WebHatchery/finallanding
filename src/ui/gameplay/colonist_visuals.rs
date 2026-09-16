@@ -1,6 +1,8 @@
+//! colonist visuals domain.
+
 use super::*;
 
-pub(crate) fn job_color(job_preference: crate::data::colonist::JobPreference) -> Color {
+pub fn job_color(job_preference: crate::data::colonist::JobPreference) -> Color {
     match job_preference {
         crate::data::colonist::JobPreference::Explorer => PURPLE,
         crate::data::colonist::JobPreference::Builder => YELLOW,
@@ -10,7 +12,7 @@ pub(crate) fn job_color(job_preference: crate::data::colonist::JobPreference) ->
     }
 }
 
-pub(crate) fn colonist_activity_summary(colonist: &Colonist) -> &'static str {
+pub fn colonist_activity_summary(colonist: &Colonist) -> &'static str {
     match colonist.state {
         ColonistState::Idle => "Idle",
         ColonistState::Moving { .. } => "Moving",
@@ -21,7 +23,7 @@ pub(crate) fn colonist_activity_summary(colonist: &Colonist) -> &'static str {
     }
 }
 
-pub(crate) fn sprite_pose_for_state(state: ColonistState) -> SpritePose {
+pub fn sprite_pose_for_state(state: ColonistState) -> SpritePose {
     match state {
         ColonistState::Idle => SpritePose::Idle,
         ColonistState::Moving { .. } => SpritePose::Moving,
@@ -33,19 +35,19 @@ pub(crate) fn sprite_pose_for_state(state: ColonistState) -> SpritePose {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum SocialBodyLanguage {
+pub enum SocialBodyLanguage {
     Supported(i32),
     Tense(i32),
 }
 
 impl SocialBodyLanguage {
-    pub(crate) fn intensity(self) -> i32 {
+    pub fn intensity(self) -> i32 {
         match self {
             SocialBodyLanguage::Supported(value) | SocialBodyLanguage::Tense(value) => value.abs(),
         }
     }
 
-    pub(crate) fn color(self, alpha: f32) -> Color {
+    pub fn color(self, alpha: f32) -> Color {
         match self {
             SocialBodyLanguage::Supported(_) => Color::new(
                 style::BAR_GREEN.r,
@@ -62,7 +64,7 @@ impl SocialBodyLanguage {
         }
     }
 
-    pub(crate) fn symbol(self) -> &'static str {
+    pub fn symbol(self) -> &'static str {
         match self {
             SocialBodyLanguage::Supported(_) => "+",
             SocialBodyLanguage::Tense(_) => "!",
@@ -70,7 +72,7 @@ impl SocialBodyLanguage {
     }
 }
 
-pub(crate) fn sprite_pose_for_colonist_frame(
+pub fn sprite_pose_for_colonist_frame(
     colonist: &Colonist,
     social_signal: Option<SocialBodyLanguage>,
     tick: u64,
@@ -97,11 +99,11 @@ pub(crate) fn sprite_pose_for_colonist_frame(
     sprite_pose_for_state(colonist.state)
 }
 
-pub(crate) fn social_pose_uses_alternate_frame(tick: u64) -> bool {
+pub fn social_pose_uses_alternate_frame(tick: u64) -> bool {
     (tick / 45) % 2 == 1
 }
 
-pub(crate) fn strongest_relationship_value(colonist: &Colonist) -> Option<i32> {
+pub fn strongest_relationship_value(colonist: &Colonist) -> Option<i32> {
     colonist
         .relationships
         .values()
@@ -109,9 +111,6 @@ pub(crate) fn strongest_relationship_value(colonist: &Colonist) -> Option<i32> {
         .copied()
 }
 
-pub(crate) fn social_color(value: i32, alpha: f32) -> Color {
+pub fn social_color(value: i32, alpha: f32) -> Color {
     style::relationship_color_alpha(value, alpha)
 }
-
-#[cfg(test)]
-mod tests;

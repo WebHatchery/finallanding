@@ -1,3 +1,5 @@
+//! resources domain.
+
 use serde::{Deserialize, Serialize};
 
 pub const BASE_STORAGE_CAPACITY: i32 = 36;

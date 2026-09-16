@@ -1,3 +1,5 @@
+//! assignment system domain.
+
 use crate::data::colonist::{relationship_label, Colonist, JobPreference, RelationshipBand};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -109,6 +111,3 @@ fn average_relationship(first: &Colonist, second: &Colonist) -> i32 {
     let second_value = second.relationships.get(&first.id).copied().unwrap_or(0);
     (first_value + second_value) / 2
 }
-
-#[cfg(test)]
-mod tests;

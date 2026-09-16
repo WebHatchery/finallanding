@@ -1,3 +1,5 @@
+//! game state lifecycle domain.
+
 use super::*;
 
 impl State for GameplayState {

@@ -1,3 +1,5 @@
+//! resolution domain.
+
 use crate::data::colonist::{ActivityLocation, ColonistState};
 use crate::data::event_log::LogCategory;
 use crate::data::game_state::GameState;
@@ -5,10 +7,10 @@ use crate::data::mission::{ActiveMission, MissionItem, MissionType};
 use crate::data::priority::ColonyPriority;
 use crate::systems::resource_system::ResourceSystem;
 
-pub(super) struct MissionResolution;
+pub struct MissionResolution;
 
 impl MissionResolution {
-    pub(super) fn process_completed_missions(state: &mut GameState) {
+    pub fn process_completed_missions(state: &mut GameState) {
         if state.missions.active_missions.is_empty() {
             return;
         }
@@ -28,7 +30,7 @@ impl MissionResolution {
         }
     }
 
-    pub(super) fn recover_injured_colonists(state: &mut GameState) {
+    pub fn recover_injured_colonists(state: &mut GameState) {
         let recovered_names = state
             .colonists
             .iter_mut()
@@ -127,7 +129,7 @@ impl MissionResolution {
         ResourceSystem::update_condition(state);
     }
 
-    fn item_for_mission(mission: &ActiveMission) -> MissionItem {
+    pub fn item_for_mission(mission: &ActiveMission) -> MissionItem {
         let roll = (mission.id + mission.colonist_id + mission.started_tick as u32) % 6;
         match mission.mission_type {
             MissionType::SupplyRun => match mission.priority {
@@ -250,6 +252,3 @@ impl MissionResolution {
         detail
     }
 }
-
-#[cfg(test)]
-mod tests;

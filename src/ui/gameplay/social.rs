@@ -1,8 +1,10 @@
+//! social domain.
+
 use super::*;
 use macroquad_toolkit::ui::{draw_ui_text, measure_ui_text};
 
 impl GameplayState {
-    pub(crate) fn draw_social_links(&self, hovered_colonist_id: Option<u32>) {
+    pub fn draw_social_links(&self, hovered_colonist_id: Option<u32>) {
         let focus_id = hovered_colonist_id.or(self.selected_colonist_id);
         let iso = self.iso_view();
 
@@ -73,10 +75,7 @@ impl GameplayState {
         }
     }
 
-    pub(crate) fn social_body_language_for(
-        &self,
-        colonist: &Colonist,
-    ) -> Option<SocialBodyLanguage> {
+    pub fn social_body_language_for(&self, colonist: &Colonist) -> Option<SocialBodyLanguage> {
         if matches!(
             colonist.state,
             ColonistState::Moving { .. }

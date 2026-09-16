@@ -1,3 +1,5 @@
+//! menu state domain.
+
 use crate::state::game_state::GameplayState;
 use crate::state::{State, StateTransition};
 use crate::ui::{menu_start_rect, style};

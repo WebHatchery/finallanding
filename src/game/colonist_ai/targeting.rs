@@ -1,3 +1,5 @@
+//! targeting domain.
+
 use crate::data::building::BuildingType;
 use crate::data::colonist::Colonist;
 use crate::data::grid::Grid;
@@ -5,7 +7,7 @@ use crate::data::types::Position;
 use crate::game::colonist_ai::social::social_score_for_building;
 use crate::game::colonist_ai::types::{BuildingSnapshot, BuildingTarget, SocialLocation};
 
-pub(super) fn find_building_entrance(
+pub fn find_building_entrance(
     from: Position,
     building_type: BuildingType,
     buildings: &[BuildingSnapshot],
@@ -52,7 +54,7 @@ pub(super) fn find_building_entrance(
     best_target.map(|(target, _, _)| target)
 }
 
-pub(super) fn find_adjacent_building(
+pub fn find_adjacent_building(
     pos: Position,
     building_type: BuildingType,
     buildings: &[BuildingSnapshot],
@@ -77,7 +79,7 @@ pub(super) fn find_adjacent_building(
     None
 }
 
-pub(super) fn is_adjacent_to_building(
+pub fn is_adjacent_to_building(
     pos: Position,
     building_type: BuildingType,
     buildings: &[BuildingSnapshot],
@@ -158,6 +160,3 @@ fn is_position_adjacent_to_building(
 
     on_perimeter && !inside
 }
-
-#[cfg(test)]
-mod tests;

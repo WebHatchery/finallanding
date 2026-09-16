@@ -1,3 +1,5 @@
+//! menu domain.
+
 use macroquad::prelude::Rect;
 
 pub fn menu_start_rect(screen_width: f32, screen_height: f32) -> Rect {
@@ -12,6 +14,3 @@ pub fn restart_button_rect(screen_width: f32, screen_height: f32) -> Rect {
         38.0,
     )
 }
-
-#[cfg(test)]
-mod tests;

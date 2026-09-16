@@ -1,3 +1,5 @@
+//! assignment domain.
+
 use crate::data::building::BuildingType;
 use crate::data::colonist::{ActivityLocation, Colonist, ColonistState, JobPreference};
 use crate::data::event_log::LogCategory;
@@ -7,7 +9,7 @@ use crate::game::colonist_ai::types::{BuildingSnapshot, PendingLog, SocialLocati
 use crate::game::colonist_ai::REFUSAL_LOG_COOLDOWN_TICKS;
 use std::collections::HashMap;
 
-pub(super) fn find_or_assign_habitat(
+pub fn find_or_assign_habitat(
     colonist: &mut Colonist,
     buildings: &[BuildingSnapshot],
     building_occupancy: &mut HashMap<u32, u32>,
@@ -67,7 +69,7 @@ pub(super) fn find_or_assign_habitat(
     None
 }
 
-pub(super) fn building_type_for_activity(
+pub fn building_type_for_activity(
     activity: &ActivityType,
     job_preference: JobPreference,
 ) -> Option<BuildingType> {
@@ -79,7 +81,7 @@ pub(super) fn building_type_for_activity(
     }
 }
 
-pub(super) fn specific_target_for_activity(
+pub fn specific_target_for_activity(
     colonist: &Colonist,
     activity: &ActivityType,
     building_type: BuildingType,
@@ -96,7 +98,7 @@ pub(super) fn specific_target_for_activity(
     }
 }
 
-pub(super) fn building_matches_type(
+pub fn building_matches_type(
     buildings: &[BuildingSnapshot],
     building_id: u32,
     building_type: BuildingType,
@@ -116,6 +118,3 @@ fn better_habitat_candidate(candidate: (u32, i32, u32), best: (u32, i32, u32)) -
             && candidate_count == best_count
             && candidate_id < best_id)
 }
-
-#[cfg(test)]
-mod tests;

@@ -1,12 +1,9 @@
+//! game state assign roster commands domain.
+
 use super::*;
 
 impl GameplayState {
-    pub(super) fn handle_assign_toolbar_click(
-        &mut self,
-        context: Rect,
-        mouse_x: f32,
-        mouse_y: f32,
-    ) {
+    pub fn handle_assign_toolbar_click(&mut self, context: Rect, mouse_x: f32, mouse_y: f32) {
         if let Some(filter) = assign_filter_at(context, mouse_x, mouse_y) {
             self.assign_roster_filter = filter;
             self.assign_roster_page = 0;
@@ -52,7 +49,7 @@ impl GameplayState {
         }
     }
 
-    pub(super) fn update_assign_roster_page(&mut self, action: PageAction) {
+    pub fn update_assign_roster_page(&mut self, action: PageAction) {
         let page_count = assign_roster_page_count(
             &self.data.colonists,
             self.selected_colonist_id,
@@ -74,7 +71,7 @@ impl GameplayState {
         self.assign_roster_page = self.assign_roster_page.min(page_count.saturating_sub(1));
     }
 
-    pub(super) fn assign_colonist_index_for_slot(&self, slot: usize) -> Option<usize> {
+    pub fn assign_colonist_index_for_slot(&self, slot: usize) -> Option<usize> {
         assign_visible_colonist_indices(
             &self.data.colonists,
             self.selected_colonist_id,
@@ -88,7 +85,7 @@ impl GameplayState {
         .copied()
     }
 
-    pub(super) fn update_assign_click(&mut self, colonist_index: usize) {
+    pub fn update_assign_click(&mut self, colonist_index: usize) {
         let Some(clicked_id) = self
             .data
             .colonists
@@ -108,7 +105,7 @@ impl GameplayState {
         self.cycle_colonist_job(colonist_index);
     }
 
-    pub(super) fn cycle_colonist_job(&mut self, colonist_index: usize) {
+    pub fn cycle_colonist_job(&mut self, colonist_index: usize) {
         let Some(snapshot) = self.data.colonists.get(colonist_index) else {
             return;
         };

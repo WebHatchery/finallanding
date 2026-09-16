@@ -1,7 +1,9 @@
+//! game state relationship commands domain.
+
 use super::*;
 
 impl GameplayState {
-    pub(super) fn toggle_relationship_directive(&mut self, first_id: u32, second_id: u32) {
+    pub fn toggle_relationship_directive(&mut self, first_id: u32, second_id: u32) {
         let first_name = self
             .colonist_by_id(first_id)
             .map(|colonist| colonist.name.clone())

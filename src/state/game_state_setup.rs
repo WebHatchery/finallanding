@@ -1,13 +1,15 @@
+//! game state setup domain.
+
 use super::*;
 
-pub(crate) fn initial_toolbar_mode() -> ToolbarMode {
+pub fn initial_toolbar_mode() -> ToolbarMode {
     std::env::var("TFL_START_TOOLBAR_MODE")
         .ok()
         .and_then(|value| toolbar_mode_from_name(&value))
         .unwrap_or(ToolbarMode::Build)
 }
 
-pub(crate) fn initial_selected_building(toolbar_mode: ToolbarMode) -> Option<BuildingType> {
+pub fn initial_selected_building(toolbar_mode: ToolbarMode) -> Option<BuildingType> {
     std::env::var("TFL_START_SELECTED_BUILDING")
         .ok()
         .and_then(|value| building_type_from_name(&value))
@@ -17,7 +19,7 @@ pub(crate) fn initial_selected_building(toolbar_mode: ToolbarMode) -> Option<Bui
         })
 }
 
-pub(crate) fn initial_capture_preview_position() -> Option<Position> {
+pub fn initial_capture_preview_position() -> Option<Position> {
     let x = std::env::var("TFL_PREVIEW_GRID_X")
         .ok()
         .and_then(|value| value.parse::<i32>().ok())?;
@@ -27,7 +29,7 @@ pub(crate) fn initial_capture_preview_position() -> Option<Position> {
     Some(Position::new(x, y))
 }
 
-pub(crate) fn seed_assign_spaces_for_capture(data: &mut GameState) {
+pub fn seed_assign_spaces_for_capture(data: &mut GameState) {
     if !std::env::var("TFL_SEED_ASSIGN_SPACES").is_ok_and(|value| value != "0") {
         return;
     }
@@ -63,7 +65,7 @@ pub(crate) fn seed_assign_spaces_for_capture(data: &mut GameState) {
     }
 }
 
-pub(crate) fn seed_social_history_for_capture(data: &mut GameState) {
+pub fn seed_social_history_for_capture(data: &mut GameState) {
     if !std::env::var("TFL_SEED_SOCIAL_HISTORY").is_ok_and(|value| value != "0") {
         return;
     }
@@ -124,7 +126,7 @@ pub(crate) fn seed_social_history_for_capture(data: &mut GameState) {
     }
 }
 
-pub(crate) fn seed_activity_poses_for_capture(data: &mut GameState) {
+pub fn seed_activity_poses_for_capture(data: &mut GameState) {
     if !std::env::var("TFL_SEED_ACTIVITY_POSES").is_ok_and(|value| value != "0") {
         return;
     }
@@ -154,10 +156,7 @@ pub(crate) fn seed_activity_poses_for_capture(data: &mut GameState) {
     }
 }
 
-pub(crate) fn initial_selected_colonist_id(
-    data: &GameState,
-    toolbar_mode: ToolbarMode,
-) -> Option<u32> {
+pub fn initial_selected_colonist_id(data: &GameState, toolbar_mode: ToolbarMode) -> Option<u32> {
     std::env::var("TFL_START_SELECTED_COLONIST")
         .ok()
         .and_then(|value| value.parse::<u32>().ok())
@@ -169,14 +168,14 @@ pub(crate) fn initial_selected_colonist_id(
         })
 }
 
-pub(crate) fn initial_selected_social_history_day(data: &GameState) -> Option<u32> {
+pub fn initial_selected_social_history_day(data: &GameState) -> Option<u32> {
     std::env::var("TFL_START_SOCIAL_HISTORY_DAY")
         .ok()
         .and_then(|value| value.parse::<u32>().ok())
         .filter(|day| data.social_history.iter().any(|entry| entry.day == *day))
 }
 
-pub(crate) fn toolbar_mode_from_name(value: &str) -> Option<ToolbarMode> {
+pub fn toolbar_mode_from_name(value: &str) -> Option<ToolbarMode> {
     match value.trim().to_ascii_lowercase().as_str() {
         "build" => Some(ToolbarMode::Build),
         "rooms" => Some(ToolbarMode::Rooms),
@@ -189,7 +188,7 @@ pub(crate) fn toolbar_mode_from_name(value: &str) -> Option<ToolbarMode> {
     }
 }
 
-pub(crate) fn building_type_from_name(value: &str) -> Option<BuildingType> {
+pub fn building_type_from_name(value: &str) -> Option<BuildingType> {
     match value
         .trim()
         .to_ascii_lowercase()
@@ -204,7 +203,3 @@ pub(crate) fn building_type_from_name(value: &str) -> Option<BuildingType> {
         _ => None,
     }
 }
-
-#[cfg(test)]
-#[path = "game_state_setup/tests.rs"]
-mod tests;

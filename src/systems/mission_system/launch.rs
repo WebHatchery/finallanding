@@ -1,3 +1,5 @@
+//! launch domain.
+
 use crate::data::building::BuildingType;
 use crate::data::colonist::{ActivityLocation, ColonistState, JobPreference};
 use crate::data::event_log::LogCategory;
@@ -12,10 +14,10 @@ pub enum LaunchMissionError {
     MissionCooldown { remaining_ticks: u64 },
 }
 
-pub(super) struct MissionLaunch;
+pub struct MissionLaunch;
 
 impl MissionLaunch {
-    pub(super) fn launch_mission(
+    pub fn launch_mission(
         state: &mut GameState,
         mission_type: MissionType,
     ) -> Result<u32, LaunchMissionError> {
@@ -99,6 +101,3 @@ impl MissionLaunch {
             })
     }
 }
-
-#[cfg(test)]
-mod tests;

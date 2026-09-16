@@ -1,3 +1,5 @@
+//! playtest system domain.
+
 use crate::data::building::BuildingType;
 use crate::data::colonist::{ActivityLocation, ColonistState, JobPreference};
 use crate::data::game_state::GameState;
@@ -392,6 +394,3 @@ impl PlaytestSystem {
             / state.colonists.len() as f32
     }
 }
-
-#[cfg(test)]
-mod tests;

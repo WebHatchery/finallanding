@@ -1,8 +1,8 @@
+//! game state social archive domain.
+
 use super::*;
 
-pub(crate) fn write_social_archive_markdown(
-    history: &[SocialHistoryEntry],
-) -> Result<PathBuf, String> {
+pub fn write_social_archive_markdown(history: &[SocialHistoryEntry]) -> Result<PathBuf, String> {
     let output_dir = PathBuf::from("docs").join("exports");
     std::fs::create_dir_all(&output_dir)
         .map_err(|error| format!("Could not create {}: {}", output_dir.display(), error))?;
@@ -12,7 +12,7 @@ pub(crate) fn write_social_archive_markdown(
     Ok(output_path)
 }
 
-pub(crate) fn social_archive_markdown(history: &[SocialHistoryEntry]) -> String {
+pub fn social_archive_markdown(history: &[SocialHistoryEntry]) -> String {
     let mut output = String::from("# The Final Landing Social Archive\n\n");
     output.push_str(&format!("Reports: {}\n\n", history.len()));
 
@@ -28,7 +28,3 @@ pub(crate) fn social_archive_markdown(history: &[SocialHistoryEntry]) -> String 
 
     output
 }
-
-#[cfg(test)]
-#[path = "game_state_social_archive/tests.rs"]
-mod tests;

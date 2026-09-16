@@ -1,3 +1,5 @@
+//! time events domain.
+
 use serde::{Deserialize, Serialize};
 
 /// Events that are triggered by the time system

@@ -1,7 +1,9 @@
+//! game state assign filter commands domain.
+
 use super::*;
 
 impl GameplayState {
-    pub(super) fn update_assign_building_filter_click(&mut self) {
+    pub fn update_assign_building_filter_click(&mut self) {
         let clicked = self
             .building_at_mouse()
             .map(|building| (building.id, building.building_type.name().to_string()));

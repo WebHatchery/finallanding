@@ -1,3 +1,5 @@
+//! assign domain.
+
 use super::PageAction;
 pub use crate::data::assign_roster::{AssignRosterFilter, AssignRosterSort};
 use macroquad::prelude::{vec2, Rect};
@@ -154,6 +156,3 @@ pub fn assign_batch_action_at(context: Rect, x: f32, y: f32) -> Option<AssignBat
         vec2(x, y),
     )
 }
-
-#[cfg(test)]
-mod tests;

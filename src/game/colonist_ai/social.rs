@@ -1,10 +1,12 @@
+//! social domain.
+
 use crate::data::colonist::Colonist;
 use crate::data::event_log::LogCategory;
 use crate::game::colonist_ai::types::{PendingLog, SocialLocation};
 use crate::game::colonist_ai::SOCIAL_STRAIN_LOG_COOLDOWN_TICKS;
 use std::collections::HashMap;
 
-pub(super) fn social_score_for_building(
+pub fn social_score_for_building(
     colonist: &Colonist,
     building_id: u32,
     social_locations: &[SocialLocation],
@@ -29,7 +31,7 @@ pub(super) fn social_score_for_building(
         .sum()
 }
 
-pub(super) fn log_social_strain(
+pub fn log_social_strain(
     colonist: &mut Colonist,
     other_id: u32,
     colonist_names: &HashMap<u32, String>,

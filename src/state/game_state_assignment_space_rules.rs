@@ -1,12 +1,14 @@
+//! game state assignment space rules domain.
+
 use super::*;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum SpaceAssignmentKind {
+pub enum SpaceAssignmentKind {
     Recovery,
     Work,
 }
 
-pub(crate) fn space_assignment_kind(
+pub fn space_assignment_kind(
     job_preference: crate::data::colonist::JobPreference,
     building_type: BuildingType,
 ) -> Option<SpaceAssignmentKind> {
@@ -16,7 +18,3 @@ pub(crate) fn space_assignment_kind(
 
     (building_type == job_preference.work_building_type()).then_some(SpaceAssignmentKind::Work)
 }
-
-#[cfg(test)]
-#[path = "game_state_assignment_space_rules/tests.rs"]
-mod tests;

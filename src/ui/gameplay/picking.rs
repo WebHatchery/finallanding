@@ -1,7 +1,9 @@
+//! picking domain.
+
 use super::*;
 
 impl GameplayState {
-    pub(crate) fn colonist_id_at_mouse(&self) -> Option<u32> {
+    pub fn colonist_id_at_mouse(&self) -> Option<u32> {
         let game_area = self.layout.game_area();
         let mouse = mouse_position_vec2();
         let mouse_x = mouse.x;
@@ -36,7 +38,7 @@ impl GameplayState {
             .map(|(id, _)| id)
     }
 
-    pub(crate) fn building_at_mouse(&self) -> Option<&Building> {
+    pub fn building_at_mouse(&self) -> Option<&Building> {
         let game_area = self.layout.game_area();
         let mouse = mouse_position_vec2();
         if !game_area.contains(mouse) {
@@ -47,14 +49,14 @@ impl GameplayState {
         self.data.building_system.get_building_at(grid_pos)
     }
 
-    pub(crate) fn colonist_by_id(&self, id: u32) -> Option<&Colonist> {
+    pub fn colonist_by_id(&self, id: u32) -> Option<&Colonist> {
         self.data
             .colonists
             .iter()
             .find(|colonist| colonist.id == id)
     }
 
-    pub(crate) fn inspected_colonist(&self, hovered_colonist_id: Option<u32>) -> Option<&Colonist> {
+    pub fn inspected_colonist(&self, hovered_colonist_id: Option<u32>) -> Option<&Colonist> {
         hovered_colonist_id
             .and_then(|id| self.colonist_by_id(id))
             .or_else(|| {

@@ -1,7 +1,9 @@
+//! game state toolbar input domain.
+
 use super::*;
 
 impl GameplayState {
-    pub(super) fn update_pointer_ui_input(&mut self, input: &InputState) {
+    pub fn update_pointer_ui_input(&mut self, input: &InputState) {
         let assign_room_filter_click =
             self.toolbar_mode == ToolbarMode::Assign && input.right_pressed;
         if !input.left_pressed && !assign_room_filter_click {
@@ -36,7 +38,7 @@ impl GameplayState {
         {}
     }
 
-    pub(super) fn update_toolbar_click(&mut self, mouse_x: f32, mouse_y: f32) -> bool {
+    pub fn update_toolbar_click(&mut self, mouse_x: f32, mouse_y: f32) -> bool {
         let toolbar = self.layout.bottom_toolbar();
         if let Some(mode) = toolbar_mode_at(toolbar, mouse_x, mouse_y) {
             self.toolbar_mode = mode;

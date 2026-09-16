@@ -1,7 +1,9 @@
+//! game state keyboard input domain.
+
 use super::*;
 
 impl GameplayState {
-    pub(super) fn update_building_selection(&mut self) {
+    pub fn update_building_selection(&mut self) {
         // Number keys select buildings (Q, W, E, R, T for 5 buildings)
         if is_key_pressed(KeyCode::Q) {
             self.toggle_building(BuildingType::Habitat);
