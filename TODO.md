@@ -22,7 +22,7 @@ root. Keep this existing tracked `TODO.md` as the single backlog (the requested
   - **Visual evidence:** the current checkout has fresh native captures in
     `docs/verification/` for ordinary, closed-tray, Colony objectives, Assign,
     Research, placement, activity poses, Log timeline, event history, selected Log
-    report, menu, results, and the 720x480 Assign/Research states. The normal 1280x720 and large
+    report, menu, results, help, and the 720x480 Assign/Research states. The normal 1280x720 and large
   1920x1080 captures show the colony as the dominant field without permanent
   rails; the Colony, Assign, Research, and Log captures show secondary information
   replacing the world area instead of stacking over it. These captures verify
@@ -254,8 +254,9 @@ root. Keep this existing tracked `TODO.md` as the single backlog (the requested
     becomes permanent wallpaper. Depends on UI-01/03/04/08.
   - **Current state:** placement feedback now keeps footprint, cost, effect, and
     blocking reason beside the preview, and touch copy uses the visible FILTER
-    ROOM and Tap actions. The arrival mission step is named Research. A
-    persistent Help/reopen route and the full teaching review remain.
+    ROOM and Tap actions. The arrival mission step is named Research, and HELP
+    reopens a concise decision guide without restarting the run. The full
+    teaching review remains.
 
 ### Further inspection and implementation sign-off — not verified defects
 

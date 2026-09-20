@@ -209,6 +209,9 @@ impl Game {
         if scene == "smoke_closed_1280x720" {
             gameplay.context_panel_open = false;
         }
+        if scene == "help_1280x720" {
+            gameplay.help_open = true;
+        }
         if scene == "smoke_research_ready_1280x720" {
             let data = &mut gameplay.data;
             let crate::state::runtime_state::GameState {

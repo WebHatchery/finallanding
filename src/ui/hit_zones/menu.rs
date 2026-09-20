@@ -56,6 +56,27 @@ pub fn introduction_continue_rect(screen_width: f32, screen_height: f32) -> Rect
     )
 }
 
+pub fn help_panel_rect(screen_width: f32, screen_height: f32) -> Rect {
+    let width = (screen_width - 24.0).clamp(320.0, 700.0);
+    let height = 330.0_f32.min(screen_height - 24.0);
+    Rect::new(
+        (screen_width - width) * 0.5,
+        (screen_height - height) * 0.5,
+        width,
+        height,
+    )
+}
+
+pub fn help_close_rect(screen_width: f32, screen_height: f32) -> Rect {
+    let panel = help_panel_rect(screen_width, screen_height);
+    Rect::new(
+        panel.x + panel.w * 0.5 - 100.0,
+        panel.bottom() - 54.0,
+        200.0,
+        44.0,
+    )
+}
+
 pub fn restart_button_rect(screen_width: f32, screen_height: f32) -> Rect {
     Rect::new(
         screen_width * 0.5 - 90.0,

@@ -140,6 +140,8 @@ pub struct GameplayState {
     pub menu_requested: bool,
     /// Whether the finished-scenario result is currently showing the Log view.
     pub result_review_open: bool,
+    /// Whether the contextual help disclosure is open.
+    pub help_open: bool,
     /// Brief acknowledgement for the latest player-visible event.
     pub action_feedback: Option<ActionFeedback>,
     /// Event-log length already surfaced in the transient acknowledgement.
@@ -228,6 +230,7 @@ impl GameplayState {
             save_error_reported: false,
             menu_requested: false,
             result_review_open: false,
+            help_open: false,
             action_feedback: None,
             feedback_seen_log_len,
             selected_mission_type,

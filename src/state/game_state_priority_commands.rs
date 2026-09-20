@@ -34,6 +34,7 @@ impl GameplayState {
                     self.assign_pair_armed = false;
                     self.social_history_search_active = false;
                 }
+                TopBarAction::Help => self.help_open = true,
                 TopBarAction::Menu => self.menu_requested = true,
             }
             return;

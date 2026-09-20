@@ -3,7 +3,7 @@
 use super::*;
 use crate::state::persistence::save_game;
 use crate::ui::introduction::{draw_arrival_overlay, ARRIVAL_STAGE_COUNT};
-use crate::ui::introduction_continue_rect;
+use crate::ui::{draw_help_overlay, help_close_rect, introduction_continue_rect};
 
 impl State for GameplayState {
     fn update(&mut self) -> StateTransition {
@@ -31,6 +31,16 @@ impl State for GameplayState {
                 } else {
                     self.arrival_stage = Some(stage + 1);
                 }
+            }
+            return StateTransition::None;
+        }
+
+        if self.help_open {
+            if input.escape_pressed
+                || (input.left_released
+                    && help_close_rect(screen_width(), screen_height()).contains(input.mouse_pos))
+            {
+                self.help_open = false;
             }
             return StateTransition::None;
         }
@@ -237,6 +247,9 @@ impl State for GameplayState {
         self.draw_scenario_overlay();
         if let Some(stage) = self.arrival_stage {
             draw_arrival_overlay(stage);
+        }
+        if self.help_open {
+            draw_help_overlay();
         }
     }
 }

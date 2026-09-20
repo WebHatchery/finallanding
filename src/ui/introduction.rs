@@ -1,6 +1,7 @@
 //! First-run arrival briefing shown before the survivor roster becomes active.
 
 use crate::ui::hit_zones::introduction_continue_rect;
+use crate::ui::hit_zones::{help_close_rect, help_panel_rect};
 use crate::ui::style;
 use macroquad::prelude::*;
 use macroquad_toolkit::ui::{draw_ui_text, measure_ui_text};
@@ -69,6 +70,74 @@ pub fn draw_arrival_overlay(stage: usize) {
         label,
         button.x + (button.w - label_width) * 0.5,
         button.y + 30.0,
+        style::BODY_SIZE,
+        style::TEXT_PRIMARY,
+    );
+}
+
+pub fn draw_help_overlay() {
+    let panel = help_panel_rect(screen_width(), screen_height());
+    draw_rectangle(
+        0.0,
+        0.0,
+        screen_width(),
+        screen_height(),
+        Color::new(0.01, 0.02, 0.025, 0.7),
+    );
+    style::draw_deep_panel(panel);
+    draw_ui_text(
+        "COLONY HELP",
+        panel.x + 18.0,
+        panel.y + 31.0,
+        style::TITLE_SIZE,
+        style::TEXT_PRIMARY,
+    );
+    draw_ui_text(
+        "Reopen this guide any time from HELP.",
+        panel.x + 18.0,
+        panel.y + 55.0,
+        style::SMALL_SIZE,
+        style::TEXT_MUTED,
+    );
+
+    let text = &crate::data::config::game_config().text;
+    let sections = [
+        ("BUILD", text.intro_building.as_str()),
+        (
+            "ASSIGN",
+            "Tap a survivor to inspect. Use NEXT ROLE, PAIR / APART, or FILTER ROOM before changing the colony.",
+        ),
+        ("RESEARCH", text.intro_missions.as_str()),
+        (
+            "RECOVER",
+            "Use UNDO or CANCEL beside an active plan. MENU saves before leaving; outcomes offer Review, Restart, and Return to Menu.",
+        ),
+    ];
+    for (index, (heading, body)) in sections.into_iter().enumerate() {
+        let y = panel.y + 88.0 + index as f32 * 48.0;
+        draw_ui_text(
+            heading,
+            panel.x + 18.0,
+            y,
+            style::SMALL_SIZE,
+            style::ACCENT_GOLD,
+        );
+        draw_wrapped_text(
+            body,
+            panel.x + 92.0,
+            y,
+            panel.w - 110.0,
+            style::SMALL_SIZE,
+            style::TEXT_BODY,
+        );
+    }
+
+    let close = help_close_rect(screen_width(), screen_height());
+    style::draw_button(close, false, style::button_hovered(close));
+    draw_ui_text(
+        "CLOSE HELP",
+        close.x + 49.0,
+        close.y + 29.0,
         style::BODY_SIZE,
         style::TEXT_PRIMARY,
     );

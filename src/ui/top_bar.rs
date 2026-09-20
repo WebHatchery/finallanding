@@ -84,7 +84,12 @@ pub fn draw_top_bar(
         );
     }
 
-    for action in [TopBarAction::Undo, TopBarAction::Cancel, TopBarAction::Menu] {
+    for action in [
+        TopBarAction::Undo,
+        TopBarAction::Cancel,
+        TopBarAction::Help,
+        TopBarAction::Menu,
+    ] {
         let action_rect = top_bar_action_rect(layout, action);
         let hovered = style::button_hovered(action_rect);
         style::draw_button(action_rect, false, hovered);
@@ -95,6 +100,7 @@ pub fn draw_top_bar(
             TopBarAction::Cancel => crate::data::config::game_config()
                 .text
                 .label("toolbar_cancel"),
+            TopBarAction::Help => "HELP",
             TopBarAction::Menu => "MENU",
         };
         let label_width = measure_ui_text(label, None, 12, 1.0).width;

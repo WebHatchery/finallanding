@@ -20,6 +20,7 @@ pub const BUTTON_GAP: f32 = 5.0;
 pub enum TopBarAction {
     Undo,
     Cancel,
+    Help,
     Menu,
 }
 
@@ -28,9 +29,13 @@ pub fn top_bar_action_rect(layout: &Layout, action: TopBarAction) -> Rect {
     let width = if phone { 54.0 } else { 70.0 };
     let y = if phone { 32.0 } else { TOP_BAR_BUTTON_Y };
     let height = if phone { 20.0 } else { TOP_BAR_BUTTON_H };
+    let action_count = 4.0;
     let x = match action {
-        TopBarAction::Undo => layout.viewport_width - width * 3.0 - BUTTON_GAP * 2.0 - 10.0,
-        TopBarAction::Cancel => layout.viewport_width - width * 2.0 - BUTTON_GAP - 10.0,
+        TopBarAction::Undo => {
+            layout.viewport_width - width * action_count - BUTTON_GAP * 3.0 - 10.0
+        }
+        TopBarAction::Cancel => layout.viewport_width - width * 3.0 - BUTTON_GAP * 2.0 - 10.0,
+        TopBarAction::Help => layout.viewport_width - width * 2.0 - BUTTON_GAP - 10.0,
         TopBarAction::Menu => layout.viewport_width - width - 10.0,
     };
     Rect::new(x.max(8.0), y, width, height)
@@ -38,9 +43,14 @@ pub fn top_bar_action_rect(layout: &Layout, action: TopBarAction) -> Rect {
 
 pub fn top_bar_action_at(layout: &Layout, x: f32, y: f32) -> Option<TopBarAction> {
     hit_test(
-        [TopBarAction::Undo, TopBarAction::Cancel, TopBarAction::Menu]
-            .into_iter()
-            .map(|action| HitTarget::new(top_bar_action_rect(layout, action), action)),
+        [
+            TopBarAction::Undo,
+            TopBarAction::Cancel,
+            TopBarAction::Help,
+            TopBarAction::Menu,
+        ]
+        .into_iter()
+        .map(|action| HitTarget::new(top_bar_action_rect(layout, action), action)),
         vec2(x, y),
     )
 }
