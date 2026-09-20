@@ -1,7 +1,9 @@
 //! advisor overlay domain.
 
 use super::Layout;
+use crate::data::event_log::LogCategory;
 use crate::data::resources::ResourceState;
+use crate::state::game_state::ActionFeedback;
 use crate::systems::advisor_system::{AdvisorPlan, AdvisorSeverity};
 use crate::systems::objective_system::{ObjectiveCard, ObjectiveStatus};
 use crate::ui::style;
@@ -111,6 +113,34 @@ pub fn advisor_banner_rect(layout: &Layout) -> Rect {
         width,
         46.0,
     )
+}
+
+pub fn draw_action_feedback(layout: &Layout, feedback: &ActionFeedback) {
+    let banner = advisor_banner_rect(layout);
+    let width = (banner.w * 0.72).clamp(300.0, 540.0);
+    let rect = Rect::new(banner.x, banner.bottom() + 6.0, width, 48.0);
+    let accent = match feedback.category {
+        LogCategory::System | LogCategory::Mission => style::ACCENT_GOLD,
+        LogCategory::Resource | LogCategory::Colony => style::BAR_GREEN,
+        LogCategory::Mood | LogCategory::Social => style::HEADING_BLUE,
+        LogCategory::Time | LogCategory::Work | LogCategory::Technology => style::TEXT_MUTED,
+    };
+    style::draw_deep_panel(rect);
+    draw_rectangle(rect.x, rect.y, 4.0, rect.h, accent);
+    draw_ui_text(
+        &style::fit_text(&feedback.title, width - 28.0, style::SMALL_SIZE),
+        rect.x + 14.0,
+        rect.y + 19.0,
+        style::SMALL_SIZE,
+        style::TEXT_PRIMARY,
+    );
+    draw_ui_text(
+        &style::fit_text(&feedback.detail, width - 28.0, style::TINY_SIZE),
+        rect.x + 14.0,
+        rect.y + 35.0,
+        style::TINY_SIZE,
+        style::TEXT_BODY,
+    );
 }
 
 pub fn draw_objective_card(x: f32, y: f32, width: f32, objective: &ObjectiveCard) {

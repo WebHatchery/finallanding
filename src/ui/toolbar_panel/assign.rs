@@ -187,12 +187,15 @@ pub fn draw_assign_context(view: AssignContext<'_>) {
     );
     let footer = selected_colonist
         .map(|colonist| {
+            let filter_help = crate::data::config::game_config()
+                .text
+                .label("assign_filter_help");
             let filter_note = active_building_filter
                 .map(|id| format!(" | room filter #{}", id))
                 .unwrap_or_default();
             format!(
-                "Selected {} | tap a room to pin | right-click room to filter{}",
-                colonist.name, filter_note
+                "Selected {} | tap a room to pin | {}{}",
+                colonist.name, filter_help, filter_note
             )
         })
         .unwrap_or_else(|| {

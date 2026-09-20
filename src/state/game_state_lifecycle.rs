@@ -10,6 +10,10 @@ impl State for GameplayState {
         self.layout.refresh();
         let mut input = InputState::capture();
         let pointer = Pointer::read(|position| position);
+        if pointer.down {
+            input.mouse_pos = pointer.position;
+            input.left_down = true;
+        }
         if pointer.released {
             input.mouse_pos = pointer.position;
             input.left_pressed = true;
@@ -66,11 +70,12 @@ impl State for GameplayState {
         }
 
         let ui_consumed_input = self.update_pointer_ui_input(&input);
+        let camera_consumed_input = self.update_camera_pan(&pointer, &input);
         if self.menu_requested {
             self.menu_requested = false;
             return self.menu_transition();
         }
-        if !ui_consumed_input {
+        if !ui_consumed_input && !camera_consumed_input {
             self.update_colonist_selection(&input);
         }
 
@@ -106,6 +111,7 @@ impl State for GameplayState {
         self.update_building_placement(&input);
         self.refresh_render_caches();
         self.maybe_autosave();
+        self.update_action_feedback();
 
         StateTransition::None
     }
@@ -127,6 +133,9 @@ impl State for GameplayState {
             self.data.colonists.len(),
             self.average_mood(),
         );
+        if let Some(feedback) = self.action_feedback.as_ref() {
+            crate::ui::advisor_overlay::draw_action_feedback(&self.layout, feedback);
+        }
         draw_camera_controls(self.world_area(), self.camera_zoom);
         if !self.context_panel_open {
             draw_colonist_inspector(
@@ -230,6 +239,28 @@ impl State for GameplayState {
 }
 
 impl GameplayState {
+    fn update_action_feedback(&mut self) {
+        let frame_seconds = get_frame_time();
+        if self.data.event_log.len() > self.feedback_seen_log_len {
+            if let Some(entry) = self.data.event_log.last() {
+                self.action_feedback = Some(ActionFeedback {
+                    category: entry.category,
+                    title: entry.title.clone(),
+                    detail: entry.detail.clone(),
+                    remaining_seconds: 4.0,
+                });
+            }
+            self.feedback_seen_log_len = self.data.event_log.len();
+        }
+
+        if let Some(feedback) = self.action_feedback.as_mut() {
+            feedback.remaining_seconds -= frame_seconds;
+            if feedback.remaining_seconds <= 0.0 {
+                self.action_feedback = None;
+            }
+        }
+    }
+
     fn maybe_autosave(&mut self) {
         self.autosave_elapsed += get_frame_time();
         if self.autosave_elapsed < 2.0 {

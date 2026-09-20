@@ -52,6 +52,26 @@ pub fn draw_log_context(view: LogContext<'_>) {
         style::TINY_SIZE,
         style::TEXT_BODY,
     );
+    if let Some(log) = logs.last() {
+        draw_ui_text(
+            "RECENT ACTION",
+            context.x + 18.0,
+            context.y + 91.0,
+            style::TINY_SIZE,
+            style::HEADING_BLUE,
+        );
+        draw_ui_text(
+            &style::fit_text(
+                &format!("{} {}", category_prefix(log.category), log.title),
+                context.w - 132.0,
+                style::TINY_SIZE,
+            ),
+            context.x + 108.0,
+            context.y + 91.0,
+            style::TINY_SIZE,
+            style::TEXT_BODY,
+        );
+    }
 
     let current_page = social_history_page.min(page_count.saturating_sub(1));
     let timeline = timeline_rows;
@@ -59,7 +79,7 @@ pub fn draw_log_context(view: LogContext<'_>) {
         draw_ui_text(
             "SOCIAL TIMELINE",
             context.x + 18.0,
-            context.y + 78.0,
+            context.y + 107.0,
             style::TINY_SIZE,
             style::HEADING_BLUE,
         );
@@ -278,9 +298,9 @@ pub fn draw_log_search_control(context: Rect, query: &str, active: bool) {
 pub fn draw_social_report_drilldown(context: Rect, entry: &SocialHistoryEntry) {
     let rect = Rect::new(
         context.x + 12.0,
-        context.y + 96.0,
+        context.y + 112.0,
         context.w - 24.0,
-        context.h - 108.0,
+        context.h - 124.0,
     );
     style::draw_deep_panel(rect);
     draw_rectangle(rect.x, rect.y, 4.0, rect.h, social_history_color(entry));

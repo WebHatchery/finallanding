@@ -19,11 +19,22 @@ impl GameplayState {
     }
 
     pub fn iso_view(&self) -> IsoView {
-        IsoView::for_area_with_zoom(
+        IsoView::for_area_with_zoom_and_offset(
             self.world_area(),
             self.data.grid.width as u32,
             self.data.grid.height as u32,
             self.camera_zoom,
+            self.camera_offset,
         )
+    }
+
+    pub fn clamp_camera_offset(&mut self) {
+        self.camera_offset = IsoView::clamp_pan(
+            self.world_area(),
+            self.data.grid.width as u32,
+            self.data.grid.height as u32,
+            self.camera_zoom,
+            self.camera_offset,
+        );
     }
 }

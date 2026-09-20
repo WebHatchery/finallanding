@@ -72,9 +72,9 @@ root. Keep this existing tracked `TODO.md` as the single backlog (the requested
     clustered survivors, resize, zoom and display scaling. Use taps and drags to
     place, cancel, inspect, pin and recenter; confirm dragging never places a room.
   - **Current state:** rendering, placement preview, picking, and blocked-world
-    input now share the unobstructed world rectangle, with bounded visible zoom
-    and recenter controls. Remaining work is bounded pan/drag behavior and live
-    resize/touch verification.
+  input now share the unobstructed world rectangle, with bounded visible zoom,
+  recenter, and drag-to-pan controls. Remaining work is live resize/touch
+  verification.
 
 - [ ] **UI-04 / P1 — Reflow controls and consume input in the visible topmost layer.**
   - **Screen/files:** top bar, Assign filters, Log search/keyboard, modal states;
@@ -168,6 +168,10 @@ root. Keep this existing tracked `TODO.md` as the single backlog (the requested
     controlled save/export failure. Observe feedback expiry and retrieve each
     result using touch at 720x480 and 1280x720. Depends on UI-01/04; supplies the
     history foundation for UI-07.
+  - **Current state:** new event-log entries surface as a temporary, color-coded
+    acknowledgement near the advisor banner, and Log retains a readable Recent
+    Action line alongside social reports. Full general-event paging and live
+    failure/recovery review remain.
 
 - [ ] **UI-07 / P1 — Give social reports a readable, deliberate reading view.**
   - **Screen/files:** Log timeline, selected report, search and export;
@@ -249,6 +253,10 @@ root. Keep this existing tracked `TODO.md` as the single backlog (the requested
     placement, unaffordable/occupied/out-of-bounds placement, Undo, Cancel and
     Help reopen. Confirm full warnings remain available and no temporary hint
     becomes permanent wallpaper. Depends on UI-01/03/04/08.
+  - **Current state:** placement feedback now keeps footprint, cost, effect, and
+    blocking reason beside the preview, and touch copy uses the visible FILTER
+    ROOM and Tap actions. The arrival mission step is named Research. A
+    persistent Help/reopen route and the full teaching review remain.
 
 ### Further inspection and implementation sign-off — not verified defects
 

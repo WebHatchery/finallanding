@@ -16,6 +16,16 @@ impl IsoView {
     }
 
     pub fn for_area_with_zoom(area: Rect, grid_width: u32, grid_height: u32, zoom: f32) -> Self {
+        Self::for_area_with_zoom_and_offset(area, grid_width, grid_height, zoom, Vec2::ZERO)
+    }
+
+    pub fn for_area_with_zoom_and_offset(
+        area: Rect,
+        grid_width: u32,
+        grid_height: u32,
+        zoom: f32,
+        offset: Vec2,
+    ) -> Self {
         let map_span = (grid_width + grid_height) as f32;
         // Fit the whole diamond inside the playable region at compact sizes so
         // every cell remains reachable by touch. Desktop layouts still get
@@ -29,10 +39,48 @@ impl IsoView {
             origin: vec2(
                 area.x + area.w * 0.5,
                 area.y + (area.h - map_h) * 0.28 + 18.0,
-            ),
+            ) + offset,
             tile_w,
             tile_h,
         }
+    }
+
+    pub fn map_bounds(self, grid_width: u32, grid_height: u32) -> Rect {
+        let horizontal_extent = grid_width.max(grid_height) as f32 * self.tile_w * 0.5;
+        let vertical_extent = (grid_width + grid_height) as f32 * self.tile_h * 0.5;
+        Rect::new(
+            self.origin.x - horizontal_extent,
+            self.origin.y,
+            horizontal_extent * 2.0,
+            vertical_extent,
+        )
+    }
+
+    pub fn pan_limits(area: Rect, grid_width: u32, grid_height: u32, zoom: f32) -> (Vec2, Vec2) {
+        let base = Self::for_area_with_zoom(area, grid_width, grid_height, zoom);
+        let bounds = base.map_bounds(grid_width, grid_height);
+        let margin = 18.0;
+        (
+            vec2(
+                bounded_pan_axis(area.x, area.right(), bounds.x, bounds.right(), margin).0,
+                bounded_pan_axis(area.y, area.bottom(), bounds.y, bounds.bottom(), margin).0,
+            ),
+            vec2(
+                bounded_pan_axis(area.x, area.right(), bounds.x, bounds.right(), margin).1,
+                bounded_pan_axis(area.y, area.bottom(), bounds.y, bounds.bottom(), margin).1,
+            ),
+        )
+    }
+
+    pub fn clamp_pan(
+        area: Rect,
+        grid_width: u32,
+        grid_height: u32,
+        zoom: f32,
+        offset: Vec2,
+    ) -> Vec2 {
+        let (min, max) = Self::pan_limits(area, grid_width, grid_height, zoom);
+        vec2(offset.x.clamp(min.x, max.x), offset.y.clamp(min.y, max.y))
     }
 
     pub fn grid_to_screen(self, position: Position) -> Vec2 {
@@ -51,6 +99,22 @@ impl IsoView {
             ((dy + dx) * 0.5).floor() as i32,
             ((dy - dx) * 0.5).floor() as i32,
         )
+    }
+}
+
+fn bounded_pan_axis(
+    area_start: f32,
+    area_end: f32,
+    map_start: f32,
+    map_end: f32,
+    margin: f32,
+) -> (f32, f32) {
+    let min = area_end - margin - map_end;
+    let max = area_start + margin - map_start;
+    if min <= max {
+        (min, max)
+    } else {
+        (0.0, 0.0)
     }
 }
 

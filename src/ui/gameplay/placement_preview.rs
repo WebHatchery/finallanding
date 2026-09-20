@@ -124,7 +124,7 @@ impl GameplayState {
                 ORANGE,
             );
             draw_ui_text(
-                "Move the footprint or pick another building.",
+                "Move the footprint or choose another plan.",
                 x + 12.0,
                 y + 108.0,
                 11.0,
@@ -142,7 +142,7 @@ impl GameplayState {
                 12.0,
                 LIGHTGRAY,
             );
-            draw_ui_text("Click to place this plan.", x + 12.0, y + 108.0, 11.0, GRAY);
+            draw_ui_text("Tap to place this plan.", x + 12.0, y + 108.0, 11.0, GRAY);
         }
     }
 }

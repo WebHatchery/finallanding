@@ -50,6 +50,14 @@ use macroquad_toolkit::input::InputState;
 use macroquad_toolkit::ui::Pointer;
 use std::path::PathBuf;
 
+#[derive(Clone, Debug)]
+pub struct ActionFeedback {
+    pub category: LogCategory,
+    pub title: String,
+    pub detail: String,
+    pub remaining_seconds: f32,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 struct LogCacheKey {
     history_len: usize,
@@ -87,6 +95,12 @@ pub struct GameplayState {
     pub context_panel_open: bool,
     /// Bounded observation zoom; placement and picking use the same view.
     pub camera_zoom: f32,
+    /// Bounded camera translation used by the map drag gesture.
+    pub camera_offset: Vec2,
+    /// Last pointer position while a map drag is in progress.
+    pub camera_drag_last: Option<Vec2>,
+    /// Whether the current map gesture moved far enough to consume selection.
+    pub camera_drag_moved: bool,
     /// Current page in the Assign mode roster.
     pub assign_roster_page: usize,
     /// Active filter in the Assign mode roster.
@@ -121,6 +135,10 @@ pub struct GameplayState {
     pub menu_requested: bool,
     /// Whether the finished-scenario result is currently showing the Log view.
     pub result_review_open: bool,
+    /// Brief acknowledgement for the latest player-visible event.
+    pub action_feedback: Option<ActionFeedback>,
+    /// Event-log length already surfaced in the transient acknowledgement.
+    pub feedback_seen_log_len: usize,
     /// Mission card selected in the Research tray before an explicit launch.
     pub selected_mission_type: MissionType,
     /// Cached summary input fingerprint used to avoid repeated relationship scans during draw.
@@ -165,6 +183,7 @@ impl GameplayState {
         let capture_preview_position = initial_capture_preview_position();
         let selected_social_history_day = initial_selected_social_history_day(&data);
         let selected_mission_type = MissionSystem::recommended_mission_type(&data);
+        let feedback_seen_log_len = data.event_log.len();
 
         let mut state = Self {
             prev_tick: data.tick,
@@ -181,6 +200,9 @@ impl GameplayState {
             toolbar_mode,
             context_panel_open: false,
             camera_zoom: 1.0,
+            camera_offset: Vec2::ZERO,
+            camera_drag_last: None,
+            camera_drag_moved: false,
             assign_roster_page: 0,
             assign_roster_filter: AssignRosterFilter::All,
             assign_roster_sort: AssignRosterSort::Roster,
@@ -198,6 +220,8 @@ impl GameplayState {
             save_error_reported: false,
             menu_requested: false,
             result_review_open: false,
+            action_feedback: None,
+            feedback_seen_log_len,
             selected_mission_type,
             cached_summary_key: 0,
             cached_colony_summary: crate::systems::summary_system::ColonyPressureSummary {

@@ -165,7 +165,7 @@
     "back_to_menu": "Return to Menu",
     "intro_building": "BUILD: choose a room, then tap a clear tile to place it.",
     "intro_assignments": "ASSIGN: select a survivor and pin a home or work room.",
-    "intro_missions": "MISSIONS: build an Exploration Gate, then launch a safe scan.",
+    "intro_missions": "RESEARCH: build an Exploration Gate, then launch a safe scan.",
     "intro_restart": "RESTART: use the visible Restart Run button after a failure or victory.",
     "intro_continue": "Continue",
     "labels": {
@@ -185,6 +185,7 @@
       "toolbar_undo": "UNDO",
       "toolbar_cancel": "CANCEL",
       "assign_filter_room": "FILTER ROOM",
+      "assign_filter_help": "Tap FILTER ROOM, then tap a room to filter.",
       "toolbar_mode_build": "Build",
       "toolbar_mode_rooms": "Rooms",
       "toolbar_mode_objects": "Objects",

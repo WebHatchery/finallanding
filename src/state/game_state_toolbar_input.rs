@@ -39,12 +39,56 @@ impl GameplayState {
         false
     }
 
+    pub fn update_camera_pan(&mut self, pointer: &Pointer, input: &InputState) -> bool {
+        let map_point = pointer.position;
+        let can_start = self.selected_building.is_none()
+            && self.pointer_inside_playable_map(&InputState {
+                mouse_pos: map_point,
+                ..input.clone()
+            });
+
+        if pointer.down && self.camera_drag_last.is_none() && can_start {
+            self.camera_drag_last = Some(map_point);
+            self.camera_drag_moved = false;
+        }
+
+        let Some(last) = self.camera_drag_last else {
+            return false;
+        };
+
+        if pointer.down {
+            let delta = map_point - last;
+            self.camera_drag_last = Some(map_point);
+            if delta.length_squared() > 0.25 {
+                self.camera_offset += delta;
+                self.clamp_camera_offset();
+            }
+            if delta.length_squared() > 25.0 {
+                self.camera_drag_moved = true;
+            }
+            return self.camera_drag_moved;
+        }
+
+        if pointer.released {
+            let moved = self.camera_drag_moved;
+            self.camera_drag_last = None;
+            self.camera_drag_moved = false;
+            return moved;
+        }
+
+        false
+    }
+
     fn update_camera_action(&mut self, action: CameraAction) {
         match action {
             CameraAction::ZoomOut => self.camera_zoom = (self.camera_zoom - 0.1).max(0.8),
             CameraAction::ZoomIn => self.camera_zoom = (self.camera_zoom + 0.1).min(1.25),
-            CameraAction::Recenter => self.camera_zoom = 1.0,
+            CameraAction::Recenter => {
+                self.camera_zoom = 1.0;
+                self.camera_offset = Vec2::ZERO;
+            }
         }
+        self.clamp_camera_offset();
     }
 
     pub fn update_toolbar_click(&mut self, mouse_x: f32, mouse_y: f32) -> bool {
