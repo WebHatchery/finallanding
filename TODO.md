@@ -18,13 +18,19 @@ backlog (the requested `todo.md` resolves to it on Windows).
   `PROJECT_AGENTS.md` was found. Reviewed rendering, hit zones, state transitions,
   pointer routing, camera math, capture code, configuration text, and the existing
   manual relationship checklist.
-- **Visual evidence:** inspected all eight existing `docs/verification/ui_smoke*.png`
-  images: Build at 1280x720 and 1920x1080, Assign and Log at 1280x720, placement,
-  activity poses, toolkit tooltips, and the 720x480 Assign capture. These are saved
-  reference images, not fresh captures of this checkout. The toolkit-tooltip image
-  has older art/layout and artificial text; do not treat its test copy as shipped
-  demo prose. `tfl_guide_mvp.png` and `catalog_thumbnail.png` are not gameplay QA
-  evidence for this review.
+- **Visual evidence:** re-inspected all eight existing
+  `docs/verification/ui_smoke*.png` images: Build at 1280x720 and 1920x1080,
+  Assign and Log at 1280x720, placement, activity poses, toolkit tooltips, and the
+  720x480 Assign capture. The Build, Assign, Log, and placement captures visibly
+  confirm the stacked left objective/advisor/inspector area, rail-constrained world,
+  right map/resources/colonists area, and bottom context-plus-mode trays. The Log
+  capture also shows the selected report floating over the map/rail boundary, while
+  the 720x480 capture visibly truncates or compresses several regions. These are
+  saved reference images, not fresh captures of this checkout, and they establish
+  composition/readability findings rather than touch-path results. The
+  toolkit-tooltip image has older art/layout and artificial text; do not treat its
+  test copy as shipped demo prose. `tfl_guide_mvp.png` and `catalog_thumbnail.png`
+  are not gameplay QA evidence for this review.
 - **Code evidence** below means a source-confirmed layout or behavior, not a claim
   that a live mouse/touch path was exercised. No game was launched, screenshots
   overwritten, browser touch test performed, or publish run made for this
@@ -52,7 +58,8 @@ backlog (the requested `todo.md` resolves to it on Windows).
     with the colony. At 1280x720 the nominal map is only 678x568 before the tray
     obscures its bottom. Both rails remain at 720x480; the fixed resource stack
     runs behind the tray and the colonist heading reaches the bottom edge.
-    Build/Rooms/Objects repeat the same five buildings in overlapping categories.
+    Build repeats the same five plans already exposed by the Rooms and Objects
+    subsets, so the player must choose among three construction entry points.
   - **Change:** first record the UI_STYLE §1 brief for observation, placement,
     assignment, reports, arrival, and results, with explicit normal/minimum canvas
     sizes. Replace the permanent dual rails with a quiet essential-status strip
