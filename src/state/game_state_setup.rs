@@ -9,6 +9,12 @@ pub fn initial_toolbar_mode() -> ToolbarMode {
         .unwrap_or(ToolbarMode::Build)
 }
 
+pub fn initial_log_view_is_events() -> bool {
+    std::env::var("TFL_START_LOG_VIEW")
+        .ok()
+        .is_some_and(|value| value.eq_ignore_ascii_case("events"))
+}
+
 pub fn initial_selected_building(toolbar_mode: ToolbarMode) -> Option<BuildingType> {
     std::env::var("TFL_START_SELECTED_BUILDING")
         .ok()

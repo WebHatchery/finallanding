@@ -206,6 +206,9 @@ impl State for GameplayState {
                         colony_summary: &self.cached_colony_summary,
                         timeline_rows: &self.cached_log_rows,
                         page_count: self.cached_log_page_count,
+                        event_page: self.event_history_page,
+                        event_page_count: self.event_history_page_count(),
+                        show_event_history: self.show_event_history,
                     },
                 },
             );

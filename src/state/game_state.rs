@@ -35,14 +35,15 @@ use crate::ui::{
     draw_advisor_banner, draw_bottom_toolbar, draw_camera_controls, draw_colonist_inspector,
     draw_debug_overlay, draw_toolbar_context_panel, draw_top_bar, log_filter_at,
     log_keyboard_action_at, log_keyboard_bounds, log_page_action_at, log_report_close_rect,
-    log_search_action_at, log_timeline_row_at, research_action_rect, restart_button_rect,
-    social_history_page_count, social_timeline_day_at, toolbar_building_at_for_mode,
-    toolbar_buildings_for_mode, toolbar_colonist_index_at, toolbar_context_rect_for_mode,
-    toolbar_mission_at, toolbar_mode_at, toolbar_priority_at, top_bar_action_at,
-    top_bar_priority_at_for, top_bar_speed_at_for, AssignBatchAction, AssignRosterFilter,
-    AssignRosterSort, CameraAction, DebugOverlayContext, IsoView, Layout, LogFilter,
-    LogSearchAction, PageAction, PlaceholderArt, SocialTimelineRow, ToolbarAssignData,
-    ToolbarLogData, ToolbarMode, ToolbarPanelData, ToolbarResearchData, TopBarAction,
+    log_search_action_at, log_section_at, log_timeline_row_at, research_action_rect,
+    restart_button_rect, social_history_page_count, social_timeline_day_at,
+    toolbar_building_at_for_mode, toolbar_buildings_for_mode, toolbar_colonist_index_at,
+    toolbar_context_rect_for_mode, toolbar_mission_at, toolbar_mode_at, toolbar_priority_at,
+    top_bar_action_at, top_bar_priority_at_for, top_bar_speed_at_for, AssignBatchAction,
+    AssignRosterFilter, AssignRosterSort, CameraAction, DebugOverlayContext, IsoView, Layout,
+    LogFilter, LogSearchAction, LogSectionAction, PageAction, PlaceholderArt, SocialTimelineRow,
+    ToolbarAssignData, ToolbarLogData, ToolbarMode, ToolbarPanelData, ToolbarResearchData,
+    TopBarAction,
 };
 use macroquad::prelude::*;
 use macroquad_toolkit::debug::DebugOverlay;
@@ -117,6 +118,10 @@ pub struct GameplayState {
     pub assign_pair_armed: bool,
     /// Current page in the Log mode social archive.
     pub social_history_page: usize,
+    /// Current page in the general event history.
+    pub event_history_page: usize,
+    /// Whether Log is showing general events instead of social reports.
+    pub show_event_history: bool,
     /// Active filter in the Log mode social archive.
     pub social_history_filter: LogFilter,
     /// Search query for the Log mode social archive.
@@ -183,6 +188,7 @@ impl GameplayState {
         let capture_preview_position = initial_capture_preview_position();
         let selected_social_history_day = initial_selected_social_history_day(&data);
         let selected_mission_type = MissionSystem::recommended_mission_type(&data);
+        let show_event_history = initial_log_view_is_events();
         let feedback_seen_log_len = data.event_log.len();
 
         let mut state = Self {
@@ -211,6 +217,8 @@ impl GameplayState {
             assign_room_filter_armed: false,
             assign_pair_armed: false,
             social_history_page: 0,
+            event_history_page: 0,
+            show_event_history,
             social_history_filter: LogFilter::All,
             social_history_query: String::new(),
             social_history_search_active: false,

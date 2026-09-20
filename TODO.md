@@ -19,10 +19,10 @@ root. Keep this existing tracked `TODO.md` as the single backlog (the requested
   `PROJECT_AGENTS.md` was found. Reviewed rendering, hit zones, state transitions,
   pointer routing, camera math, capture code, configuration text, and the existing
   manual relationship checklist.
-- **Visual evidence:** the current checkout has fresh native captures in
-  `docs/verification/` for ordinary, closed-tray, Colony objectives, Assign,
-  Research, placement, activity poses, Log timeline, selected Log report, menu,
-  results, and the 720x480 Assign/Research states. The normal 1280x720 and large
+  - **Visual evidence:** the current checkout has fresh native captures in
+    `docs/verification/` for ordinary, closed-tray, Colony objectives, Assign,
+    Research, placement, activity poses, Log timeline, event history, selected Log
+    report, menu, results, and the 720x480 Assign/Research states. The normal 1280x720 and large
   1920x1080 captures show the colony as the dominant field without permanent
   rails; the Colony, Assign, Research, and Log captures show secondary information
   replacing the world area instead of stacking over it. These captures verify
@@ -169,9 +169,8 @@ root. Keep this existing tracked `TODO.md` as the single backlog (the requested
     result using touch at 720x480 and 1280x720. Depends on UI-01/04; supplies the
     history foundation for UI-07.
   - **Current state:** new event-log entries surface as a temporary, color-coded
-    acknowledgement near the advisor banner, and Log retains a readable Recent
-    Action line alongside social reports. Full general-event paging and live
-    failure/recovery review remain.
+    acknowledgement near the advisor banner, and Log now has a paged EVENT HISTORY
+    view beside social reports. Live failure/recovery review remains.
 
 - [ ] **UI-07 / P1 — Give social reports a readable, deliberate reading view.**
   - **Screen/files:** Log timeline, selected report, search and export;

@@ -70,6 +70,7 @@ impl Game {
             "TFL_START_TOOLBAR_MODE",
             "TFL_START_SELECTED_COLONIST",
             "TFL_START_SOCIAL_HISTORY_DAY",
+            "TFL_START_LOG_VIEW",
             "TFL_START_SELECTED_BUILDING",
             "TFL_PREVIEW_GRID_X",
             "TFL_PREVIEW_GRID_Y",
@@ -133,6 +134,16 @@ impl Game {
                 false,
                 vec![
                     ("TFL_START_TOOLBAR_MODE", "log"),
+                    ("TFL_SEED_SOCIAL_HISTORY", "1"),
+                ],
+            ),
+            "smoke_log_events_1280x720" => (
+                1280,
+                720,
+                false,
+                vec![
+                    ("TFL_START_TOOLBAR_MODE", "log"),
+                    ("TFL_START_LOG_VIEW", "events"),
                     ("TFL_SEED_SOCIAL_HISTORY", "1"),
                 ],
             ),

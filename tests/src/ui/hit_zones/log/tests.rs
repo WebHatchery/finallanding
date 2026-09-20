@@ -76,3 +76,21 @@ fn test_log_timeline_hit_zones_match_visible_rows() {
     assert_eq!(log_timeline_row_at(context, 3, third_x, third_y), Some(2));
     assert_eq!(log_timeline_row_at(context, 2, third_x, third_y), None);
 }
+
+#[test]
+fn test_log_section_tabs_and_event_rows_are_distinct() {
+    let context = Rect::new(380.0, 500.0, 520.0, 276.0);
+    let (social_x, social_y) = center(log_section_rect(context, 0));
+    let (events_x, events_y) = center(log_section_rect(context, 1));
+    let (event_x, event_y) = center(log_event_row_rect(context, 2));
+
+    assert_eq!(
+        log_section_at(context, social_x, social_y),
+        Some(LogSectionAction::Social)
+    );
+    assert_eq!(
+        log_section_at(context, events_x, events_y),
+        Some(LogSectionAction::Events)
+    );
+    assert_eq!(log_event_row_at(context, 3, event_x, event_y), Some(2));
+}

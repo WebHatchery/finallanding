@@ -15,6 +15,9 @@ pub struct LogContext<'a> {
     pub summary: &'a ColonyPressureSummary,
     pub timeline_rows: &'a [SocialTimelineRow],
     pub page_count: usize,
+    pub event_page: usize,
+    pub event_page_count: usize,
+    pub show_event_history: bool,
 }
 
 pub fn draw_log_context(view: LogContext<'_>) {
@@ -30,12 +33,20 @@ pub fn draw_log_context(view: LogContext<'_>) {
         summary,
         timeline_rows,
         page_count,
+        event_page,
+        event_page_count,
+        show_event_history,
     } = view;
     let text = &crate::data::config::game_config().text;
     let mut hovered_history = None;
     draw_log_search_control(context, social_history_query, social_history_search_active);
+    draw_log_section_tabs(context, show_event_history);
     if social_history_search_active {
         draw_touch_keyboard(context);
+    }
+    if show_event_history {
+        draw_event_history(context, logs, event_page, event_page_count);
+        return;
     }
     let social_brief = social_brief_lines(summary);
     draw_ui_text(
@@ -191,6 +202,102 @@ pub fn draw_log_context(view: LogContext<'_>) {
 
     if let Some(log) = hovered_log {
         draw_tooltip_near_mouse(toolbar_tooltip_bounds(context), &log.title, &log.detail);
+    }
+}
+
+fn draw_log_section_tabs(context: Rect, show_event_history: bool) {
+    for (index, (label, active)) in [
+        ("SOCIAL", !show_event_history),
+        ("EVENTS", show_event_history),
+    ]
+    .into_iter()
+    .enumerate()
+    {
+        let rect = log_section_rect(context, index);
+        style::draw_button(rect, active, style::button_hovered(rect));
+        draw_ui_text(
+            label,
+            rect.x + 9.0,
+            rect.y + 20.0,
+            style::TINY_SIZE,
+            if active {
+                style::TEXT_PRIMARY
+            } else {
+                style::TEXT_MUTED
+            },
+        );
+    }
+}
+
+fn draw_event_history(context: Rect, logs: &[ColonyLogEntry], page: usize, page_count: usize) {
+    draw_ui_text(
+        "EVENT HISTORY",
+        context.x + 18.0,
+        context.y + 97.0,
+        style::TINY_SIZE,
+        style::HEADING_BLUE,
+    );
+    draw_log_page_controls(context, page.min(page_count.saturating_sub(1)), page_count);
+
+    let start = page.saturating_mul(4);
+    let entries = logs.iter().rev().skip(start).take(4);
+    let mut count = 0;
+    for (index, entry) in entries.enumerate() {
+        count += 1;
+        let rect = log_event_row_rect(context, index);
+        draw_rectangle(
+            rect.x,
+            rect.y,
+            rect.w,
+            rect.h,
+            Color::new(0.05, 0.07, 0.075, 0.72),
+        );
+        draw_rectangle(
+            rect.x,
+            rect.y,
+            3.0,
+            rect.h,
+            event_category_color(entry.category),
+        );
+        draw_ui_text(
+            category_prefix(entry.category),
+            rect.x + 10.0,
+            rect.y + 16.0,
+            style::TINY_SIZE,
+            event_category_color(entry.category),
+        );
+        draw_ui_text(
+            &style::fit_text(&entry.title, rect.w - 90.0, style::SMALL_SIZE),
+            rect.x + 54.0,
+            rect.y + 16.0,
+            style::SMALL_SIZE,
+            style::TEXT_PRIMARY,
+        );
+        draw_ui_text(
+            &style::fit_text(&entry.detail, rect.w - 64.0, style::TINY_SIZE),
+            rect.x + 54.0,
+            rect.y + 31.0,
+            style::TINY_SIZE,
+            style::TEXT_BODY,
+        );
+    }
+    if count == 0 {
+        draw_ui_text(
+            "No general events yet.",
+            context.x + 18.0,
+            context.y + 128.0,
+            style::SMALL_SIZE,
+            style::TEXT_MUTED,
+        );
+    }
+}
+
+fn event_category_color(category: LogCategory) -> Color {
+    match category {
+        LogCategory::System | LogCategory::Mission => style::ACCENT_GOLD,
+        LogCategory::Resource | LogCategory::Colony => style::BAR_GREEN,
+        LogCategory::Mood | LogCategory::Social => style::HEADING_BLUE,
+        LogCategory::Time | LogCategory::Work | LogCategory::Technology => style::TEXT_MUTED,
     }
 }
 

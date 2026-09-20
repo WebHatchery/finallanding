@@ -16,12 +16,12 @@ use crate::ui::advisor_overlay::draw_objective_card;
 use crate::ui::hit_zones::{
     assign_batch_rect, assign_filter_rect, assign_page_next_rect, assign_page_previous_rect,
     assign_pair_action_rect, assign_role_action_rect, assign_role_filter_rect,
-    assign_room_filter_rect, assign_sort_rect, log_filter_rect, log_keyboard_bounds,
-    log_keyboard_key_rect, log_page_next_rect, log_page_previous_rect, log_report_close_rect,
-    log_search_clear_rect, log_search_export_rect, log_search_rect, log_timeline_row_rect,
-    research_action_rect, toolbar_buildings_for_mode, toolbar_context_item_rect,
-    toolbar_context_rect_for_mode, toolbar_list_item_rect, AssignBatchAction, AssignRosterFilter,
-    AssignRosterSort, LogFilter, ToolbarMode,
+    assign_room_filter_rect, assign_sort_rect, log_event_row_rect, log_filter_rect,
+    log_keyboard_bounds, log_keyboard_key_rect, log_page_next_rect, log_page_previous_rect,
+    log_report_close_rect, log_search_clear_rect, log_search_export_rect, log_search_rect,
+    log_section_rect, log_timeline_row_rect, research_action_rect, toolbar_buildings_for_mode,
+    toolbar_context_item_rect, toolbar_context_rect_for_mode, toolbar_list_item_rect,
+    AssignBatchAction, AssignRosterFilter, AssignRosterSort, LogFilter, ToolbarMode,
 };
 use crate::ui::style;
 use crate::ui::tooltip::draw_tooltip_near_mouse;
@@ -89,6 +89,9 @@ pub struct ToolbarLogData<'a> {
     pub colony_summary: &'a ColonyPressureSummary,
     pub timeline_rows: &'a [SocialTimelineRow],
     pub page_count: usize,
+    pub event_page: usize,
+    pub event_page_count: usize,
+    pub show_event_history: bool,
 }
 
 struct ResearchContext<'a> {
@@ -156,6 +159,9 @@ pub fn draw_toolbar_context_panel(layout: &Layout, panel: ToolbarPanelData<'_>) 
             summary: panel.log.colony_summary,
             timeline_rows: panel.log.timeline_rows,
             page_count: panel.log.page_count,
+            event_page: panel.log.event_page,
+            event_page_count: panel.log.event_page_count,
+            show_event_history: panel.log.show_event_history,
         }),
     }
 }

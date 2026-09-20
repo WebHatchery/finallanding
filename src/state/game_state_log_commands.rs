@@ -43,6 +43,21 @@ impl GameplayState {
     }
 
     pub fn handle_log_toolbar_click(&mut self, context: Rect, mouse_x: f32, mouse_y: f32) {
+        if let Some(section) = log_section_at(context, mouse_x, mouse_y) {
+            self.show_event_history = matches!(section, LogSectionAction::Events);
+            self.social_history_search_active = false;
+            self.event_history_page = 0;
+            self.selected_social_history_day = None;
+            return;
+        }
+
+        if self.show_event_history {
+            if let Some(action) = log_page_action_at(context, mouse_x, mouse_y) {
+                self.update_event_history_page(action);
+            }
+            return;
+        }
+
         if self.social_history_search_active {
             if let Some(action) = log_keyboard_action_at(context, mouse_x, mouse_y) {
                 match action {
@@ -138,6 +153,25 @@ impl GameplayState {
         }
 
         self.social_history_page = self.social_history_page.min(page_count.saturating_sub(1));
+    }
+
+    pub fn event_history_page_count(&self) -> usize {
+        self.data.event_log.len().max(1).div_ceil(4)
+    }
+
+    pub fn update_event_history_page(&mut self, action: PageAction) {
+        let page_count = self.event_history_page_count();
+        match action {
+            PageAction::Previous => {
+                self.event_history_page = self.event_history_page.saturating_sub(1);
+            }
+            PageAction::Next => {
+                if self.event_history_page + 1 < page_count {
+                    self.event_history_page += 1;
+                }
+            }
+        }
+        self.event_history_page = self.event_history_page.min(page_count.saturating_sub(1));
     }
 
     pub fn export_social_archive(&mut self) {
