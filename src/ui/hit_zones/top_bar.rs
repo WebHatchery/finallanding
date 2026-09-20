@@ -5,6 +5,7 @@ use crate::data::priority::ColonyPriority;
 use macroquad::prelude::{vec2, Rect};
 use macroquad_toolkit::input::{hit_test, HitTarget};
 
+use super::touch_target_vertical;
 use crate::ui::Layout;
 
 pub const TOP_BAR_BUTTON_Y: f32 = 10.0;
@@ -50,7 +51,12 @@ pub fn top_bar_action_at(layout: &Layout, x: f32, y: f32) -> Option<TopBarAction
             TopBarAction::Menu,
         ]
         .into_iter()
-        .map(|action| HitTarget::new(top_bar_action_rect(layout, action), action)),
+        .map(|action| {
+            HitTarget::new(
+                touch_target_vertical(top_bar_action_rect(layout, action)),
+                action,
+            )
+        }),
         vec2(x, y),
     )
 }
@@ -111,10 +117,9 @@ pub fn top_bar_speed_at(x: f32, y: f32) -> Option<TimeSpeed> {
         TimeSpeed::SuperFast,
     ];
     hit_test(
-        speeds
-            .into_iter()
-            .enumerate()
-            .map(|(index, speed)| HitTarget::new(speed_button_rect(index), speed)),
+        speeds.into_iter().enumerate().map(|(index, speed)| {
+            HitTarget::new(touch_target_vertical(speed_button_rect(index)), speed)
+        }),
         vec2(x, y),
     )
 }
@@ -127,10 +132,12 @@ pub fn top_bar_speed_at_for(layout: &Layout, x: f32, y: f32) -> Option<TimeSpeed
         TimeSpeed::SuperFast,
     ];
     hit_test(
-        speeds
-            .into_iter()
-            .enumerate()
-            .map(|(index, speed)| HitTarget::new(speed_button_rect_for(layout, index), speed)),
+        speeds.into_iter().enumerate().map(|(index, speed)| {
+            HitTarget::new(
+                touch_target_vertical(speed_button_rect_for(layout, index)),
+                speed,
+            )
+        }),
         vec2(x, y),
     )
 }

@@ -1,6 +1,7 @@
 //! assign domain.
 
 use super::PageAction;
+use super::{touch_target, touch_target_vertical};
 pub use crate::data::assign_roster::{AssignRosterFilter, AssignRosterSort};
 use macroquad::prelude::{vec2, Rect};
 use macroquad_toolkit::input::{hit_test, rect_contains_point, HitTarget};
@@ -84,8 +85,14 @@ pub fn assign_page_next_rect(context: Rect) -> Rect {
 pub fn assign_page_action_at(context: Rect, x: f32, y: f32) -> Option<PageAction> {
     hit_test(
         [
-            HitTarget::new(assign_page_previous_rect(context), PageAction::Previous),
-            HitTarget::new(assign_page_next_rect(context), PageAction::Next),
+            HitTarget::new(
+                touch_target(assign_page_previous_rect(context)),
+                PageAction::Previous,
+            ),
+            HitTarget::new(
+                touch_target(assign_page_next_rect(context)),
+                PageAction::Next,
+            ),
         ],
         vec2(x, y),
     )
@@ -106,7 +113,12 @@ pub fn assign_filter_at(context: Rect, x: f32, y: f32) -> Option<AssignRosterFil
         AssignRosterFilter::all()
             .iter()
             .enumerate()
-            .map(|(index, filter)| HitTarget::new(assign_filter_rect(context, index), *filter)),
+            .map(|(index, filter)| {
+                HitTarget::new(
+                    touch_target_vertical(assign_filter_rect(context, index)),
+                    *filter,
+                )
+            }),
         point,
     )
 }
@@ -125,7 +137,12 @@ pub fn assign_sort_at(context: Rect, x: f32, y: f32) -> Option<AssignRosterSort>
         AssignRosterSort::all()
             .iter()
             .enumerate()
-            .map(|(index, sort)| HitTarget::new(assign_sort_rect(context, index), *sort)),
+            .map(|(index, sort)| {
+                HitTarget::new(
+                    touch_target_vertical(assign_sort_rect(context, index)),
+                    *sort,
+                )
+            }),
         vec2(x, y),
     )
 }
@@ -135,7 +152,10 @@ pub fn assign_role_filter_rect(context: Rect) -> Rect {
 }
 
 pub fn assign_role_filter_at(context: Rect, x: f32, y: f32) -> bool {
-    rect_contains_point(assign_role_filter_rect(context), vec2(x, y))
+    rect_contains_point(
+        touch_target_vertical(assign_role_filter_rect(context)),
+        vec2(x, y),
+    )
 }
 
 pub fn assign_room_filter_rect(context: Rect) -> Rect {
@@ -164,7 +184,12 @@ pub fn assign_batch_action_at(context: Rect, x: f32, y: f32) -> Option<AssignBat
         AssignBatchAction::all()
             .iter()
             .enumerate()
-            .map(|(index, action)| HitTarget::new(assign_batch_rect(context, index), *action)),
+            .map(|(index, action)| {
+                HitTarget::new(
+                    touch_target_vertical(assign_batch_rect(context, index)),
+                    *action,
+                )
+            }),
         vec2(x, y),
     )
 }

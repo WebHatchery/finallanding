@@ -1,5 +1,6 @@
 //! camera control hit zones.
 
+use super::touch_target_vertical;
 use macroquad::prelude::{vec2, Rect};
 use macroquad_toolkit::input::{hit_test, HitTarget};
 
@@ -35,7 +36,12 @@ pub fn camera_action_at(area: Rect, x: f32, y: f32) -> Option<CameraAction> {
             CameraAction::ZoomIn,
         ]
         .into_iter()
-        .map(|action| HitTarget::new(camera_control_button_rect(area, action), action)),
+        .map(|action| {
+            HitTarget::new(
+                touch_target_vertical(camera_control_button_rect(area, action)),
+                action,
+            )
+        }),
         vec2(x, y),
     )
 }

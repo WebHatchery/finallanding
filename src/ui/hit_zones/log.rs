@@ -1,6 +1,7 @@
 //! log domain.
 
 use super::PageAction;
+use super::{touch_target, touch_target_vertical};
 use macroquad::prelude::{vec2, Rect};
 use macroquad_toolkit::input::{hit_test, HitTarget};
 
@@ -53,8 +54,11 @@ pub fn log_page_next_rect(context: Rect) -> Rect {
 pub fn log_page_action_at(context: Rect, x: f32, y: f32) -> Option<PageAction> {
     hit_test(
         [
-            HitTarget::new(log_page_previous_rect(context), PageAction::Previous),
-            HitTarget::new(log_page_next_rect(context), PageAction::Next),
+            HitTarget::new(
+                touch_target(log_page_previous_rect(context)),
+                PageAction::Previous,
+            ),
+            HitTarget::new(touch_target(log_page_next_rect(context)), PageAction::Next),
         ],
         vec2(x, y),
     )
@@ -86,7 +90,12 @@ pub fn log_section_at(context: Rect, x: f32, y: f32) -> Option<LogSectionAction>
         [LogSectionAction::Social, LogSectionAction::Events]
             .into_iter()
             .enumerate()
-            .map(|(index, section)| HitTarget::new(log_section_rect(context, index), section)),
+            .map(|(index, section)| {
+                HitTarget::new(
+                    touch_target_vertical(log_section_rect(context, index)),
+                    section,
+                )
+            }),
         vec2(x, y),
     )
 }
@@ -94,9 +103,18 @@ pub fn log_section_at(context: Rect, x: f32, y: f32) -> Option<LogSectionAction>
 pub fn log_search_action_at(context: Rect, x: f32, y: f32) -> Option<LogSearchAction> {
     hit_test(
         [
-            HitTarget::new(log_search_rect(context), LogSearchAction::Focus),
-            HitTarget::new(log_search_clear_rect(context), LogSearchAction::Clear),
-            HitTarget::new(log_search_export_rect(context), LogSearchAction::Export),
+            HitTarget::new(
+                touch_target_vertical(log_search_rect(context)),
+                LogSearchAction::Focus,
+            ),
+            HitTarget::new(
+                touch_target_vertical(log_search_clear_rect(context)),
+                LogSearchAction::Clear,
+            ),
+            HitTarget::new(
+                touch_target_vertical(log_search_export_rect(context)),
+                LogSearchAction::Export,
+            ),
         ],
         vec2(x, y),
     )
@@ -157,10 +175,12 @@ pub fn log_filter_rect(context: Rect, index: usize) -> Rect {
 
 pub fn log_filter_at(context: Rect, x: f32, y: f32) -> Option<LogFilter> {
     hit_test(
-        LogFilter::all()
-            .iter()
-            .enumerate()
-            .map(|(index, filter)| HitTarget::new(log_filter_rect(context, index), *filter)),
+        LogFilter::all().iter().enumerate().map(|(index, filter)| {
+            HitTarget::new(
+                touch_target_vertical(log_filter_rect(context, index)),
+                *filter,
+            )
+        }),
         vec2(x, y),
     )
 }
@@ -177,16 +197,24 @@ pub fn log_event_row_rect(context: Rect, index: usize) -> Rect {
 
 pub fn log_event_row_at(context: Rect, row_count: usize, x: f32, y: f32) -> Option<usize> {
     hit_test(
-        (0..row_count.min(4))
-            .map(|index| HitTarget::new(log_event_row_rect(context, index), index)),
+        (0..row_count.min(4)).map(|index| {
+            HitTarget::new(
+                touch_target_vertical(log_event_row_rect(context, index)),
+                index,
+            )
+        }),
         vec2(x, y),
     )
 }
 
 pub fn log_timeline_row_at(context: Rect, row_count: usize, x: f32, y: f32) -> Option<usize> {
     hit_test(
-        (0..row_count.min(3))
-            .map(|index| HitTarget::new(log_timeline_row_rect(context, index), index)),
+        (0..row_count.min(3)).map(|index| {
+            HitTarget::new(
+                touch_target_vertical(log_timeline_row_rect(context, index)),
+                index,
+            )
+        }),
         vec2(x, y),
     )
 }

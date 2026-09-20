@@ -105,8 +105,9 @@ root. Keep this existing tracked `TODO.md` as the single backlog (the requested
     regressions and add focused routing cases in `tests/`. Depends on UI-01/03.
   - **Current state:** top-bar collisions are removed, Assign inspection/actions
     use separate hit zones, report dismissal is topmost, and handled releases no
-    longer fall through to world selection. Remaining work is 44px logical target
-    sizing at compact breakpoints plus live browser/touch verification.
+    longer fall through to world selection. Compact gameplay controls now use
+    separated 44px vertical touch-hit bands where the layout allows. Remaining
+    work is live browser/touch verification and edge-case resize review.
 
 - [ ] **UI-05 / P1 — Make survivor inspection truthful and separate selection from commands.**
   - **Screen/files:** selected survivor, right roster and Assign;
