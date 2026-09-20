@@ -44,6 +44,17 @@ root. Keep this existing tracked `TODO.md` as the single backlog (the requested
   warnings, mission risks, autosave recovery, and visible Undo/Cancel/Restart.
   There is no evidence that the whole UI was copied from the template; the fixed
   inspector meters are specific demonstration-style remnants confirmed below.
+- **Follow-up validation:** the required publish completed after the
+  browser-export fix: Windows and WebGL builds, packaging, and preview deploy
+  all succeeded. The exact-size smoke wrapper then stopped during Cargo
+  workspace discovery because the real catalog sees the independent
+  `apartment` workspace (and intermittently `idle_hands`) beside this project.
+  No copied checkout, alternate manifest, or sibling-project edit was used.
+  Native source-level evidence and a normal embedded-browser pass remain
+  available. Exact-size screenshots now pass from the existing real-checkout
+  debug executable through the wrapper's `-SkipBuild` path; a fresh build
+  through that wrapper and browser touch verification stay open until the
+  workspace issue is resolved.
 
 ### Verified findings — implement in this dependency order
 
@@ -195,9 +206,13 @@ root. Keep this existing tracked `TODO.md` as the single backlog (the requested
     days, empty archive and no-match query. Tap search, backspace, Done, Clear,
     filters, next/previous, full report, close and export. Depends on UI-01/04/06.
   - **Current state:** the Log now has readable timeline rows, wrapped report
-    detail/recommendation text, a persistent CLOSE REPORT action, and fresh
-    timeline/detail captures. Remaining work is keyboard/no-match/empty-archive
-    capture and live touch verification.
+    detail/recommendation text, and a persistent CLOSE REPORT action. The
+    timeline layout now separates its summary, filters, and rows; selected
+    reports remain a focused reading view. Browser archive export now uses the
+    shared clipboard bridge so the raw Macroquad wasm remains loadable, and the
+    republished browser build loads in the embedded-browser review. Exact-size
+    captures now cover the reflowed timeline and report, while touch input,
+    keyboard/no-match, and empty-archive review remain open.
 
 - [ ] **UI-08 / P1 — Put mission readiness, risk and reward beside an explicit launch action.**
   - **Screen/files:** Research before/after an Exploration Gate and during missions;

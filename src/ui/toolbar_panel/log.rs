@@ -48,51 +48,36 @@ pub fn draw_log_context(view: LogContext<'_>) {
         draw_event_history(context, logs, event_page, event_page_count);
         return;
     }
-    let social_brief = social_brief_lines(summary);
-    draw_ui_text(
-        &social_brief.header,
-        context.x + 18.0,
-        context.y + 51.0,
-        style::TINY_SIZE,
-        social_brief.color,
-    );
-    draw_ui_text(
-        &style::fit_text(&social_brief.detail, context.w - 36.0, style::TINY_SIZE),
-        context.x + 18.0,
-        context.y + 68.0,
-        style::TINY_SIZE,
-        style::TEXT_BODY,
-    );
-    if let Some(log) = logs.last() {
-        draw_ui_text(
-            "RECENT ACTION",
-            context.x + 18.0,
-            context.y + 91.0,
-            style::TINY_SIZE,
-            style::HEADING_BLUE,
-        );
-        draw_ui_text(
-            &style::fit_text(
-                &format!("{} {}", category_prefix(log.category), log.title),
-                context.w - 132.0,
-                style::TINY_SIZE,
-            ),
-            context.x + 108.0,
-            context.y + 91.0,
-            style::TINY_SIZE,
-            style::TEXT_BODY,
-        );
-    }
-
     let current_page = social_history_page.min(page_count.saturating_sub(1));
     let timeline = timeline_rows;
     if !social_history.is_empty() {
+        if let Some(entry) =
+            selected_social_history_entry(social_history, selected_social_history_day)
+        {
+            // The report is a focused view: keep the summary and filters out of
+            // its compact reading area, while search, tabs, paging, and close
+            // remain available.
+            if page_count > 1 {
+                draw_log_page_controls(context, current_page, page_count);
+            }
+            draw_social_report_drilldown(context, entry);
+            return;
+        }
+
+        let social_brief = social_brief_lines(summary);
         draw_ui_text(
-            "SOCIAL TIMELINE",
+            &social_brief.header,
             context.x + 18.0,
-            context.y + 107.0,
+            context.y + 94.0,
             style::TINY_SIZE,
-            style::HEADING_BLUE,
+            social_brief.color,
+        );
+        draw_ui_text(
+            &style::fit_text(&social_brief.detail, context.w - 36.0, style::TINY_SIZE),
+            context.x + 18.0,
+            context.y + 110.0,
+            style::TINY_SIZE,
+            style::TEXT_BODY,
         );
         draw_log_filter_controls(context, social_history_filter);
         if page_count > 1 {
@@ -103,17 +88,10 @@ pub fn draw_log_context(view: LogContext<'_>) {
             draw_ui_text(
                 text.label("log_no_matching"),
                 context.x + 18.0,
-                context.y + 112.0,
+                context.y + 184.0,
                 style::TINY_SIZE,
                 style::TEXT_MUTED,
             );
-            return;
-        }
-
-        if let Some(entry) =
-            selected_social_history_entry(social_history, selected_social_history_day)
-        {
-            draw_social_report_drilldown(context, entry);
             return;
         }
 
@@ -143,21 +121,21 @@ pub fn draw_log_context(view: LogContext<'_>) {
             draw_ui_text(
                 &format!("D{}", row.day),
                 rect.x + 9.0,
-                rect.y + 24.0,
+                rect.y + 22.0,
                 style::SMALL_SIZE,
                 row.color,
             );
             draw_ui_text(
                 &style::fit_text(&row.title, rect.w - 182.0, style::SMALL_SIZE),
                 rect.x + 39.0,
-                rect.y + 24.0,
+                rect.y + 22.0,
                 style::SMALL_SIZE,
                 style::TEXT_BODY,
             );
             draw_ui_text(
                 &row.metrics,
                 rect.x + rect.w - 104.0,
-                rect.y + 24.0,
+                rect.y + 22.0,
                 style::TINY_SIZE,
                 style::TEXT_MUTED,
             );
@@ -166,9 +144,25 @@ pub fn draw_log_context(view: LogContext<'_>) {
         return;
     }
 
+    let social_brief = social_brief_lines(summary);
+    draw_ui_text(
+        &social_brief.header,
+        context.x + 18.0,
+        context.y + 94.0,
+        style::TINY_SIZE,
+        social_brief.color,
+    );
+    draw_ui_text(
+        &style::fit_text(&social_brief.detail, context.w - 36.0, style::TINY_SIZE),
+        context.x + 18.0,
+        context.y + 110.0,
+        style::TINY_SIZE,
+        style::TEXT_BODY,
+    );
+
     let mut hovered_log = None;
     for (index, log) in logs.iter().rev().take(2).enumerate() {
-        let y = context.y + 91.0 + index as f32 * 20.0;
+        let y = context.y + 138.0 + index as f32 * 20.0;
         let row = Rect::new(context.x + 12.0, y - 14.0, context.w - 24.0, 18.0);
         if style::button_hovered(row) {
             hovered_log = Some(log);

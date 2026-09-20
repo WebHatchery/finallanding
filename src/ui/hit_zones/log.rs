@@ -167,7 +167,7 @@ pub fn log_keyboard_action_at(context: Rect, x: f32, y: f32) -> Option<LogSearch
 pub fn log_filter_rect(context: Rect, index: usize) -> Rect {
     Rect::new(
         context.x + 164.0 + index as f32 * 68.0,
-        context.y + 56.0,
+        context.y + 122.0,
         62.0,
         30.0,
     )
@@ -186,8 +186,8 @@ pub fn log_filter_at(context: Rect, x: f32, y: f32) -> Option<LogFilter> {
 }
 
 pub fn log_timeline_row_rect(context: Rect, index: usize) -> Rect {
-    let y = context.y + 112.0 + index as f32 * 42.0;
-    Rect::new(context.x + 12.0, y, context.w - 24.0, 38.0)
+    let y = context.y + 160.0 + index as f32 * 36.0;
+    Rect::new(context.x + 12.0, y, context.w - 24.0, 34.0)
 }
 
 pub fn log_event_row_rect(context: Rect, index: usize) -> Rect {

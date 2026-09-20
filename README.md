@@ -111,7 +111,7 @@ Log mode:
 
 - Search, filter, and page daily social reports.
 - Click a report row for a recommendation drilldown.
-- On Windows, export the social archive to `docs\exports\social_archive.md`; in the browser, Export downloads `social_archive.md`.
+- On Windows, Export writes the social archive to `docs\exports\social_archive.md`; in the browser, Export copies the Markdown archive through the shared browser clipboard bridge (with its copy/download fallback when clipboard access is blocked).
 
 ## Major Systems
 

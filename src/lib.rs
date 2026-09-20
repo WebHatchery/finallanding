@@ -5,6 +5,7 @@
 //! and prevents test-only compilation from changing the production module
 //! graph.
 
+pub mod browser_clipboard;
 pub mod data;
 pub mod game;
 pub mod state;

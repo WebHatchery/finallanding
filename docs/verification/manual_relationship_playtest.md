@@ -44,7 +44,7 @@ Use this checklist after relationship, Assign-mode, Log-mode, or character-visua
 - Filter the social archive by ALL, TENSE, and PLUS; confirm only matching reports remain.
 - Search by survivor name, relationship wording, recommendation text, and day number.
 - Open a report drilldown and confirm the full story plus recommendation are visible without hover or layout overflow, then use CLOSE REPORT.
-- Use the touch keyboard to enter a search, then export the archive and confirm `docs\exports\social_archive.md` contains newest reports first (or confirm the browser downloads `social_archive.md`).
+- Use the touch keyboard to enter a search, then export the archive and confirm `docs\exports\social_archive.md` contains newest reports first on Windows. In a browser, confirm the Markdown is copied through the shared clipboard bridge; if clipboard access is blocked, use its visible copy/download fallback.
 
 ## End-To-End Outcome
 
