@@ -3,45 +3,62 @@
 use super::*;
 
 impl GameplayState {
-    pub fn update_pointer_ui_input(&mut self, input: &InputState) {
-        let assign_room_filter_click = self.toolbar_mode == ToolbarMode::Assign
+    pub fn update_pointer_ui_input(&mut self, input: &InputState) -> bool {
+        let assign_room_filter_click = self.context_panel_open
+            && self.toolbar_mode == ToolbarMode::Assign
             && (input.right_released || self.assign_room_filter_armed && input.left_released);
-        if !input.left_released && !assign_room_filter_click {
-            return;
-        }
+        let map_click = assign_room_filter_click && input.hovered_rect(self.world_area());
 
         let mouse_x = input.mouse_pos.x;
         let mouse_y = input.mouse_pos.y;
 
-        if assign_room_filter_click {
-            if input.hovered_rect(self.layout.game_area()) {
-                self.update_assign_building_filter_click();
-                self.assign_room_filter_armed = false;
-                return;
-            }
-            return;
+        if map_click {
+            self.update_assign_building_filter_click();
+            self.assign_room_filter_armed = false;
+            return true;
+        }
+
+        if !input.left_released {
+            return false;
         }
 
         if mouse_y <= self.layout.top_bar_height {
             self.update_top_bar_click(mouse_x, mouse_y);
-            return;
+            return true;
+        }
+
+        if let Some(action) = camera_action_at(self.world_area(), mouse_x, mouse_y) {
+            self.update_camera_action(action);
+            return true;
         }
 
         if self.update_toolbar_click(mouse_x, mouse_y) {
-            return;
+            return true;
         }
 
-        let right_panel = self.layout.right_panel();
-        if mouse_x >= right_panel.x
-            && mouse_x <= right_panel.x + right_panel.w
-            && mouse_y >= right_panel.y
-            && mouse_y <= right_panel.y + right_panel.h
-        {}
+        false
+    }
+
+    fn update_camera_action(&mut self, action: CameraAction) {
+        match action {
+            CameraAction::ZoomOut => self.camera_zoom = (self.camera_zoom - 0.1).max(0.8),
+            CameraAction::ZoomIn => self.camera_zoom = (self.camera_zoom + 0.1).min(1.25),
+            CameraAction::Recenter => self.camera_zoom = 1.0,
+        }
     }
 
     pub fn update_toolbar_click(&mut self, mouse_x: f32, mouse_y: f32) -> bool {
         let toolbar = self.layout.bottom_toolbar();
         if let Some(mode) = toolbar_mode_at(toolbar, mouse_x, mouse_y) {
+            if self.toolbar_mode == mode {
+                self.context_panel_open = !self.context_panel_open;
+            } else {
+                self.context_panel_open = true;
+            }
+            if mode != ToolbarMode::Assign || !self.context_panel_open {
+                self.assign_room_filter_armed = false;
+                self.assign_pair_armed = false;
+            }
             self.toolbar_mode = mode;
             if !mode.uses_building_choices()
                 || self
@@ -53,11 +70,13 @@ impl GameplayState {
             return true;
         }
 
-        let context = toolbar_context_rect(toolbar);
+        let context = toolbar_context_rect_for_mode(toolbar, self.toolbar_mode);
         let in_touch_keyboard = self.toolbar_mode == ToolbarMode::Log
             && self.social_history_search_active
             && log_keyboard_bounds(context).contains(Vec2::new(mouse_x, mouse_y));
-        if !context.contains(Vec2::new(mouse_x, mouse_y)) && !in_touch_keyboard {
+        if !self.context_panel_open
+            || (!context.contains(Vec2::new(mouse_x, mouse_y)) && !in_touch_keyboard)
+        {
             return false;
         }
 

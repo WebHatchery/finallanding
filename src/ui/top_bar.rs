@@ -2,13 +2,9 @@
 
 use super::Layout;
 use crate::data::game_state::TimeSpeed;
-use crate::data::priority::ColonyPriority;
 use crate::data::resources::ResourceState;
 use crate::systems::time_system::TimeSystem;
-use crate::ui::hit_zones::{
-    priority_button_rect_for, speed_button_rect_for, top_bar_action_rect, TopBarAction, BUTTON_GAP,
-    PRIORITY_BUTTON_START_X, PRIORITY_BUTTON_W, PRIORITY_LABEL_X,
-};
+use crate::ui::hit_zones::{speed_button_rect_for, top_bar_action_rect, TopBarAction};
 use crate::ui::style;
 use macroquad::prelude::*;
 use macroquad_toolkit::ui::{draw_ui_text, format_clock, measure_ui_text};
@@ -21,7 +17,6 @@ pub fn draw_top_bar(
     colonist_count: usize,
     average_mood: f32,
     resources: &ResourceState,
-    current_priority: ColonyPriority,
 ) {
     let rect = layout.top_bar();
 
@@ -89,36 +84,7 @@ pub fn draw_top_bar(
         );
     }
 
-    if !phone {
-        let priority_label_x = if layout.viewport_width < 1_100.0 {
-            500.0
-        } else {
-            PRIORITY_LABEL_X
-        };
-        draw_ui_text("PRIORITY", priority_label_x, 24.0, 12.0, style::TEXT_MUTED);
-
-        for (i, priority) in ColonyPriority::all().iter().enumerate() {
-            let button_rect = priority_button_rect_for(layout, i);
-            let is_active = current_priority == *priority;
-            style::draw_button(button_rect, is_active, style::button_hovered(button_rect));
-
-            let label = format!("[{}] {}", priority.shortcut(), priority.short_label());
-            let text_w = measure_ui_text(&label, None, 13, 1.0).width;
-            draw_ui_text(
-                &label,
-                button_rect.x + (button_rect.w - text_w) / 2.0,
-                button_rect.y + 20.0,
-                13.0,
-                if is_active {
-                    style::TEXT_PRIMARY
-                } else {
-                    style::TEXT_BODY
-                },
-            );
-        }
-    }
-
-    for action in [TopBarAction::Undo, TopBarAction::Cancel] {
+    for action in [TopBarAction::Undo, TopBarAction::Cancel, TopBarAction::Menu] {
         let action_rect = top_bar_action_rect(layout, action);
         let hovered = style::button_hovered(action_rect);
         style::draw_button(action_rect, false, hovered);
@@ -129,6 +95,7 @@ pub fn draw_top_bar(
             TopBarAction::Cancel => crate::data::config::game_config()
                 .text
                 .label("toolbar_cancel"),
+            TopBarAction::Menu => "MENU",
         };
         let label_width = measure_ui_text(label, None, 12, 1.0).width;
         draw_ui_text(
@@ -140,15 +107,6 @@ pub fn draw_top_bar(
         );
     }
 
-    let priority_end = if phone {
-        0.0
-    } else if layout.viewport_width < 1_100.0 {
-        545.0 + ColonyPriority::all().len() as f32 * 60.0 - 5.0
-    } else {
-        PRIORITY_BUTTON_START_X
-            + ColonyPriority::all().len() as f32 * (PRIORITY_BUTTON_W + BUTTON_GAP)
-            - BUTTON_GAP
-    };
     if phone {
         return;
     }
@@ -161,9 +119,14 @@ pub fn draw_top_bar(
         resources.salvage,
         resources.condition.label()
     );
-    let status_x = priority_end + 18.0;
+    let actions_start = top_bar_action_rect(layout, TopBarAction::Undo).x;
+    let status_x = if layout.viewport_width < 1_100.0 {
+        430.0
+    } else {
+        700.0
+    };
     let status_width = measure_ui_text(&status_label, None, 16, 1.0).width;
-    if status_x + status_width <= rect.w - 10.0 {
+    if status_x + status_width <= actions_start - 10.0 {
         draw_ui_text(&status_label, status_x, 42.0, 16.0, style::TEXT_BODY);
     } else {
         let compact_status = format!(
@@ -174,7 +137,7 @@ pub fn draw_top_bar(
         );
         let compact_width = measure_ui_text(&compact_status, None, 14, 1.0).width;
         let compact_x = rect.w - compact_width - 10.0;
-        if compact_x > priority_end + 10.0 {
+        if compact_x > status_x + 10.0 && compact_x + compact_width <= actions_start - 10.0 {
             draw_ui_text(&compact_status, compact_x, 42.0, 14.0, style::TEXT_BODY);
         }
     }

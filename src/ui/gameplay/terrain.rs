@@ -5,7 +5,7 @@ use super::*;
 impl GameplayState {
     pub fn draw_grid_with_offset(&self) {
         let iso = self.iso_view();
-        let area = self.layout.game_area();
+        let area = self.world_area();
         draw_texture_ex(
             self.art.crash_site_backdrop(),
             area.x,

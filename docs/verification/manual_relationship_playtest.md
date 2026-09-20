@@ -12,9 +12,9 @@ Use this checklist after relationship, Assign-mode, Log-mode, or character-visua
 
 ## First Frame Readability
 
-- Confirm the left rail shows current objectives and at least one actionable alert.
-- Confirm the right rail shows every survivor with a portrait and Friendly/Tense relationship chip where relevant.
-- Select each starting survivor and confirm the inspector shows portrait, job, activity, bars, and relationship line.
+- Confirm the colony occupies the main field, with the compact status strip showing the urgent alert and essential food/salvage/mood values.
+- Open Colony and confirm the four active objectives replace the world area without a permanent rail.
+- Open Assign and confirm survivor cards expose actual role, room-pin, activity, mood, and relationship state without invented need bars.
 - Confirm support/tension markers and body-language frames are visible on the map before opening Log mode.
 - Complete the four-step arrival briefing with Continue / Enter Colony and confirm the active colony opens with the configured roster.
 
@@ -23,11 +23,11 @@ Use this checklist after relationship, Assign-mode, Log-mode, or character-visua
 - Open Assign mode and confirm the selected survivor stays pinned at the start of the roster.
 - Cycle filters through ALL, RISK, TENSE, PLUS, PIN, and at least one role filter; confirm visible rows match the selected filter.
 - Cycle sorting through ORD, MOOD, BOND, and R-ALL; confirm low-mood or high-pressure survivors move as expected.
-- Hover survivor cards and confirm relationship-preview text explains the expected impact before retasking.
-- Click survivor cards to change work role, then confirm future work-space compatibility changes.
+- Tap survivor cards to select and inspect without changing a role; use NEXT ROLE for an explicit role change.
+- Arm PAIR / APART before selecting a second survivor, then confirm the directive and warning text update.
 - Click a compatible Habitat and work room on the map for the selected survivor; confirm HOME/WORK map labels and warnings update.
-- Right-click a room or work space, then repeat with Filter Room armed and a map tap, and confirm the roster filters to survivors pinned to that specific building instance.
-- Use `P-H`, `P-W`, `ALL-H`, and `ALL-W`; confirm capacity and compatibility warnings prevent bad silent assignments.
+- Tap Filter Room, then tap a room or work space, and confirm the roster filters to survivors pinned to that specific building instance. Right-click remains an optional desktop shortcut.
+- Use the labeled page/colony home/work copy controls; confirm capacity and compatibility warnings prevent bad silent assignments.
 
 ## Relationship Pressure Loop
 
@@ -35,20 +35,20 @@ Use this checklist after relationship, Assign-mode, Log-mode, or character-visua
 - Put a supportive pair together and confirm the assignment reads as beneficial or neutral.
 - Advance time through work/eating/recovery periods and confirm daily routine contact changes relationship pressure.
 - Confirm strong support/tension creates pulsing social markers and alternates support/tension body-language frames.
-- Change colony priority to Recovery, Stockpile, and Survey; confirm the relationship loop still remains readable.
+- Change colony priority to Recovery, Stockpile, and Survey from the Colony tray; confirm the relationship loop still remains readable.
 
 ## Log And Archive
 
 - Advance through at least three daily summaries.
-- Open Log mode and confirm the social brief names mood, close/tense pair counts, and strongest signal.
+- Open Log mode and confirm the social brief names mood, close/tense pair counts, and strongest signal while the colony remains visible above it.
 - Filter the social archive by ALL, TENSE, and PLUS; confirm only matching reports remain.
 - Search by survivor name, relationship wording, recommendation text, and day number.
-- Open a report drilldown and confirm detail plus recommendation are visible without layout overflow.
+- Open a report drilldown and confirm the full story plus recommendation are visible without hover or layout overflow, then use CLOSE REPORT.
 - Use the touch keyboard to enter a search, then export the archive and confirm `docs\exports\social_archive.md` contains newest reports first (or confirm the browser downloads `social_archive.md`).
 
 ## End-To-End Outcome
 
-- Launch at least two mission types from Research mode.
+- Select mission cards in Research, confirm risk/duration/reward/readiness, then use the explicit LAUNCH or BUILD GATE action.
 - Reach Day 7 victory or trigger a failure case.
 - Confirm the final outcome is understandable from objectives, alerts, resources, and social history.
 - Restart, then use Continue from the menu and confirm Assign/Log state does not leak from the previous run.

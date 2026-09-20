@@ -1,7 +1,7 @@
 //! log domain.
 
 use super::*;
-use macroquad_toolkit::ui::{draw_ui_text, format_clock};
+use macroquad_toolkit::ui::{draw_ui_text, format_clock, measure_ui_text};
 
 pub struct LogContext<'a> {
     pub context: Rect,
@@ -59,7 +59,7 @@ pub fn draw_log_context(view: LogContext<'_>) {
         draw_ui_text(
             "SOCIAL TIMELINE",
             context.x + 18.0,
-            context.y + 82.0,
+            context.y + 78.0,
             style::TINY_SIZE,
             style::HEADING_BLUE,
         );
@@ -72,15 +72,21 @@ pub fn draw_log_context(view: LogContext<'_>) {
             draw_ui_text(
                 text.label("log_no_matching"),
                 context.x + 18.0,
-                context.y + 102.0,
+                context.y + 112.0,
                 style::TINY_SIZE,
                 style::TEXT_MUTED,
             );
             return;
         }
 
+        if let Some(entry) =
+            selected_social_history_entry(social_history, selected_social_history_day)
+        {
+            draw_social_report_drilldown(context, entry);
+            return;
+        }
+
         for (index, row) in timeline.iter().enumerate() {
-            let y = context.y + 94.0 + index as f32 * 13.0;
             let rect = log_timeline_row_rect(context, index);
             if style::button_hovered(rect) {
                 hovered_history = Some(row);
@@ -106,34 +112,26 @@ pub fn draw_log_context(view: LogContext<'_>) {
             draw_ui_text(
                 &format!("D{}", row.day),
                 rect.x + 9.0,
-                y,
-                style::TINY_SIZE,
+                rect.y + 24.0,
+                style::SMALL_SIZE,
                 row.color,
             );
             draw_ui_text(
-                &style::fit_text(&row.title, rect.w - 151.0, style::TINY_SIZE),
+                &style::fit_text(&row.title, rect.w - 182.0, style::SMALL_SIZE),
                 rect.x + 39.0,
-                y,
-                style::TINY_SIZE,
+                rect.y + 24.0,
+                style::SMALL_SIZE,
                 style::TEXT_BODY,
             );
             draw_ui_text(
                 &row.metrics,
                 rect.x + rect.w - 104.0,
-                y,
+                rect.y + 24.0,
                 style::TINY_SIZE,
                 style::TEXT_MUTED,
             );
         }
-
-        if let Some(row) = hovered_history {
-            draw_tooltip_near_mouse(toolbar_tooltip_bounds(context), &row.title, &row.detail);
-        }
-        if let Some(entry) =
-            selected_social_history_entry(social_history, selected_social_history_day)
-        {
-            draw_social_report_drilldown(context, entry);
-        }
+        let _ = hovered_history;
         return;
     }
 
@@ -248,9 +246,9 @@ pub fn draw_log_search_control(context: Rect, query: &str, active: bool) {
 
     draw_ui_text(
         &label,
-        search.x + 7.0,
-        search.y + 12.0,
-        style::TINY_SIZE,
+        search.x + 10.0,
+        search.y + 21.0,
+        style::SMALL_SIZE,
         if query.is_empty() {
             style::TEXT_MUTED
         } else {
@@ -259,9 +257,9 @@ pub fn draw_log_search_control(context: Rect, query: &str, active: bool) {
     );
     draw_ui_text(
         text.label("log_clear"),
-        clear.x + 8.0,
-        clear.y + 12.0,
-        style::TINY_SIZE,
+        clear.x + 13.0,
+        clear.y + 21.0,
+        style::SMALL_SIZE,
         if query.is_empty() {
             style::TEXT_MUTED
         } else {
@@ -270,19 +268,19 @@ pub fn draw_log_search_control(context: Rect, query: &str, active: bool) {
     );
     draw_ui_text(
         text.label("log_export_button"),
-        export.x + 9.0,
-        export.y + 12.0,
-        style::TINY_SIZE,
+        export.x + 13.0,
+        export.y + 21.0,
+        style::SMALL_SIZE,
         style::TEXT_PRIMARY,
     );
 }
 
 pub fn draw_social_report_drilldown(context: Rect, entry: &SocialHistoryEntry) {
     let rect = Rect::new(
-        context.x + context.w - 330.0,
-        (context.y - 78.0).max(70.0),
-        320.0,
-        68.0,
+        context.x + 12.0,
+        context.y + 96.0,
+        context.w - 24.0,
+        context.h - 108.0,
     );
     style::draw_deep_panel(rect);
     draw_rectangle(rect.x, rect.y, 4.0, rect.h, social_history_color(entry));
@@ -294,25 +292,69 @@ pub fn draw_social_report_drilldown(context: Rect, entry: &SocialHistoryEntry) {
                 style::fit_text(&entry.title, rect.w - 85.0, style::TINY_SIZE),
             ],
         ),
-        rect.x + 12.0,
-        rect.y + 17.0,
+        rect.x + 14.0,
+        rect.y + 24.0,
+        style::SMALL_SIZE,
+        style::TEXT_PRIMARY,
+    );
+    let close = log_report_close_rect(context);
+    style::draw_button(close, false, style::button_hovered(close));
+    draw_ui_text(
+        "CLOSE REPORT",
+        close.x + 10.0,
+        close.y + 20.0,
         style::TINY_SIZE,
         style::TEXT_PRIMARY,
     );
-    draw_ui_text(
-        &style::fit_text(&entry.detail, rect.w - 24.0, style::TINY_SIZE),
-        rect.x + 12.0,
-        rect.y + 37.0,
-        style::TINY_SIZE,
+    draw_wrapped_report_text(
+        "STORY",
+        &entry.detail,
+        rect.x + 14.0,
+        rect.y + 54.0,
+        rect.w - 28.0,
+        style::SMALL_SIZE,
         style::TEXT_BODY,
     );
-    draw_ui_text(
-        &style::fit_text(&entry.recommendation, rect.w - 24.0, style::TINY_SIZE),
-        rect.x + 12.0,
-        rect.y + 55.0,
-        style::TINY_SIZE,
+    draw_wrapped_report_text(
+        "RECOMMENDATION",
+        &entry.recommendation,
+        rect.x + 14.0,
+        rect.y + 122.0,
+        rect.w - 28.0,
+        style::SMALL_SIZE,
         style::HEADING_BLUE,
     );
+}
+
+fn draw_wrapped_report_text(
+    label: &str,
+    text: &str,
+    x: f32,
+    start_y: f32,
+    width: f32,
+    size: f32,
+    color: Color,
+) {
+    draw_ui_text(label, x, start_y, style::TINY_SIZE, style::TEXT_MUTED);
+    let mut line = String::new();
+    let mut y = start_y + 19.0;
+    for word in text.split_whitespace() {
+        let candidate = if line.is_empty() {
+            word.to_string()
+        } else {
+            format!("{line} {word}")
+        };
+        if !line.is_empty() && measure_ui_text(&candidate, None, size as u16, 1.0).width > width {
+            draw_ui_text(&line, x, y, size, color);
+            y += size + 5.0;
+            line = word.to_string();
+        } else {
+            line = candidate;
+        }
+    }
+    if !line.is_empty() {
+        draw_ui_text(&line, x, y, size, color);
+    }
 }
 
 pub fn draw_log_filter_controls(context: Rect, active_filter: LogFilter) {
@@ -349,7 +391,7 @@ pub fn draw_log_page_controls(context: Rect, current_page: usize, page_count: us
     draw_ui_text(
         "<",
         previous.x + 10.0,
-        previous.y + 12.0,
+        previous.y + 20.0,
         style::TINY_SIZE,
         if can_go_previous {
             style::TEXT_PRIMARY
@@ -360,7 +402,7 @@ pub fn draw_log_page_controls(context: Rect, current_page: usize, page_count: us
     draw_ui_text(
         ">",
         next.x + 10.0,
-        next.y + 12.0,
+        next.y + 20.0,
         style::TINY_SIZE,
         if can_go_next {
             style::TEXT_PRIMARY
@@ -371,7 +413,7 @@ pub fn draw_log_page_controls(context: Rect, current_page: usize, page_count: us
     draw_ui_text(
         &format!("{}/{}", current_page + 1, page_count),
         context.x + context.w - 63.0,
-        context.y + 84.0,
+        context.y + 78.0,
         style::TINY_SIZE,
         style::TEXT_MUTED,
     );

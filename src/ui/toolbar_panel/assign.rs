@@ -13,6 +13,7 @@ pub struct AssignContext<'a> {
     pub active_role_filter: Option<JobPreference>,
     pub active_building_filter: Option<u32>,
     pub room_filter_armed: bool,
+    pub pair_action_armed: bool,
     pub technology: &'a TechnologyState,
 }
 
@@ -27,9 +28,9 @@ pub fn draw_assign_context(view: AssignContext<'_>) {
         active_role_filter,
         active_building_filter,
         room_filter_armed,
+        pair_action_armed,
         technology,
     } = view;
-    let mut hovered_forecast = None;
     let mut hovered_name = None;
     let mut hovered_directive = None;
     let mut hovered_filter = None;
@@ -71,7 +72,9 @@ pub fn draw_assign_context(view: AssignContext<'_>) {
         let rect = toolbar_list_item_rect(context, slot);
         let selected = selected_colonist_id == Some(colonist.id);
         let hovered = style::button_hovered(rect);
-        let pair_action = selected_colonist_id
+        let pair_action = pair_action_armed
+            .then_some(selected_colonist_id)
+            .flatten()
             .filter(|selected_id| *selected_id != colonist.id)
             .and_then(|selected_id| assign_pair_action(colonists, selected_id, colonist.id));
         let pin_warning = assignment_pin_warning(colonist, colonists, technology);
@@ -101,7 +104,7 @@ pub fn draw_assign_context(view: AssignContext<'_>) {
         draw_ui_text(
             &style::fit_text(&colonist.name, rect.w - 20.0, style::SMALL_SIZE),
             rect.x + 10.0,
-            rect.y + 18.0,
+            rect.y + 20.0,
             style::SMALL_SIZE,
             style::TEXT_PRIMARY,
         );
@@ -119,7 +122,7 @@ pub fn draw_assign_context(view: AssignContext<'_>) {
             draw_ui_text(
                 &style::fit_text(&label, rect.w - 20.0, style::TINY_SIZE),
                 rect.x + 10.0,
-                rect.y + 34.0,
+                rect.y + 40.0,
                 style::TINY_SIZE,
                 if pin_warning.is_some() {
                     style::ALERT_RED
@@ -135,32 +138,26 @@ pub fn draw_assign_context(view: AssignContext<'_>) {
             draw_ui_text(
                 &style::fit_text(&action.label, rect.w - 20.0, style::TINY_SIZE),
                 rect.x + 10.0,
-                rect.y + 34.0,
+                rect.y + 40.0,
                 style::TINY_SIZE,
                 directive_color(action.directive),
             );
         } else {
-            let next_role = colonist.job_preference.next_assignable();
-            let forecast =
-                AssignmentSystem::forecast_role_change(colonists, colonist.id, next_role);
-            if hovered {
-                hovered_forecast = Some(forecast.clone());
-                hovered_name = Some(colonist.name.clone());
-            }
+            let prompt = if pair_action_armed {
+                "PAIR / APART TARGET"
+            } else {
+                "SELECT TO INSPECT"
+            };
             draw_ui_text(
-                &style::fit_text(
-                    &format!(
-                        "{} -> {}",
-                        colonist.job_preference.label(),
-                        next_role.label()
-                    ),
-                    rect.w - 20.0,
-                    style::TINY_SIZE,
-                ),
+                prompt,
                 rect.x + 10.0,
-                rect.y + 34.0,
+                rect.y + 40.0,
                 style::TINY_SIZE,
-                style::HEADING_BLUE,
+                if pair_action_armed {
+                    style::HEADING_BLUE
+                } else {
+                    style::TEXT_MUTED
+                },
             );
         }
     }
@@ -169,6 +166,7 @@ pub fn draw_assign_context(view: AssignContext<'_>) {
         selected_colonist_id.and_then(|id| colonists.iter().find(|colonist| colonist.id == id));
     let selected_warning = selected_colonist
         .and_then(|colonist| assignment_pin_warning(colonist, colonists, technology));
+    draw_assign_selection_actions(context, selected_colonist, pair_action_armed);
     if let Some(colonist) = selected_colonist {
         draw_assign_batch_controls(context, colonist);
     }
@@ -183,7 +181,7 @@ pub fn draw_assign_context(view: AssignContext<'_>) {
             .text
             .label("assign_filter_room"),
         room_filter.x + 8.0,
-        room_filter.y + 15.0,
+        room_filter.y + 21.0,
         style::TINY_SIZE,
         style::TEXT_PRIMARY,
     );
@@ -193,12 +191,12 @@ pub fn draw_assign_context(view: AssignContext<'_>) {
                 .map(|id| format!(" | room filter #{}", id))
                 .unwrap_or_default();
             format!(
-                "Selected {} | click rooms to pin | right-click room to filter{}",
+                "Selected {} | tap a room to pin | right-click room to filter{}",
                 colonist.name, filter_note
             )
         })
         .unwrap_or_else(|| {
-            "Roles, pair directives, and space directives shape work blocks.".to_string()
+            "Select a survivor before changing a role or relationship directive.".to_string()
         });
     let footer = selected_warning
         .as_ref()
@@ -207,7 +205,7 @@ pub fn draw_assign_context(view: AssignContext<'_>) {
     draw_ui_text(
         &style::fit_text(&footer, context.w - 36.0, style::TINY_SIZE),
         context.x + 18.0,
-        context.y + 111.0,
+        context.y + 181.0,
         style::TINY_SIZE,
         if selected_warning.is_some() {
             style::ALERT_RED
@@ -236,9 +234,48 @@ pub fn draw_assign_context(view: AssignContext<'_>) {
         );
     } else if let (Some(name), Some(detail)) = (hovered_name.clone(), hovered_directive) {
         draw_tooltip_near_mouse(toolbar_tooltip_bounds(context), &name, &detail);
-    } else if let (Some(name), Some(forecast)) = (hovered_name, hovered_forecast) {
-        draw_tooltip_near_mouse(toolbar_tooltip_bounds(context), &name, &forecast.detail);
     }
+}
+
+fn draw_assign_selection_actions(
+    context: Rect,
+    selected_colonist: Option<&Colonist>,
+    pair_action_armed: bool,
+) {
+    let role = assign_role_action_rect(context);
+    let pair = assign_pair_action_rect(context);
+    style::draw_button(
+        role,
+        false,
+        selected_colonist.is_some() && style::button_hovered(role),
+    );
+    style::draw_button(
+        pair,
+        pair_action_armed,
+        selected_colonist.is_some() && style::button_hovered(pair),
+    );
+    draw_ui_text(
+        "NEXT ROLE",
+        role.x + 10.0,
+        role.y + 20.0,
+        style::TINY_SIZE,
+        if selected_colonist.is_some() {
+            style::TEXT_PRIMARY
+        } else {
+            style::TEXT_MUTED
+        },
+    );
+    draw_ui_text(
+        "PAIR / APART",
+        pair.x + 10.0,
+        pair.y + 20.0,
+        style::TINY_SIZE,
+        if selected_colonist.is_some() {
+            style::TEXT_PRIMARY
+        } else {
+            style::TEXT_MUTED
+        },
+    );
 }
 
 pub fn draw_assign_roster_controls(
@@ -259,8 +296,8 @@ pub fn draw_assign_roster_controls(
         style::draw_button(rect, *filter == active_filter, hovered);
         draw_ui_text(
             filter.label(),
-            rect.x + 5.0,
-            rect.y + 12.0,
+            rect.x + 7.0,
+            rect.y + 20.0,
             style::TINY_SIZE,
             if *filter == active_filter {
                 style::TEXT_PRIMARY
@@ -279,8 +316,8 @@ pub fn draw_assign_roster_controls(
         style::draw_button(rect, *sort == active_sort, hovered);
         draw_ui_text(
             sort.label(),
-            rect.x + 5.0,
-            rect.y + 12.0,
+            rect.x + 7.0,
+            rect.y + 20.0,
             style::TINY_SIZE,
             if *sort == active_sort {
                 style::TEXT_PRIMARY
@@ -298,8 +335,8 @@ pub fn draw_assign_roster_controls(
     style::draw_button(role, active_role_filter.is_some(), role_hovered);
     draw_ui_text(
         &format!("R:{}", assign_role_filter_label(active_role_filter)),
-        role.x + 4.0,
-        role.y + 12.0,
+        role.x + 7.0,
+        role.y + 20.0,
         style::TINY_SIZE,
         if active_role_filter.is_some() {
             style::TEXT_PRIMARY
@@ -328,8 +365,8 @@ pub fn draw_assign_batch_controls(context: Rect, selected_colonist: &Colonist) {
         style::draw_button(rect, false, enabled && hovered);
         draw_ui_text(
             action.label(),
-            rect.x + 5.0,
-            rect.y + 12.0,
+            rect.x + 7.0,
+            rect.y + 20.0,
             style::TINY_SIZE,
             if enabled {
                 style::TEXT_PRIMARY

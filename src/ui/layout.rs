@@ -52,12 +52,51 @@ impl Layout {
 
     /// Get the game area rectangle (where grid is drawn)
     pub fn game_area(&self) -> Rect {
+        self.game_area_with_context(false)
+    }
+
+    pub fn game_area_with_context(&self, context_open: bool) -> Rect {
+        self.game_area_with_height(context_open, 126.0)
+    }
+
+    pub fn game_area_with_height(&self, context_open: bool, context_height: f32) -> Rect {
+        let reserved_bottom = self.bottom_toolbar_height
+            + if context_open {
+                context_height + 22.0
+            } else {
+                0.0
+            };
         Rect {
-            x: self.left_panel_width,
-            y: self.top_bar_height,
-            w: (self.viewport_width - self.left_panel_width - self.right_panel_width).max(1.0),
-            h: (self.viewport_height - self.top_bar_height - self.bottom_toolbar_height).max(1.0),
+            x: self.screen_margin,
+            y: self.top_bar_height + self.screen_margin,
+            w: (self.viewport_width - self.screen_margin * 2.0).max(1.0),
+            h: (self.viewport_height
+                - self.top_bar_height
+                - reserved_bottom
+                - self.screen_margin * 2.0)
+                .max(1.0),
         }
+    }
+
+    pub fn inspector_panel(&self) -> Rect {
+        let width = if self.viewport_width < 760.0 {
+            260.0
+        } else {
+            292.0
+        };
+        let height: f32 = if self.viewport_height < 560.0 {
+            212.0
+        } else {
+            254.0
+        };
+        Rect::new(
+            (self.viewport_width - width - self.screen_margin).max(self.screen_margin),
+            self.top_bar_height + self.screen_margin + 58.0,
+            width.min(self.viewport_width - self.screen_margin * 2.0),
+            height.min(
+                self.viewport_height - self.top_bar_height - self.bottom_toolbar_height - 72.0,
+            ),
+        )
     }
 
     /// Get the top bar rectangle

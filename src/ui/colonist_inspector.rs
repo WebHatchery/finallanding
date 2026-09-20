@@ -21,11 +21,11 @@ pub fn draw_colonist_inspector(
         return;
     };
 
-    let rail = layout.left_panel();
-    let width = rail.w;
-    let height = 320.0_f32.min(rail.h * 0.48);
-    let x = rail.x;
-    let y = rail.y + rail.h - height;
+    let panel = layout.inspector_panel();
+    let width = panel.w;
+    let height = panel.h;
+    let x = panel.x;
+    let y = panel.y;
     let accent = style::mood_color(colonist.mood);
 
     style::draw_panel(Rect::new(x, y, width, height));
@@ -127,20 +127,6 @@ pub fn draw_colonist_inspector(
         colonist.mood / 100.0,
         style::BAR_GREEN,
     );
-    draw_labeled_bar(x + 18.0, bars_y + 23.0, "Energy", 0.46, style::BAR_GOLD);
-    draw_labeled_bar(x + 18.0, bars_y + 46.0, "Hunger", 0.58, style::BAR_RED);
-    draw_labeled_bar(
-        x + 18.0,
-        bars_y + 69.0,
-        "Health",
-        if colonist.is_hurt(current_tick) {
-            0.45
-        } else {
-            0.82
-        },
-        style::BAR_CYAN,
-    );
-
     let relationship = strongest_relationship(colonist, colonists)
         .map(|(name, value)| format!("{} {} ({:+})", name, relationship_label(value), value))
         .unwrap_or_else(|| "No strong tie yet".to_string());
@@ -157,7 +143,7 @@ pub fn draw_colonist_inspector(
         style::TEXT_BODY,
     );
 
-    if height >= 310.0 {
+    if height >= 240.0 {
         draw_relationship_portraits(x + 18.0, y + height - 58.0, colonist, art);
     }
 }

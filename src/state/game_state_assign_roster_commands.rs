@@ -4,6 +4,25 @@ use super::*;
 
 impl GameplayState {
     pub fn handle_assign_toolbar_click(&mut self, context: Rect, mouse_x: f32, mouse_y: f32) {
+        if assign_role_action_rect(context).contains(Vec2::new(mouse_x, mouse_y)) {
+            if let Some(colonist_id) = self.selected_colonist_id {
+                if let Some(index) = self
+                    .data
+                    .colonists
+                    .iter()
+                    .position(|colonist| colonist.id == colonist_id)
+                {
+                    self.cycle_colonist_job(index);
+                }
+            }
+            return;
+        }
+
+        if assign_pair_action_rect(context).contains(Vec2::new(mouse_x, mouse_y)) {
+            self.assign_pair_armed = self.selected_colonist_id.is_some() && !self.assign_pair_armed;
+            return;
+        }
+
         if assign_room_filter_rect(context).contains(Vec2::new(mouse_x, mouse_y)) {
             self.assign_room_filter_armed = !self.assign_room_filter_armed;
             return;
@@ -100,14 +119,18 @@ impl GameplayState {
             return;
         };
 
-        if let Some(selected_id) = self.selected_colonist_id {
-            if selected_id != clicked_id {
-                self.toggle_relationship_directive(selected_id, clicked_id);
-                return;
+        if self.assign_pair_armed {
+            if let Some(selected_id) = self.selected_colonist_id {
+                if selected_id != clicked_id {
+                    self.toggle_relationship_directive(selected_id, clicked_id);
+                    self.assign_pair_armed = false;
+                    return;
+                }
             }
         }
 
-        self.cycle_colonist_job(colonist_index);
+        self.selected_colonist_id = Some(clicked_id);
+        self.assign_pair_armed = false;
     }
 
     pub fn cycle_colonist_job(&mut self, colonist_index: usize) {

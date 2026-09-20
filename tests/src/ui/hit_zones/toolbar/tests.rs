@@ -8,7 +8,7 @@ fn center(rect: Rect) -> (f32, f32) {
 fn test_toolbar_mode_hit_zones_match_visible_buttons() {
     let toolbar = Rect::new(380.0, 640.0, 520.0, 66.0);
     let (build_x, build_y) = center(toolbar_button_rect(toolbar, 0));
-    let (log_x, log_y) = center(toolbar_button_rect(toolbar, 6));
+    let (log_x, log_y) = center(toolbar_button_rect(toolbar, 4));
 
     assert_eq!(
         toolbar_mode_at(toolbar, build_x, build_y),
@@ -79,4 +79,15 @@ fn test_toolbar_priority_and_colonist_hits() {
         toolbar_colonist_index_at(context, 4, colonist_x, colonist_y),
         None
     );
+}
+
+#[test]
+fn test_research_action_is_below_mission_cards() {
+    let context = Rect::new(380.0, 460.0, 520.0, 196.0);
+    let (action_x, action_y) = center(research_action_rect(context));
+    let (mission_x, mission_y) = center(toolbar_context_item_rect(context, 0));
+
+    assert!(research_action_rect(context).contains(vec2(action_x, action_y)));
+    assert_ne!((action_x, action_y), (mission_x, mission_y));
+    assert!(action_y > mission_y);
 }

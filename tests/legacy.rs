@@ -167,6 +167,11 @@ mod ui_hit_zones_assign {
     use macroquad::prelude::Rect;
     include!("src/ui/hit_zones/assign/tests.rs");
 }
+mod ui_hit_zones_camera {
+    pub use finallanding::ui::hit_zones::camera::*;
+    use macroquad::prelude::Rect;
+    include!("src/ui/hit_zones/camera/tests.rs");
+}
 mod ui_hit_zones_log {
     pub use finallanding::ui::hit_zones::log::*;
     use macroquad::prelude::Rect;

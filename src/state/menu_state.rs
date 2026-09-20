@@ -2,7 +2,10 @@
 
 use crate::state::persistence::{has_saved_game, load_game};
 use crate::state::{State, StateTransition};
-use crate::ui::{menu_continue_rect, menu_exit_rect, menu_settings_rect, menu_start_rect, style};
+use crate::ui::{
+    menu_continue_rect, menu_exit_rect, menu_settings_close_rect, menu_settings_rect,
+    menu_start_rect, style,
+};
 use macroquad::prelude::*;
 use macroquad_toolkit::input::InputState;
 use macroquad_toolkit::ui::{draw_ui_text, measure_ui_text, Pointer};
@@ -16,6 +19,13 @@ pub struct MenuState {
 impl MenuState {
     pub fn new() -> Self {
         Self::default()
+    }
+
+    pub fn with_status(status_message: Option<String>) -> Self {
+        Self {
+            settings_open: false,
+            status_message,
+        }
     }
 }
 
@@ -38,6 +48,16 @@ impl MenuState {
             input.mouse_pos = pointer.position;
             input.left_released = true;
         }
+        if self.settings_open {
+            if input.escape_pressed
+                || input
+                    .left_released_rect(menu_settings_close_rect(screen_width(), screen_height()))
+            {
+                self.settings_open = false;
+            }
+            return StateTransition::None;
+        }
+
         if input.space_pressed || input.enter_pressed {
             return StateTransition::ToGameplay(Box::default());
         }
@@ -65,7 +85,7 @@ impl MenuState {
         }
 
         if input.left_released_rect(menu_settings_rect(screen_width(), screen_height())) {
-            self.settings_open = !self.settings_open;
+            self.settings_open = true;
             return StateTransition::None;
         }
 
@@ -109,8 +129,8 @@ impl MenuState {
             draw_ui_text(
                 line,
                 screen_center_x - dim.width / 2.0,
-                screen_center_y - 112.0 + index as f32 * 28.0,
-                20.0,
+                screen_center_y - 112.0 + index as f32 * 24.0,
+                18.0,
                 LIGHTGRAY,
             );
         }
@@ -151,15 +171,25 @@ impl MenuState {
         }
 
         // Instructions
-        for (index, line) in text.menu_controls.iter().enumerate() {
-            let dim = measure_ui_text(line, None, 16, 1.0);
+        if screen_height() < 560.0 {
             draw_ui_text(
-                line,
-                screen_center_x - dim.width / 2.0,
-                screen_center_y + 176.0 + index as f32 * 22.0,
-                16.0,
+                "Tap the visible controls to play.",
+                12.0,
+                screen_height() - 16.0,
+                13.0,
                 GRAY,
             );
+        } else {
+            for (index, line) in text.menu_controls.iter().enumerate() {
+                let dim = measure_ui_text(line, None, 15, 1.0);
+                draw_ui_text(
+                    line,
+                    screen_center_x - dim.width / 2.0,
+                    screen_center_y + 176.0 + index as f32 * 20.0,
+                    15.0,
+                    GRAY,
+                );
+            }
         }
 
         if let Some(message) = &self.status_message {
@@ -198,9 +228,18 @@ impl MenuState {
             draw_ui_text(
                 text.label("menu_settings_close"),
                 modal.x + 18.0,
-                modal.y + 88.0,
-                14.0,
+                modal.y + 90.0,
+                13.0,
                 style::TEXT_BODY,
+            );
+            let close = menu_settings_close_rect(screen_width(), screen_height());
+            style::draw_button(close, false, style::button_hovered(close));
+            draw_ui_text(
+                "CLOSE",
+                close.x + 10.0,
+                close.y + 23.0,
+                12.0,
+                style::TEXT_PRIMARY,
             );
         }
     }

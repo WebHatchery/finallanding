@@ -60,6 +60,28 @@ Core loop:
 
 The settlement can limp or fail if it has no food plan, no habitats, or no mission/technology progress.
 
+## Screen Brief and Viewport Contract
+
+The normal 1280×720 canvas is the primary desktop composition. The current
+minimum supported canvas is 720×480; smaller or portrait canvases are not a
+support promise until they have a dedicated review. The game is touch-first at
+both declared sizes, with keyboard shortcuts as supplements.
+
+| Phase | Current decision | Dominant focus | Primary action | Supporting information | Deferred information |
+| --- | --- | --- | --- | --- | --- |
+| Arrival | Learn the next colony decision | Briefing copy and the visible Continue control | Continue / Enter Colony | Step count and the immediate mechanic | Full colony status |
+| Observation | Decide which pressure to address next | The colony map and its visible people/buildings | Open one contextual mode or change priority | Current shortage, mood, and active warning | Full objectives, roster, archive, and research detail |
+| Placement | Decide whether a plan fits the selected tile | Ghost footprint and affected map cells | Place, Undo, or Cancel | Cost, purpose, and blocking reason beside the plan | Secondary building catalog detail |
+| Assignment | Decide who should work or live where | Selected survivor and compatible spaces | Role, Home, Work, Pair, or Apart | Mood, activity, injury, capacity, and tension | Batch tools and advanced filters |
+| Research | Choose a mission tradeoff | Selected mission and its Launch action | Launch the selected mission | Crew, danger, duration, reward, and prerequisite | Technology effects until inspected |
+| Reports | Understand what changed and what to do next | The selected daily story | Read, page, filter, or search | Recommendation beside the full report | Export and secondary metrics |
+| Results | Review the outcome or begin another plan | Outcome summary and recovery choices | Review Log, Restart Run, or Return to Menu | The outcome condition and preserved colony context | Ongoing gameplay input |
+
+The world area must remain the main space during observation. Context panels
+replace that focus when opened; they must not stack with permanent objective,
+resource, minimap, and roster dashboards. Menu, Settings, save recovery, and
+exit controls remain separate from gameplay decisions.
+
 ## Controls
 
 - Mouse or touch: release/click UI buttons, select colonists, place buildings, and pin compatible rooms/workspaces in Assign mode.

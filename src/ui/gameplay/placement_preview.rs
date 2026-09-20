@@ -9,7 +9,7 @@ impl GameplayState {
             let mouse = mouse_position_vec2();
             let mouse_x = mouse.x;
             let mouse_y = mouse.y;
-            let game_area = self.layout.game_area();
+            let game_area = self.world_area();
             let iso = self.iso_view();
             let pos = if let Some(position) = self.capture_preview_position {
                 position
@@ -72,7 +72,7 @@ impl GameplayState {
         feedback: &BuildingPlacementFeedback,
         anchor: Vec2,
     ) {
-        let game_area = self.layout.game_area();
+        let game_area = self.world_area();
         let width = (game_area.w - 24.0).clamp(260.0, 340.0);
         let height = 124.0;
         let x = (anchor.x + 18.0)

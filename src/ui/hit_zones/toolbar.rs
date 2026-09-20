@@ -30,6 +30,16 @@ impl ToolbarMode {
         ]
     }
 
+    pub fn visible() -> &'static [ToolbarMode] {
+        &[
+            ToolbarMode::Build,
+            ToolbarMode::Colony,
+            ToolbarMode::Research,
+            ToolbarMode::Assign,
+            ToolbarMode::Log,
+        ]
+    }
+
     pub fn label(self) -> &'static str {
         let key = match self {
             ToolbarMode::Build => "toolbar_mode_build",
@@ -84,7 +94,7 @@ const ROOM_BUILDINGS: &[BuildingType] = &[
 const OBJECT_BUILDINGS: &[BuildingType] = &[BuildingType::Workshop, BuildingType::ExplorationGate];
 
 pub fn toolbar_button_rect(toolbar: Rect, index: usize) -> Rect {
-    let button_w = toolbar.w / ToolbarMode::all().len() as f32;
+    let button_w = toolbar.w / ToolbarMode::visible().len() as f32;
     Rect::new(
         toolbar.x + index as f32 * button_w,
         toolbar.y + 8.0,
@@ -95,7 +105,7 @@ pub fn toolbar_button_rect(toolbar: Rect, index: usize) -> Rect {
 
 pub fn toolbar_mode_at(toolbar: Rect, x: f32, y: f32) -> Option<ToolbarMode> {
     hit_test(
-        ToolbarMode::all()
+        ToolbarMode::visible()
             .iter()
             .enumerate()
             .map(|(index, mode)| HitTarget::new(toolbar_button_rect(toolbar, index), *mode)),
@@ -104,14 +114,25 @@ pub fn toolbar_mode_at(toolbar: Rect, x: f32, y: f32) -> Option<ToolbarMode> {
 }
 
 pub fn toolbar_context_rect(toolbar: Rect) -> Rect {
-    Rect::new(toolbar.x, toolbar.y - 138.0, toolbar.w, 126.0)
+    toolbar_context_rect_for_mode(toolbar, ToolbarMode::Build)
+}
+
+pub fn toolbar_context_rect_for_mode(toolbar: Rect, mode: ToolbarMode) -> Rect {
+    let height = match mode {
+        ToolbarMode::Build | ToolbarMode::Rooms | ToolbarMode::Objects => 126.0,
+        ToolbarMode::Colony => 218.0,
+        ToolbarMode::Research => 196.0,
+        ToolbarMode::Assign => 218.0,
+        ToolbarMode::Log => 276.0,
+    };
+    Rect::new(toolbar.x, toolbar.y - height - 12.0, toolbar.w, height)
 }
 
 pub fn toolbar_context_item_rect(context: Rect, index: usize) -> Rect {
     let columns = 5;
     let gap = 8.0;
     let item_w = (context.w - 24.0 - gap * (columns - 1) as f32) / columns as f32;
-    let item_h = 43.0;
+    let item_h = 48.0;
     let col = index % columns;
     let row = index / columns;
     Rect::new(
@@ -181,5 +202,14 @@ pub fn toolbar_mission_at(context: Rect, x: f32, y: f32) -> Option<MissionType> 
                 HitTarget::new(toolbar_context_item_rect(context, index), *mission_type)
             }),
         vec2(x, y),
+    )
+}
+
+pub fn research_action_rect(context: Rect) -> Rect {
+    Rect::new(
+        context.x + context.w - 154.0,
+        context.y + 150.0,
+        136.0,
+        32.0,
     )
 }

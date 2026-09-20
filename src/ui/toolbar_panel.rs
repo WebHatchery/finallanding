@@ -4,20 +4,24 @@ use super::Layout;
 use crate::data::building::BuildingType;
 use crate::data::colonist::{Colonist, JobPreference};
 use crate::data::event_log::{ColonyLogEntry, LogCategory, SocialHistoryEntry};
+use crate::data::mission::MissionType;
 use crate::data::priority::ColonyPriority;
 use crate::data::resources::ResourceState;
 use crate::data::technology::{TechId, TechnologyState};
 use crate::systems::assignment_system::AssignmentSystem;
 use crate::systems::mission_system::MissionPlan;
+use crate::systems::objective_system::ObjectiveCard;
 use crate::systems::summary_system::ColonyPressureSummary;
+use crate::ui::advisor_overlay::draw_objective_card;
 use crate::ui::hit_zones::{
     assign_batch_rect, assign_filter_rect, assign_page_next_rect, assign_page_previous_rect,
-    assign_role_filter_rect, assign_room_filter_rect, assign_sort_rect, log_filter_rect,
-    log_keyboard_bounds, log_keyboard_key_rect, log_page_next_rect, log_page_previous_rect,
+    assign_pair_action_rect, assign_role_action_rect, assign_role_filter_rect,
+    assign_room_filter_rect, assign_sort_rect, log_filter_rect, log_keyboard_bounds,
+    log_keyboard_key_rect, log_page_next_rect, log_page_previous_rect, log_report_close_rect,
     log_search_clear_rect, log_search_export_rect, log_search_rect, log_timeline_row_rect,
-    toolbar_buildings_for_mode, toolbar_context_item_rect, toolbar_context_rect,
-    toolbar_list_item_rect, AssignBatchAction, AssignRosterFilter, AssignRosterSort, LogFilter,
-    ToolbarMode,
+    research_action_rect, toolbar_buildings_for_mode, toolbar_context_item_rect,
+    toolbar_context_rect_for_mode, toolbar_list_item_rect, AssignBatchAction, AssignRosterFilter,
+    AssignRosterSort, LogFilter, ToolbarMode,
 };
 use crate::ui::style;
 use crate::ui::tooltip::draw_tooltip_near_mouse;
@@ -45,6 +49,7 @@ pub struct ToolbarPanelData<'a> {
     pub selected_building: Option<BuildingType>,
     pub resources: &'a ResourceState,
     pub active_priority: ColonyPriority,
+    pub objectives: &'a [ObjectiveCard],
     pub research: ToolbarResearchData<'a>,
     pub assign: ToolbarAssignData<'a>,
     pub log: ToolbarLogData<'a>,
@@ -55,6 +60,9 @@ pub struct ToolbarResearchData<'a> {
     pub technology: &'a TechnologyState,
     pub active_mission_count: usize,
     pub required_unlocks: usize,
+    pub selected_mission_type: MissionType,
+    pub has_exploration_gate: bool,
+    pub has_available_mission_crew: bool,
 }
 
 pub struct ToolbarAssignData<'a> {
@@ -66,6 +74,7 @@ pub struct ToolbarAssignData<'a> {
     pub role_filter: Option<JobPreference>,
     pub building_filter: Option<u32>,
     pub room_filter_armed: bool,
+    pub pair_action_armed: bool,
     pub technology: &'a TechnologyState,
 }
 
@@ -82,8 +91,19 @@ pub struct ToolbarLogData<'a> {
     pub page_count: usize,
 }
 
+struct ResearchContext<'a> {
+    context: Rect,
+    mission_plans: &'a [MissionPlan],
+    technology: &'a TechnologyState,
+    active_mission_count: usize,
+    required_unlocks: usize,
+    selected_mission_type: MissionType,
+    has_exploration_gate: bool,
+    has_available_mission_crew: bool,
+}
+
 pub fn draw_toolbar_context_panel(layout: &Layout, panel: ToolbarPanelData<'_>) {
-    let context = toolbar_context_rect(layout.bottom_toolbar());
+    let context = toolbar_context_rect_for_mode(layout.bottom_toolbar(), panel.mode);
     style::draw_panel(context);
     style::draw_section_title(
         panel.mode.label().to_uppercase().as_str(),
@@ -98,14 +118,19 @@ pub fn draw_toolbar_context_panel(layout: &Layout, panel: ToolbarPanelData<'_>) 
             panel.selected_building,
             panel.resources,
         ),
-        ToolbarMode::Colony => draw_colony_context(context, panel.active_priority),
-        ToolbarMode::Research => draw_research_context(
+        ToolbarMode::Colony => {
+            draw_colony_context(context, panel.active_priority, panel.objectives)
+        }
+        ToolbarMode::Research => draw_research_context(ResearchContext {
             context,
-            panel.research.mission_plans,
-            panel.research.technology,
-            panel.research.active_mission_count,
-            panel.research.required_unlocks,
-        ),
+            mission_plans: panel.research.mission_plans,
+            technology: panel.research.technology,
+            active_mission_count: panel.research.active_mission_count,
+            required_unlocks: panel.research.required_unlocks,
+            selected_mission_type: panel.research.selected_mission_type,
+            has_exploration_gate: panel.research.has_exploration_gate,
+            has_available_mission_crew: panel.research.has_available_mission_crew,
+        }),
         ToolbarMode::Assign => draw_assign_context(AssignContext {
             context,
             colonists: panel.assign.colonists,
@@ -117,6 +142,7 @@ pub fn draw_toolbar_context_panel(layout: &Layout, panel: ToolbarPanelData<'_>) 
             active_building_filter: panel.assign.building_filter,
             technology: panel.assign.technology,
             room_filter_armed: panel.assign.room_filter_armed,
+            pair_action_armed: panel.assign.pair_action_armed,
         }),
         ToolbarMode::Log => draw_log_context(LogContext {
             context,
@@ -211,7 +237,11 @@ fn draw_build_context(
     }
 }
 
-fn draw_colony_context(context: Rect, active_priority: ColonyPriority) {
+fn draw_colony_context(
+    context: Rect,
+    active_priority: ColonyPriority,
+    objectives: &[ObjectiveCard],
+) {
     let mut hovered_priority = None;
     for (index, priority) in ColonyPriority::all().iter().enumerate() {
         let rect = toolbar_context_item_rect(context, index);
@@ -243,15 +273,38 @@ fn draw_colony_context(context: Rect, active_priority: ColonyPriority) {
             priority.description(),
         );
     }
+
+    draw_ui_text(
+        "OBJECTIVES",
+        context.x + 18.0,
+        context.y + 108.0,
+        style::TINY_SIZE,
+        style::HEADING_BLUE,
+    );
+    let objective_width = (context.w - 42.0) * 0.5;
+    for (index, objective) in objectives.iter().take(4).enumerate() {
+        let column = index % 2;
+        let row = index / 2;
+        draw_objective_card(
+            context.x + 12.0 + column as f32 * (objective_width + 18.0),
+            context.y + 116.0 + row as f32 * 30.0,
+            objective_width,
+            objective,
+        );
+    }
 }
 
-fn draw_research_context(
-    context: Rect,
-    mission_plans: &[MissionPlan],
-    technology: &TechnologyState,
-    active_mission_count: usize,
-    required_unlocks: usize,
-) {
+fn draw_research_context(view: ResearchContext<'_>) {
+    let ResearchContext {
+        context,
+        mission_plans,
+        technology,
+        active_mission_count,
+        required_unlocks,
+        selected_mission_type,
+        has_exploration_gate,
+        has_available_mission_crew,
+    } = view;
     let mut hovered_plan = None;
     for (index, plan) in mission_plans.iter().enumerate() {
         let rect = toolbar_context_item_rect(context, index);
@@ -259,7 +312,7 @@ fn draw_research_context(
         if hovered {
             hovered_plan = Some(plan);
         }
-        style::draw_button(rect, plan.recommended, hovered);
+        style::draw_button(rect, plan.mission_type == selected_mission_type, hovered);
         draw_ui_text(
             plan.definition.short_name,
             rect.x + 10.0,
@@ -269,7 +322,7 @@ fn draw_research_context(
         );
         draw_ui_text(
             &format!(
-                "{}m | {}%",
+                "{}m | {}% risk",
                 plan.definition.duration_minutes, plan.danger_percent
             ),
             rect.x + 10.0,
@@ -282,7 +335,7 @@ fn draw_research_context(
     for (slot, tech_id) in technology.visible_research_targets(2).iter().enumerate() {
         let rect = toolbar_context_item_rect(context, slot + 3);
         let hovered = style::button_hovered(rect);
-        style::draw_button(rect, false, hovered);
+        style::draw_panel(rect);
         draw_ui_text(
             &style::fit_text(tech_id.name(), rect.w - 20.0, style::SMALL_SIZE),
             rect.x + 10.0,
@@ -314,6 +367,98 @@ fn draw_research_context(
         }
     }
 
+    let Some(selected_plan) = mission_plans
+        .iter()
+        .find(|plan| plan.mission_type == selected_mission_type)
+        .or_else(|| mission_plans.iter().find(|plan| plan.recommended))
+    else {
+        return;
+    };
+    let detail_width = context.w - 190.0;
+    draw_ui_text(
+        &style::fit_text(
+            selected_plan.definition.name,
+            detail_width,
+            style::SMALL_SIZE,
+        ),
+        context.x + 18.0,
+        context.y + 111.0,
+        style::SMALL_SIZE,
+        style::TEXT_PRIMARY,
+    );
+    draw_ui_text(
+        &style::fit_text(
+            selected_plan.definition.description,
+            detail_width,
+            style::TINY_SIZE,
+        ),
+        context.x + 18.0,
+        context.y + 127.0,
+        style::TINY_SIZE,
+        style::TEXT_BODY,
+    );
+    draw_ui_text(
+        &style::fit_text(
+            &format!(
+                "Risk {}%  |  {} min  |  Reward: {}",
+                selected_plan.danger_percent,
+                selected_plan.definition.duration_minutes,
+                selected_plan.definition.reward_profile
+            ),
+            detail_width,
+            style::TINY_SIZE,
+        ),
+        context.x + 18.0,
+        context.y + 143.0,
+        style::TINY_SIZE,
+        if selected_plan.danger_percent >= 40 {
+            style::ALERT_RED
+        } else {
+            style::TEXT_MUTED
+        },
+    );
+    let action = research_action_rect(context);
+    let action_label = if !has_exploration_gate {
+        "BUILD GATE"
+    } else if selected_plan.cooldown_remaining > 0 {
+        "COOLDOWN"
+    } else if !has_available_mission_crew {
+        "NO CREW"
+    } else {
+        "LAUNCH"
+    };
+    style::draw_button(action, false, style::button_hovered(action));
+    draw_ui_text(
+        action_label,
+        action.x + 30.0,
+        action.y + 21.0,
+        style::SMALL_SIZE,
+        style::TEXT_PRIMARY,
+    );
+    let status = if !has_exploration_gate {
+        "Requires an Exploration Gate."
+    } else if selected_plan.cooldown_remaining > 0 {
+        "Mission crew regrouping."
+    } else if !has_available_mission_crew {
+        "No survivor is ready for mission duty."
+    } else {
+        "Ready crew will be assigned on launch."
+    };
+    draw_ui_text(
+        status,
+        context.x + 18.0,
+        context.y + 161.0,
+        style::TINY_SIZE,
+        if !has_exploration_gate
+            || selected_plan.cooldown_remaining > 0
+            || !has_available_mission_crew
+        {
+            style::ALERT_RED
+        } else {
+            style::TEXT_MUTED
+        },
+    );
+
     let tech_label = technology
         .next_research_target()
         .map(|tech| tech.name())
@@ -334,7 +479,7 @@ fn draw_research_context(
     draw_ui_text(
         &research_status,
         context.x + 18.0,
-        context.y + 109.0,
+        context.y + 187.0,
         style::TINY_SIZE,
         style::TEXT_MUTED,
     );

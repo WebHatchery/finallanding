@@ -17,7 +17,7 @@ pub fn draw_bottom_toolbar(
     style::draw_panel(rect);
     let mut hovered_mode = None;
 
-    for (index, mode) in ToolbarMode::all().iter().enumerate() {
+    for (index, mode) in ToolbarMode::visible().iter().enumerate() {
         let button = toolbar_button_rect(rect, index);
         let hovered = style::button_hovered(button);
         if hovered {
@@ -25,21 +25,12 @@ pub fn draw_bottom_toolbar(
         }
         let active = active_mode == *mode;
         style::draw_button(button, active, hovered);
-        let icon = mode.icon();
-        let icon_width = measure_ui_text(icon, None, 21, 1.0).width;
-        draw_ui_text(
-            icon,
-            button.x + (button.w - icon_width) * 0.5,
-            button.y + 24.0,
-            21.0,
-            style::HEADING_BLUE,
-        );
         let label = mode.label();
         let label_width = measure_ui_text(label, None, style::SMALL_SIZE as u16, 1.0).width;
         draw_ui_text(
             label,
             button.x + (button.w - label_width) * 0.5,
-            button.y + 47.0,
+            button.y + 35.0,
             style::SMALL_SIZE,
             style::TEXT_BODY,
         );

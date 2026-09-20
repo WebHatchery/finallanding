@@ -7,12 +7,14 @@ pub enum PageAction {
 }
 
 pub mod assign;
+pub mod camera;
 pub mod log;
 pub mod menu;
 pub mod toolbar;
 pub mod top_bar;
 
 pub use assign::*;
+pub use camera::*;
 pub use log::*;
 pub use menu::*;
 pub use toolbar::*;

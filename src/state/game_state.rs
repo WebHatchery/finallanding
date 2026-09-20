@@ -29,16 +29,19 @@ use crate::systems::time_events::TimeEventCollector;
 use crate::systems::time_system::TimeSystem;
 use crate::systems::work_system::WorkSystem;
 use crate::ui::{
-    assign_batch_action_at, assign_filter_at, assign_page_action_at, assign_role_filter_at,
-    assign_room_filter_rect, assign_sort_at, draw_advisor_overlay, draw_bottom_toolbar,
-    draw_colonist_inspector, draw_debug_overlay, draw_right_rail, draw_toolbar_context_panel,
-    draw_top_bar, log_filter_at, log_keyboard_action_at, log_keyboard_bounds, log_page_action_at,
-    log_search_action_at, log_timeline_row_at, restart_button_rect, social_history_page_count,
-    social_timeline_day_at, toolbar_building_at_for_mode, toolbar_buildings_for_mode,
-    toolbar_colonist_index_at, toolbar_context_rect, toolbar_mission_at, toolbar_mode_at,
-    toolbar_priority_at, top_bar_action_at, top_bar_priority_at_for, top_bar_speed_at_for,
-    AssignBatchAction, AssignRosterFilter, AssignRosterSort, DebugOverlayContext, IsoView, Layout,
-    LogFilter, LogSearchAction, PageAction, PlaceholderArt, SocialTimelineRow, ToolbarAssignData,
+    advisor_banner_rect, assign_batch_action_at, assign_filter_at, assign_page_action_at,
+    assign_pair_action_rect, assign_role_action_rect, assign_role_filter_at,
+    assign_room_filter_rect, assign_sort_at, camera_action_at, camera_control_rect,
+    draw_advisor_banner, draw_bottom_toolbar, draw_camera_controls, draw_colonist_inspector,
+    draw_debug_overlay, draw_toolbar_context_panel, draw_top_bar, log_filter_at,
+    log_keyboard_action_at, log_keyboard_bounds, log_page_action_at, log_report_close_rect,
+    log_search_action_at, log_timeline_row_at, research_action_rect, restart_button_rect,
+    social_history_page_count, social_timeline_day_at, toolbar_building_at_for_mode,
+    toolbar_buildings_for_mode, toolbar_colonist_index_at, toolbar_context_rect_for_mode,
+    toolbar_mission_at, toolbar_mode_at, toolbar_priority_at, top_bar_action_at,
+    top_bar_priority_at_for, top_bar_speed_at_for, AssignBatchAction, AssignRosterFilter,
+    AssignRosterSort, CameraAction, DebugOverlayContext, IsoView, Layout, LogFilter,
+    LogSearchAction, PageAction, PlaceholderArt, SocialTimelineRow, ToolbarAssignData,
     ToolbarLogData, ToolbarMode, ToolbarPanelData, ToolbarResearchData, TopBarAction,
 };
 use macroquad::prelude::*;
@@ -80,6 +83,10 @@ pub struct GameplayState {
     pub debug_overlay: DebugOverlay,
     /// Active bottom-toolbar mode.
     pub toolbar_mode: ToolbarMode,
+    /// Whether the current mode's context tray is open over the lower world area.
+    pub context_panel_open: bool,
+    /// Bounded observation zoom; placement and picking use the same view.
+    pub camera_zoom: f32,
     /// Current page in the Assign mode roster.
     pub assign_roster_page: usize,
     /// Active filter in the Assign mode roster.
@@ -92,6 +99,8 @@ pub struct GameplayState {
     pub assign_building_filter: Option<u32>,
     /// Whether the visible room filter control is waiting for a map tap.
     pub assign_room_filter_armed: bool,
+    /// Whether the next roster tap should set or clear a relationship directive.
+    pub assign_pair_armed: bool,
     /// Current page in the Log mode social archive.
     pub social_history_page: usize,
     /// Active filter in the Log mode social archive.
@@ -108,6 +117,12 @@ pub struct GameplayState {
     pub autosave_elapsed: f32,
     /// Prevents a storage failure from flooding the event log every frame.
     pub save_error_reported: bool,
+    /// Set by a visible menu action so the lifecycle can save before leaving.
+    pub menu_requested: bool,
+    /// Whether the finished-scenario result is currently showing the Log view.
+    pub result_review_open: bool,
+    /// Mission card selected in the Research tray before an explicit launch.
+    pub selected_mission_type: MissionType,
     /// Cached summary input fingerprint used to avoid repeated relationship scans during draw.
     pub cached_summary_key: u64,
     pub cached_colony_summary: crate::systems::summary_system::ColonyPressureSummary,
@@ -134,6 +149,7 @@ impl GameplayState {
     pub fn new_for_capture() -> Self {
         let mut state = Self::new();
         state.complete_arrival();
+        state.context_panel_open = true;
         state
     }
 
@@ -148,6 +164,7 @@ impl GameplayState {
         let selected_colonist_id = initial_selected_colonist_id(&data, toolbar_mode);
         let capture_preview_position = initial_capture_preview_position();
         let selected_social_history_day = initial_selected_social_history_day(&data);
+        let selected_mission_type = MissionSystem::recommended_mission_type(&data);
 
         let mut state = Self {
             prev_tick: data.tick,
@@ -162,12 +179,15 @@ impl GameplayState {
             layout: Layout::default(),
             debug_overlay: DebugOverlay::new(),
             toolbar_mode,
+            context_panel_open: false,
+            camera_zoom: 1.0,
             assign_roster_page: 0,
             assign_roster_filter: AssignRosterFilter::All,
             assign_roster_sort: AssignRosterSort::Roster,
             assign_role_filter: None,
             assign_building_filter: None,
             assign_room_filter_armed: false,
+            assign_pair_armed: false,
             social_history_page: 0,
             social_history_filter: LogFilter::All,
             social_history_query: String::new(),
@@ -176,6 +196,9 @@ impl GameplayState {
             art: PlaceholderArt::new(),
             autosave_elapsed: 0.0,
             save_error_reported: false,
+            menu_requested: false,
+            result_review_open: false,
+            selected_mission_type,
             cached_summary_key: 0,
             cached_colony_summary: crate::systems::summary_system::ColonyPressureSummary {
                 average_mood: 0.0,

@@ -166,7 +166,7 @@ impl GameplayState {
         let mouse = mouse_position_vec2();
         draw_tooltip_at(
             mouse + vec2(18.0, 18.0),
-            self.layout.game_area(),
+            self.world_area(),
             &colonist.name,
             &format!(
                 "{} | Mood {:.0} | {}",

@@ -31,6 +31,11 @@ impl State for GameplayState {
             return StateTransition::None;
         }
 
+        if self.menu_requested {
+            self.menu_requested = false;
+            return self.menu_transition();
+        }
+
         // Debug toggle
         self.debug_overlay.record_frame(get_frame_time());
         if is_key_pressed(KeyCode::F3) {
@@ -60,8 +65,18 @@ impl State for GameplayState {
             self.set_priority(ColonyPriority::Survey);
         }
 
-        self.update_pointer_ui_input(&input);
-        self.update_colonist_selection(&input);
+        let ui_consumed_input = self.update_pointer_ui_input(&input);
+        if self.menu_requested {
+            self.menu_requested = false;
+            return self.menu_transition();
+        }
+        if !ui_consumed_input {
+            self.update_colonist_selection(&input);
+        }
+
+        if self.data.scenario.is_finished() {
+            return StateTransition::None;
+        }
 
         let elapsed_ticks = self.advance_time();
         if elapsed_ticks > 0 {
@@ -76,7 +91,7 @@ impl State for GameplayState {
 
         // Update hovered cell based on mouse position (account for UI offset)
         let mouse = input.mouse_pos;
-        let game_area = self.layout.game_area();
+        let game_area = self.world_area();
         let grid_pos = self.iso_view().screen_to_grid(mouse);
         if game_area.contains(mouse) && self.data.grid.is_in_bounds(grid_pos.x, grid_pos.y) {
             self.hovered_cell = Some(grid_pos);
@@ -105,15 +120,23 @@ impl State for GameplayState {
         self.draw_colonists_with_offset(hovered_colonist_id);
         self.draw_hover_colonist_card(hovered_colonist_id);
         let advisor_plan = AdvisorSystem::plan(&self.data);
-        let objectives = ObjectiveSystem::active_cards(&self.data);
-        draw_advisor_overlay(&self.layout, &objectives, &advisor_plan);
-        draw_colonist_inspector(
+        draw_advisor_banner(
             &self.layout,
-            self.inspected_colonist(hovered_colonist_id),
-            &self.data.colonists,
-            self.data.tick,
-            &self.art,
+            &advisor_plan,
+            &self.data.resources,
+            self.data.colonists.len(),
+            self.average_mood(),
         );
+        draw_camera_controls(self.world_area(), self.camera_zoom);
+        if !self.context_panel_open {
+            draw_colonist_inspector(
+                &self.layout,
+                self.inspected_colonist(hovered_colonist_id),
+                &self.data.colonists,
+                self.data.tick,
+                &self.art,
+            );
+        }
 
         // Draw UI components (on top)
         draw_top_bar(
@@ -123,56 +146,61 @@ impl State for GameplayState {
             self.data.colonists.len(),
             self.average_mood(),
             &self.data.resources,
-            self.data.priority.active,
         );
 
         let mission_plans = MissionSystem::mission_plans(&self.data);
-        draw_right_rail(
-            &self.layout,
-            &self.data,
-            ResourceSystem::storage_capacity(&self.data),
-            ResourceSystem::daily_supply_need(&self.data),
-            &self.cached_colony_summary,
-            &self.art,
-        );
-        draw_toolbar_context_panel(
-            &self.layout,
-            ToolbarPanelData {
-                mode: self.toolbar_mode,
-                selected_building: self.selected_building,
-                resources: &self.data.resources,
-                active_priority: self.data.priority.active,
-                research: ToolbarResearchData {
-                    mission_plans: &mission_plans,
-                    technology: &self.data.technology,
-                    active_mission_count: self.data.missions.active_count(),
-                    required_unlocks: self.data.scenario.required_tech_unlocks,
+        let objectives = ObjectiveSystem::active_cards(&self.data);
+        if self.context_panel_open {
+            draw_toolbar_context_panel(
+                &self.layout,
+                ToolbarPanelData {
+                    mode: self.toolbar_mode,
+                    selected_building: self.selected_building,
+                    resources: &self.data.resources,
+                    active_priority: self.data.priority.active,
+                    objectives: &objectives,
+                    research: ToolbarResearchData {
+                        mission_plans: &mission_plans,
+                        technology: &self.data.technology,
+                        active_mission_count: self.data.missions.active_count(),
+                        required_unlocks: self.data.scenario.required_tech_unlocks,
+                        selected_mission_type: self.selected_mission_type,
+                        has_exploration_gate: self.data.building_system.buildings().iter().any(
+                            |building| building.building_type == BuildingType::ExplorationGate,
+                        ),
+                        has_available_mission_crew: self
+                            .data
+                            .colonists
+                            .iter()
+                            .any(|colonist| colonist.can_start_mission(self.data.tick)),
+                    },
+                    assign: ToolbarAssignData {
+                        colonists: &self.data.colonists,
+                        selected_colonist_id: self.selected_colonist_id,
+                        roster_page: self.assign_roster_page,
+                        roster_filter: self.assign_roster_filter,
+                        roster_sort: self.assign_roster_sort,
+                        role_filter: self.assign_role_filter,
+                        building_filter: self.assign_building_filter,
+                        room_filter_armed: self.assign_room_filter_armed,
+                        pair_action_armed: self.assign_pair_armed,
+                        technology: &self.data.technology,
+                    },
+                    log: ToolbarLogData {
+                        logs: &self.data.event_log,
+                        social_history: &self.data.social_history,
+                        page: self.social_history_page,
+                        filter: self.social_history_filter,
+                        query: &self.social_history_query,
+                        search_active: self.social_history_search_active,
+                        selected_day: self.selected_social_history_day,
+                        colony_summary: &self.cached_colony_summary,
+                        timeline_rows: &self.cached_log_rows,
+                        page_count: self.cached_log_page_count,
+                    },
                 },
-                assign: ToolbarAssignData {
-                    colonists: &self.data.colonists,
-                    selected_colonist_id: self.selected_colonist_id,
-                    roster_page: self.assign_roster_page,
-                    roster_filter: self.assign_roster_filter,
-                    roster_sort: self.assign_roster_sort,
-                    role_filter: self.assign_role_filter,
-                    building_filter: self.assign_building_filter,
-                    room_filter_armed: self.assign_room_filter_armed,
-                    technology: &self.data.technology,
-                },
-                log: ToolbarLogData {
-                    logs: &self.data.event_log,
-                    social_history: &self.data.social_history,
-                    page: self.social_history_page,
-                    filter: self.social_history_filter,
-                    query: &self.social_history_query,
-                    search_active: self.social_history_search_active,
-                    selected_day: self.selected_social_history_day,
-                    colony_summary: &self.cached_colony_summary,
-                    timeline_rows: &self.cached_log_rows,
-                    page_count: self.cached_log_page_count,
-                },
-            },
-        );
+            );
+        }
         draw_bottom_toolbar(&self.layout, self.toolbar_mode, self.selected_building);
 
         // Debug overlay
@@ -221,5 +249,16 @@ impl GameplayState {
             }
             Err(_) => {}
         }
+    }
+
+    fn menu_transition(&mut self) -> StateTransition {
+        let status_message = match save_game(&self.data) {
+            Ok(()) => None,
+            Err(error) => {
+                self.save_error_reported = true;
+                Some(format!("Save unavailable: {error}"))
+            }
+        };
+        StateTransition::ToMenu { status_message }
     }
 }

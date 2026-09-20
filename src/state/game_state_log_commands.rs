@@ -66,6 +66,13 @@ impl GameplayState {
             }
         }
 
+        if self.selected_social_history_day.is_some()
+            && log_report_close_rect(context).contains(Vec2::new(mouse_x, mouse_y))
+        {
+            self.selected_social_history_day = None;
+            return;
+        }
+
         if let Some(action) = log_search_action_at(context, mouse_x, mouse_y) {
             match action {
                 LogSearchAction::Focus => {

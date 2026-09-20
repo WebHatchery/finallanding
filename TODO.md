@@ -7,9 +7,10 @@ There were no existing task checkboxes or completion entries to merge or remove.
 
 ## UI_STYLE review — 2026-09-20
 
-Audit and planning only; no game changes have been implemented. Paths below are
-relative to the project root. Keep this existing tracked `TODO.md` as the single
-backlog (the requested `todo.md` resolves to it on Windows).
+The audit below is the implementation backlog. Completed, verified items are
+removed as each cohesive change lands. Paths below are relative to the project
+root. Keep this existing tracked `TODO.md` as the single backlog (the requested
+`todo.md` resolves to it on Windows).
 
 ### Evidence and scope
 
@@ -18,101 +19,33 @@ backlog (the requested `todo.md` resolves to it on Windows).
   `PROJECT_AGENTS.md` was found. Reviewed rendering, hit zones, state transitions,
   pointer routing, camera math, capture code, configuration text, and the existing
   manual relationship checklist.
-- **Visual evidence:** re-inspected all eight existing
-  `docs/verification/ui_smoke*.png` images: Build at 1280x720 and 1920x1080,
-  Assign and Log at 1280x720, placement, activity poses, toolkit tooltips, and the
-  720x480 Assign capture. The Build, Assign, Log, and placement captures visibly
-  confirm the stacked left objective/advisor/inspector area, rail-constrained world,
-  right map/resources/colonists area, and bottom context-plus-mode trays. The Log
-  capture also shows the selected report floating over the map/rail boundary, while
-  the 720x480 capture visibly truncates or compresses several regions. These are
-  saved reference images, not fresh captures of this checkout, and they establish
-  composition/readability findings rather than touch-path results. The
-  toolkit-tooltip image has older art/layout and artificial text; do not treat its
-  test copy as shipped demo prose. `tfl_guide_mvp.png` and `catalog_thumbnail.png`
-  are not gameplay QA evidence for this review.
+- **Visual evidence:** the current checkout has fresh native captures in
+  `docs/verification/` for ordinary, closed-tray, Colony objectives, Assign,
+  Research, placement, activity poses, Log timeline, selected Log report, menu,
+  results, and the 720x480 Assign/Research states. The normal 1280x720 and large
+  1920x1080 captures show the colony as the dominant field without permanent
+  rails; the Colony, Assign, Research, and Log captures show secondary information
+  replacing the world area instead of stacking over it. These captures verify
+  composition and readability, not live touch behavior. The toolkit-tooltip image
+  has older art/layout and artificial text; do not treat its test copy as shipped
+  demo prose. `tfl_guide_mvp.png` and `catalog_thumbnail.png` are not gameplay QA
+  evidence for this review.
 - **Code evidence** below means a source-confirmed layout or behavior, not a claim
-  that a live mouse/touch path was exercised. No game was launched, screenshots
-  overwritten, browser touch test performed, or publish run made for this
-  documentation-only audit. Existing evidence is sufficient to plan the verified
-  fixes; missing runtime checks are separated at the end.
+  that a live mouse/touch path was exercised. The original audit did not launch
+  the game, overwrite screenshots, perform a browser touch test, or run
+  publishing. The implementation slice now has fresh native captures and focused
+  hit-zone regression coverage; live browser/touch checks stay attached to UI-04
+  and UI-10.
 - Use 1280x720 as the normal baseline, 1920x1080 as the large check, and 720x480 as
   the current documented touch-sized baseline. README lists these capture sizes
-  but does not explicitly declare a minimum supported browser canvas. Task UI-01
-  must make that contract explicit before implementation acceptance.
+  and README now explicitly declares 720x480 as the current minimum touch-sized
+  baseline; narrower and portrait canvases remain unverified.
 - Preserve the game's spatial relationship loop, building costs, urgent survival
   warnings, mission risks, autosave recovery, and visible Undo/Cancel/Restart.
   There is no evidence that the whole UI was copied from the template; the fixed
   inspector meters are specific demonstration-style remnants confirmed below.
 
 ### Verified findings — implement in this dependency order
-
-- [ ] **UI-01 / P1 — Recompose normal play around the colony and one active decision.**
-  - **Screen/files:** ordinary Build/Colony play and selected states;
-    `src/ui/layout.rs::Layout`, `src/state/game_state_lifecycle.rs::draw`,
-    `src/ui/advisor_overlay.rs`, `src/ui/right_rail.rs`,
-    `src/ui/bottom_toolbar.rs`, `src/ui/toolbar_panel.rs`,
-    `src/ui/hit_zones/toolbar.rs`, `README.md`/`tfl_mvp.md`.
-  - **Observed (screenshots + code):** objectives, two advisor cards, minimap,
-    six resource rows, roster, context tray, and seven boxed mode buttons compete
-    with the colony. At 1280x720 the nominal map is only 678x568 before the tray
-    obscures its bottom. Both rails remain at 720x480; the fixed resource stack
-    runs behind the tray and the colonist heading reaches the bottom edge.
-    Build repeats the same five plans already exposed by the Rooms and Objects
-    subsets, so the player must choose among three construction entry points.
-  - **Change:** first record the UI_STYLE §1 brief for observation, placement,
-    assignment, reports, arrival, and results, with explicit normal/minimum canvas
-    sizes. Replace the permanent dual rails with a quiet essential-status strip
-    and one dismissible context area. Keep the current urgent problem visible;
-    disclose the full objective list, completed objectives, roster, and secondary
-    production values on demand. Remove the always-visible minimap while the
-    whole site is shown; retain an overview only if the new camera needs it.
-    Merge the three construction tabs into one Build catalog with optional
-    filters. Collapse its tray when observing. Give each fact one home: do not
-    repeat food/shelter in objectives, advisor prose and resource cards, or
-    priority controls in both the top bar and Colony panel. Keep critical
-    shortages and costs beside the affected action. Remove redundant panel
-    headings, letter icons above named tabs, and nested borders as part of this
-    recomposition, not as a separate cosmetic pass.
-  - **Acceptance:** normal play has no more than 2–3 strong attention regions;
-    the colony occupies most of the usable screen, the current decision is clear
-    at a glance, and opening secondary information replaces rather than stacks
-    competing panels. Closing it restores the world without accidental empty
-    columns. Settings/save/exit remain separate from gameplay decisions.
-  - **Verify:** compare ordinary, low-food, selected, and open/closed-tray states
-    at all three baseline sizes. Tap through every relocated mode and warning;
-    confirm critical information is readable without hover. This is the layout
-    dependency for UI-03 through UI-09; decide it before enlarging widgets.
-
-- [ ] **UI-02 / P0 — Separate Start/Continue and restore safe menu and result navigation.**
-  - **Screen/files:** main menu, Settings, gameplay utilities, victory/failure;
-    `src/ui/hit_zones/menu.rs`, `src/state/menu_state.rs::update_with_input` and
-    `draw_ui`, `src/state.rs`, `src/game.rs::update`,
-    `src/ui/gameplay/overlay.rs`, `src/state/game_state_simulation.rs`,
-    `src/state/game_state_lifecycle.rs`, `assets/data/game_config.json`.
-  - **Observed (code):** Start and Continue share the same vertical origin and
-    overlap by 200x44 pixels. Continue is drawn later, but Start handles clicks
-    first, so tapping its center starts a new run. Settings overlays the same
-    underlying controls without modal input isolation. `StateTransition` offers
-    no route back to the menu. Results say “Review the log” but offer only Restart
-    and stay drawn over play; update continues handling background gameplay.
-  - **Change:** allocate distinct Start and Continue rows; emphasize Continue
-    when a valid save exists and Start otherwise. Put Settings/Exit in a separate
-    quiet utility group. Give Settings its own visible Close and exclusive input.
-    Add a quiet, separately grouped Menu route from play with save/error handling.
-    Make results a real interaction state with explicit Review Log, Restart Run,
-    and Menu routes; block underlying placement/assignment input. Keep outcome
-    context available while reviewing reports and prevent accidental save
-    replacement from a mislabeled or overlapping control.
-  - **Acceptance:** every visible label activates only its advertised action;
-    a saved colony can be resumed reliably; utilities never share a visual group
-    with build/priority/mission decisions. A touch player can leave and resume,
-    dismiss Settings, review the outcome, and restart without background actions.
-  - **Verify:** at 1280x720 and 720x480, test no save, valid save, and unreadable
-    save; tap control centers and edges, open/close Settings, and complete both
-    victory and failure navigation. Add focused menu hit-zone/transition
-    regressions under `tests/`; inspect rendered menu/results for the first time.
-    This independent recovery blocker can be fixed immediately after the brief.
 
 - [ ] **UI-03 / P1 — Fit the camera to unobstructed space at a selectable scale.**
   - **Screen/files:** observation, placement and room selection;
@@ -138,6 +71,10 @@ backlog (the requested `todo.md` resolves to it on Windows).
   - **Verify:** all three sizes, open/closed context, occupied and edge cells,
     clustered survivors, resize, zoom and display scaling. Use taps and drags to
     place, cancel, inspect, pin and recenter; confirm dragging never places a room.
+  - **Current state:** rendering, placement preview, picking, and blocked-world
+    input now share the unobstructed world rectangle, with bounded visible zoom
+    and recenter controls. Remaining work is bounded pan/drag behavior and live
+    resize/touch verification.
 
 - [ ] **UI-04 / P1 — Reflow controls and consume input in the visible topmost layer.**
   - **Screen/files:** top bar, Assign filters, Log search/keyboard, modal states;
@@ -166,6 +103,10 @@ backlog (the requested `todo.md` resolves to it on Windows).
     Tap Survey versus Undo; arm Filter Room then Cancel; type/erase/finish a Log
     search above survivors; change modes and resize. Preserve useful hit-zone
     regressions and add focused routing cases in `tests/`. Depends on UI-01/03.
+  - **Current state:** top-bar collisions are removed, Assign inspection/actions
+    use separate hit zones, report dismissal is topmost, and handled releases no
+    longer fall through to world selection. Remaining work is 44px logical target
+    sizing at compact breakpoints plus live browser/touch verification.
 
 - [ ] **UI-05 / P1 — Make survivor inspection truthful and separate selection from commands.**
   - **Screen/files:** selected survivor, right roster and Assign;
@@ -195,6 +136,10 @@ backlog (the requested `todo.md` resolves to it on Windows).
     injured/away survivors, tense/supportive pairs, every roster page, full rooms
     and incompatible roles. Tap selection, change role, pair/separate, pin/clear
     and batch-copy paths, including Cancel and dismissal. Depends on UI-01/04.
+  - **Current state:** survivor cards now select without mutating role; NEXT ROLE
+    and PAIR / APART are explicit, and the inspector no longer invents energy,
+    hunger, or health meters. Remaining work is live multi-page/long-name review
+    and verification of every warning path.
 
 - [ ] **UI-06 / P1 — Give action results temporary feedback and retain general event history.**
   - **Screen/files:** gameplay feedback and Log;
@@ -245,6 +190,10 @@ backlog (the requested `todo.md` resolves to it on Windows).
   - **Verify:** all baseline sizes; long titles/detail/recommendations, several
     days, empty archive and no-match query. Tap search, backspace, Done, Clear,
     filters, next/previous, full report, close and export. Depends on UI-01/04/06.
+  - **Current state:** the Log now has readable timeline rows, wrapped report
+    detail/recommendation text, a persistent CLOSE REPORT action, and fresh
+    timeline/detail captures. Remaining work is keyboard/no-match/empty-archive
+    capture and live touch verification.
 
 - [ ] **UI-08 / P1 — Put mission readiness, risk and reward beside an explicit launch action.**
   - **Screen/files:** Research before/after an Exploration Gate and during missions;
@@ -269,6 +218,10 @@ backlog (the requested `todo.md` resolves to it on Windows).
     tap through no gate, no available crew, cooldown, ready launch, active mission
     and unlocked technology. Check feedback/history after return. Depends on
     UI-01/04/06; do not claim present Research clipping without a capture.
+  - **Current state:** Research now separates mission selection from action, shows
+    risk/duration/reward/readiness, and routes a missing gate to Build. Fresh
+    captures cover blocked and ready states; cooldown/no-crew and launch-result
+    review remain to be exercised.
 
 - [ ] **UI-09 / P2 — Consolidate placement information and make teaching contextual and reopenable.**
   - **Screen/files:** arrival, construction and help;

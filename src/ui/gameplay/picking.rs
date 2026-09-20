@@ -4,7 +4,7 @@ use super::*;
 
 impl GameplayState {
     pub fn colonist_id_at_mouse(&self) -> Option<u32> {
-        let game_area = self.layout.game_area();
+        let game_area = self.world_area();
         let mouse = mouse_position_vec2();
         let mouse_x = mouse.x;
         let mouse_y = mouse.y;
@@ -39,7 +39,7 @@ impl GameplayState {
     }
 
     pub fn building_at_mouse(&self) -> Option<&Building> {
-        let game_area = self.layout.game_area();
+        let game_area = self.world_area();
         let mouse = mouse_position_vec2();
         if !game_area.contains(mouse) {
             return None;

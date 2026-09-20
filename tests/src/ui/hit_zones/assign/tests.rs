@@ -65,3 +65,12 @@ fn test_assign_batch_hit_zones_match_copy_controls() {
         None
     );
 }
+
+#[test]
+fn test_assign_selection_actions_do_not_overlap_room_filter() {
+    let context = Rect::new(380.0, 400.0, 520.0, 218.0);
+
+    assert!(!assign_role_action_rect(context).overlaps(&assign_room_filter_rect(context)));
+    assert!(!assign_pair_action_rect(context).overlaps(&assign_room_filter_rect(context)));
+    assert!(assign_role_action_rect(context).contains(vec2(430.0, 507.0)));
+}

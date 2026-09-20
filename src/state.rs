@@ -10,6 +10,7 @@ use crate::state::game_state::GameplayState;
 pub enum StateTransition {
     None,
     ToGameplay(Box<GameplayState>),
+    ToMenu { status_message: Option<String> },
 }
 
 pub trait State {

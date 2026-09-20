@@ -42,8 +42,24 @@ impl GameplayState {
     }
 
     pub fn handle_research_toolbar_click(&mut self, context: Rect, mouse_x: f32, mouse_y: f32) {
+        if research_action_rect(context).contains(Vec2::new(mouse_x, mouse_y)) {
+            let has_gate = self
+                .data
+                .building_system
+                .buildings()
+                .iter()
+                .any(|building| building.building_type == BuildingType::ExplorationGate);
+            if !has_gate {
+                self.toolbar_mode = ToolbarMode::Build;
+                self.selected_building = Some(BuildingType::ExplorationGate);
+                return;
+            }
+            self.launch_mission(self.selected_mission_type);
+            return;
+        }
+
         if let Some(mission_type) = toolbar_mission_at(context, mouse_x, mouse_y) {
-            self.launch_mission(mission_type);
+            self.selected_mission_type = mission_type;
         }
     }
 }

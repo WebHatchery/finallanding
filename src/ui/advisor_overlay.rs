@@ -1,6 +1,7 @@
 //! advisor overlay domain.
 
 use super::Layout;
+use crate::data::resources::ResourceState;
 use crate::systems::advisor_system::{AdvisorPlan, AdvisorSeverity};
 use crate::systems::objective_system::{ObjectiveCard, ObjectiveStatus};
 use crate::ui::style;
@@ -57,7 +58,62 @@ pub fn draw_advisor_overlay(layout: &Layout, objectives: &[ObjectiveCard], plan:
     }
 }
 
-fn draw_objective_card(x: f32, y: f32, width: f32, objective: &ObjectiveCard) {
+pub fn draw_advisor_banner(
+    layout: &Layout,
+    plan: &AdvisorPlan,
+    resources: &ResourceState,
+    colonist_count: usize,
+    average_mood: f32,
+) {
+    let Some(line) = plan.lines.first() else {
+        return;
+    };
+    let rect = advisor_banner_rect(layout);
+    style::draw_deep_panel(rect);
+    draw_rectangle(rect.x, rect.y, 4.0, rect.h, severity_color(line.severity));
+    draw_ui_text(
+        &style::fit_text(&line.title, rect.w * 0.42, style::SMALL_SIZE),
+        rect.x + 14.0,
+        rect.y + 18.0,
+        style::SMALL_SIZE,
+        style::TEXT_PRIMARY,
+    );
+    draw_ui_text(
+        &style::fit_text(&line.detail, rect.w * 0.42, style::TINY_SIZE),
+        rect.x + 14.0,
+        rect.y + 34.0,
+        style::TINY_SIZE,
+        style::TEXT_BODY,
+    );
+
+    let status = format!(
+        "{} survivors  Mood {:.0}  Food {}  Salvage {}",
+        colonist_count, average_mood, resources.supplies, resources.salvage
+    );
+    draw_ui_text(
+        &style::fit_text(&status, rect.w * 0.48, style::TINY_SIZE),
+        rect.x + rect.w * 0.51,
+        rect.y + 27.0,
+        style::TINY_SIZE,
+        if resources.supplies < 10 {
+            style::ALERT_RED
+        } else {
+            style::TEXT_MUTED
+        },
+    );
+}
+
+pub fn advisor_banner_rect(layout: &Layout) -> Rect {
+    let width = (layout.viewport_width - layout.screen_margin * 2.0).clamp(300.0, 660.0);
+    Rect::new(
+        layout.screen_margin,
+        layout.top_bar_height + 8.0,
+        width,
+        46.0,
+    )
+}
+
+pub fn draw_objective_card(x: f32, y: f32, width: f32, objective: &ObjectiveCard) {
     let status_color = status_color(objective.status);
     draw_rectangle(x, y, width, 24.0, Color::new(0.045, 0.06, 0.065, 0.74));
     draw_rectangle(x, y, 3.0, 24.0, status_color);

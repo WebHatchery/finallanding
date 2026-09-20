@@ -31,8 +31,10 @@ impl GameplayState {
                 TopBarAction::Cancel => {
                     self.selected_building = None;
                     self.assign_room_filter_armed = false;
+                    self.assign_pair_armed = false;
                     self.social_history_search_active = false;
                 }
+                TopBarAction::Menu => self.menu_requested = true,
             }
             return;
         }

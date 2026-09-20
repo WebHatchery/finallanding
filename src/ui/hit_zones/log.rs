@@ -37,11 +37,11 @@ impl LogFilter {
 }
 
 pub fn log_page_previous_rect(context: Rect) -> Rect {
-    Rect::new(context.x + context.w - 96.0, context.y + 72.0, 28.0, 17.0)
+    Rect::new(context.x + context.w - 96.0, context.y + 56.0, 36.0, 30.0)
 }
 
 pub fn log_page_next_rect(context: Rect) -> Rect {
-    Rect::new(context.x + context.w - 34.0, context.y + 72.0, 28.0, 17.0)
+    Rect::new(context.x + context.w - 40.0, context.y + 56.0, 36.0, 30.0)
 }
 
 pub fn log_page_action_at(context: Rect, x: f32, y: f32) -> Option<PageAction> {
@@ -55,15 +55,15 @@ pub fn log_page_action_at(context: Rect, x: f32, y: f32) -> Option<PageAction> {
 }
 
 pub fn log_search_rect(context: Rect) -> Rect {
-    Rect::new(context.x + 72.0, context.y + 13.0, 200.0, 17.0)
+    Rect::new(context.x + 72.0, context.y + 12.0, 300.0, 32.0)
 }
 
 pub fn log_search_clear_rect(context: Rect) -> Rect {
-    Rect::new(context.x + 278.0, context.y + 13.0, 42.0, 17.0)
+    Rect::new(context.x + 380.0, context.y + 12.0, 64.0, 32.0)
 }
 
 pub fn log_search_export_rect(context: Rect) -> Rect {
-    Rect::new(context.x + 326.0, context.y + 13.0, 46.0, 17.0)
+    Rect::new(context.x + 452.0, context.y + 12.0, 64.0, 32.0)
 }
 
 pub fn log_search_action_at(context: Rect, x: f32, y: f32) -> Option<LogSearchAction> {
@@ -123,10 +123,10 @@ pub fn log_keyboard_action_at(context: Rect, x: f32, y: f32) -> Option<LogSearch
 
 pub fn log_filter_rect(context: Rect, index: usize) -> Rect {
     Rect::new(
-        context.x + 120.0 + index as f32 * 50.0,
-        context.y + 72.0,
-        46.0,
-        17.0,
+        context.x + 112.0 + index as f32 * 68.0,
+        context.y + 56.0,
+        62.0,
+        30.0,
     )
 }
 
@@ -141,8 +141,8 @@ pub fn log_filter_at(context: Rect, x: f32, y: f32) -> Option<LogFilter> {
 }
 
 pub fn log_timeline_row_rect(context: Rect, index: usize) -> Rect {
-    let y = context.y + 94.0 + index as f32 * 13.0;
-    Rect::new(context.x + 12.0, y - 11.0, context.w - 24.0, 13.0)
+    let y = context.y + 102.0 + index as f32 * 42.0;
+    Rect::new(context.x + 12.0, y, context.w - 24.0, 38.0)
 }
 
 pub fn log_timeline_row_at(context: Rect, row_count: usize, x: f32, y: f32) -> Option<usize> {
@@ -151,4 +151,8 @@ pub fn log_timeline_row_at(context: Rect, row_count: usize, x: f32, y: f32) -> O
             .map(|index| HitTarget::new(log_timeline_row_rect(context, index), index)),
         vec2(x, y),
     )
+}
+
+pub fn log_report_close_rect(context: Rect) -> Rect {
+    Rect::new(context.x + context.w - 112.0, context.y + 92.0, 96.0, 30.0)
 }

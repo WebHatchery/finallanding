@@ -74,11 +74,11 @@ impl AssignBatchAction {
 }
 
 pub fn assign_page_previous_rect(context: Rect) -> Rect {
-    Rect::new(context.x + context.w - 96.0, context.y + 13.0, 28.0, 17.0)
+    Rect::new(context.x + context.w - 96.0, context.y + 12.0, 36.0, 30.0)
 }
 
 pub fn assign_page_next_rect(context: Rect) -> Rect {
-    Rect::new(context.x + context.w - 34.0, context.y + 13.0, 28.0, 17.0)
+    Rect::new(context.x + context.w - 40.0, context.y + 12.0, 36.0, 30.0)
 }
 
 pub fn assign_page_action_at(context: Rect, x: f32, y: f32) -> Option<PageAction> {
@@ -93,10 +93,10 @@ pub fn assign_page_action_at(context: Rect, x: f32, y: f32) -> Option<PageAction
 
 pub fn assign_filter_rect(context: Rect, index: usize) -> Rect {
     Rect::new(
-        context.x + 72.0 + index as f32 * 44.0,
-        context.y + 13.0,
-        40.0,
-        17.0,
+        context.x + 72.0 + index as f32 * 50.0,
+        context.y + 12.0,
+        46.0,
+        30.0,
     )
 }
 
@@ -113,10 +113,10 @@ pub fn assign_filter_at(context: Rect, x: f32, y: f32) -> Option<AssignRosterFil
 
 pub fn assign_sort_rect(context: Rect, index: usize) -> Rect {
     Rect::new(
-        context.x + 252.0 + index as f32 * 42.0,
-        context.y + 13.0,
-        40.0,
-        17.0,
+        context.x + 252.0 + index as f32 * 50.0,
+        context.y + 12.0,
+        46.0,
+        30.0,
     )
 }
 
@@ -131,7 +131,7 @@ pub fn assign_sort_at(context: Rect, x: f32, y: f32) -> Option<AssignRosterSort>
 }
 
 pub fn assign_role_filter_rect(context: Rect) -> Rect {
-    Rect::new(context.x + 380.0, context.y + 13.0, 40.0, 17.0)
+    Rect::new(context.x + 380.0, context.y + 12.0, 56.0, 30.0)
 }
 
 pub fn assign_role_filter_at(context: Rect, x: f32, y: f32) -> bool {
@@ -139,15 +139,23 @@ pub fn assign_role_filter_at(context: Rect, x: f32, y: f32) -> bool {
 }
 
 pub fn assign_room_filter_rect(context: Rect) -> Rect {
-    Rect::new(context.x + 18.0, context.y + 92.0, 104.0, 23.0)
+    Rect::new(context.x + 18.0, context.y + 128.0, 118.0, 30.0)
+}
+
+pub fn assign_role_action_rect(context: Rect) -> Rect {
+    Rect::new(context.x + 18.0, context.y + 92.0, 108.0, 30.0)
+}
+
+pub fn assign_pair_action_rect(context: Rect) -> Rect {
+    Rect::new(context.x + 134.0, context.y + 92.0, 132.0, 30.0)
 }
 
 pub fn assign_batch_rect(context: Rect, index: usize) -> Rect {
     Rect::new(
-        context.x + context.w - 222.0 + index as f32 * 53.0,
-        context.y + 94.0,
-        48.0,
-        17.0,
+        context.x + context.w - 238.0 + index as f32 * 58.0,
+        context.y + 128.0,
+        54.0,
+        30.0,
     )
 }
 

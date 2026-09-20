@@ -5,6 +5,7 @@
 pub mod advisor_overlay;
 pub mod art;
 pub mod bottom_toolbar;
+pub mod camera_controls;
 pub mod colonist_inspector;
 pub mod debug_overlay;
 pub mod font;
@@ -22,6 +23,7 @@ pub mod top_bar;
 pub use advisor_overlay::*;
 pub use art::*;
 pub use bottom_toolbar::*;
+pub use camera_controls::*;
 pub use colonist_inspector::*;
 pub use debug_overlay::*;
 pub use hit_zones::*;

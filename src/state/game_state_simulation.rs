@@ -1,20 +1,45 @@
 //! game state simulation domain.
 
 use super::*;
+use crate::ui::{result_back_rect, result_menu_rect, result_review_rect};
 
 impl GameplayState {
-    pub fn scenario_restart_transition(&self, input: &InputState) -> Option<StateTransition> {
+    pub fn scenario_restart_transition(&mut self, input: &InputState) -> Option<StateTransition> {
         if !self.data.scenario.is_finished() {
             return None;
         }
 
-        let restart_rect = restart_button_rect(screen_width(), screen_height());
-        let clicked_restart = input.left_pressed_rect(restart_rect);
+        if self.result_review_open {
+            if input.left_pressed_rect(result_back_rect(screen_width(), screen_height())) {
+                self.result_review_open = false;
+                return Some(StateTransition::None);
+            }
+            return None;
+        }
+
+        let clicked_review =
+            input.left_pressed_rect(result_review_rect(screen_width(), screen_height()));
+        let clicked_restart =
+            input.left_pressed_rect(restart_button_rect(screen_width(), screen_height()));
+        let clicked_menu =
+            input.left_pressed_rect(result_menu_rect(screen_width(), screen_height()));
+
+        if clicked_review {
+            self.result_review_open = true;
+            self.toolbar_mode = ToolbarMode::Log;
+            self.selected_social_history_day =
+                self.data.social_history.last().map(|entry| entry.day);
+            return Some(StateTransition::None);
+        }
+        if clicked_menu {
+            self.menu_requested = true;
+            return Some(StateTransition::None);
+        }
 
         if clicked_restart || is_key_pressed(KeyCode::R) || input.enter_pressed {
             Some(StateTransition::ToGameplay(Box::default()))
         } else {
-            None
+            Some(StateTransition::None)
         }
     }
 
