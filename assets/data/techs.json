@@ -1,0 +1,774 @@
+{
+ "techs": [
+  {
+   "id": "foraging_lore",
+   "name": "Foraging Lore",
+   "description": "Which native plants can be eaten, and how to find them.",
+   "branch": "survival",
+   "tier": 1,
+   "cost": 150,
+   "always_known": true,
+   "effects": [
+    {
+     "type": "need_decay",
+     "need": "food",
+     "amount": -0.05
+    }
+   ]
+  },
+  {
+   "id": "field_survey",
+   "name": "Field Survey",
+   "description": "Maps, packs and radio discipline for leaving the crash site. Unlocks the Expedition Gate.",
+   "branch": "survival",
+   "tier": 1,
+   "cost": 200,
+   "always_known": true,
+   "effects": [
+    {
+     "type": "sight",
+     "amount": 1.0
+    }
+   ]
+  },
+  {
+   "id": "prefab_shelters",
+   "name": "Prefab Shelters",
+   "description": "Bolt hull panels into proper bunkhouses.",
+   "branch": "survival",
+   "tier": 1,
+   "cost": 175,
+   "always_known": true
+  },
+  {
+   "id": "combustion",
+   "name": "Combustion",
+   "description": "Burn dried fibre for steady power and heat. Unlocks the Fibre Burner.",
+   "branch": "survival",
+   "tier": 2,
+   "cost": 400
+  },
+  {
+   "id": "perimeter_watch",
+   "name": "Perimeter Watch",
+   "description": "Lookouts, flares and fauna drills. Unlocks the Watchtower.",
+   "branch": "survival",
+   "tier": 2,
+   "cost": 425,
+   "effects": [
+    {
+     "type": "defence",
+     "amount": 0.2
+    }
+   ]
+  },
+  {
+   "id": "cold_weather_gear",
+   "name": "Cold-Weather Gear",
+   "description": "Layered fibre clothing that holds body heat outdoors.",
+   "branch": "survival",
+   "tier": 2,
+   "cost": 450,
+   "effects": [
+    {
+     "type": "need_decay",
+     "need": "warmth",
+     "amount": -0.3
+    }
+   ]
+  },
+  {
+   "id": "pathfinder_kits",
+   "name": "Pathfinder Kits",
+   "description": "Better packs and route-finding for long expeditions.",
+   "branch": "survival",
+   "tier": 3,
+   "cost": 1190,
+   "effects": [
+    {
+     "type": "expedition_safety",
+     "amount": 0.2
+    },
+    {
+     "type": "carry",
+     "amount": 4.0
+    }
+   ]
+  },
+  {
+   "id": "habitat_engineering",
+   "name": "Habitat Engineering",
+   "description": "Pressure domes with heated private bunks. Unlocks the Habitat Dome.",
+   "branch": "survival",
+   "tier": 3,
+   "cost": 1260
+  },
+  {
+   "id": "arc_weapons",
+   "name": "Arc Weapons",
+   "description": "Repurposed hull emitters that drive back large fauna. Unlocks the Arc Turret.",
+   "branch": "survival",
+   "tier": 4,
+   "cost": 2100,
+   "effects": [
+    {
+     "type": "defence",
+     "amount": 0.5
+    }
+   ]
+  },
+  {
+   "id": "endurance_conditioning",
+   "name": "Endurance Conditioning",
+   "description": "Training and diet adapted to the planet's long days.",
+   "branch": "survival",
+   "tier": 5,
+   "cost": 3325,
+   "effects": [
+    {
+     "type": "need_decay",
+     "need": "rest",
+     "amount": -0.15
+    },
+    {
+     "type": "work_speed",
+     "skill": "construction",
+     "amount": 0.1
+    }
+   ]
+  },
+  {
+   "id": "seed_vault_records",
+   "name": "Seed Vault Records",
+   "description": "The ship's crop notes, recovered from the hull's memory.",
+   "branch": "agronomy",
+   "tier": 1,
+   "cost": 150,
+   "always_known": true,
+   "effects": [
+    {
+     "type": "farm_yield",
+     "amount": 0.1
+    }
+   ]
+  },
+  {
+   "id": "native_cultivation",
+   "name": "Native Cultivation",
+   "description": "Train wild glowfruit into orchards. Unlocks the Glowfruit Orchard.",
+   "branch": "agronomy",
+   "tier": 1,
+   "cost": 225
+  },
+  {
+   "id": "soil_chemistry",
+   "name": "Soil Chemistry",
+   "description": "Balance the alien soil for ship crops.",
+   "branch": "agronomy",
+   "tier": 2,
+   "cost": 425,
+   "effects": [
+    {
+     "type": "farm_yield",
+     "amount": 0.2
+    }
+   ]
+  },
+  {
+   "id": "preservation",
+   "name": "Preservation",
+   "description": "Drying, smoking and pickling make better meals.",
+   "branch": "agronomy",
+   "tier": 2,
+   "cost": 400,
+   "effects": [
+    {
+     "type": "work_speed",
+     "skill": "cooking",
+     "amount": 0.25
+    },
+    {
+     "type": "need_decay",
+     "need": "food",
+     "amount": -0.05
+    }
+   ]
+  },
+  {
+   "id": "hydroponics",
+   "name": "Hydroponics",
+   "description": "Powered racks that grow food through every season. Unlocks the Hydroponics Bay.",
+   "branch": "agronomy",
+   "tier": 3,
+   "cost": 1330
+  },
+  {
+   "id": "fungal_symbiosis",
+   "name": "Fungal Symbiosis",
+   "description": "Native fungi that feed crop roots. Locks Gene-Tailored Crops.",
+   "branch": "agronomy",
+   "tier": 3,
+   "cost": 1225,
+   "fork": "crop_path",
+   "effects": [
+    {
+     "type": "farm_yield",
+     "amount": 0.25
+    },
+    {
+     "type": "mood",
+     "amount": 0.5
+    }
+   ]
+  },
+  {
+   "id": "gene_tailored_crops",
+   "name": "Gene-Tailored Crops",
+   "description": "Rewrite ship seeds for this world. Locks Fungal Symbiosis.",
+   "branch": "agronomy",
+   "tier": 3,
+   "cost": 1225,
+   "fork": "crop_path",
+   "effects": [
+    {
+     "type": "farm_yield",
+     "amount": 0.35
+    }
+   ]
+  },
+  {
+   "id": "rootnet_listening",
+   "name": "Rootnet Listening",
+   "description": "The native flora pass signals through their roots. The colony learns to listen.",
+   "branch": "agronomy",
+   "tier": 4,
+   "cost": 2240,
+   "effects": [
+    {
+     "type": "mood",
+     "amount": 1.0
+    }
+   ]
+  },
+  {
+   "id": "biosphere_communion",
+   "name": "Biosphere Communion",
+   "description": "Join the colony to the planet's living network. Capstone of the Rootbound future.",
+   "branch": "agronomy",
+   "tier": 5,
+   "cost": 5600,
+   "capstone": "rootbound",
+   "fixed_prereqs": [
+    "rootnet_listening"
+   ]
+  },
+  {
+   "id": "salvage_protocols",
+   "name": "Salvage Protocols",
+   "description": "Systematic stripping of the wreck for reusable stock.",
+   "branch": "industry",
+   "tier": 1,
+   "cost": 150,
+   "always_known": true,
+   "effects": [
+    {
+     "type": "work_speed",
+     "skill": "crafting",
+     "amount": 0.1
+    },
+    {
+     "type": "carry",
+     "amount": 2.0
+    }
+   ]
+  },
+  {
+   "id": "smelting",
+   "name": "Smelting",
+   "description": "Smelt local stone into metal with fibre fire. Unlocks the Smelter.",
+   "branch": "industry",
+   "tier": 1,
+   "cost": 225
+  },
+  {
+   "id": "logistics",
+   "name": "Logistics",
+   "description": "Pallets, carts and inventory discipline. Unlocks the Warehouse.",
+   "branch": "industry",
+   "tier": 2,
+   "cost": 425,
+   "effects": [
+    {
+     "type": "carry",
+     "amount": 3.0
+    }
+   ]
+  },
+  {
+   "id": "power_distribution",
+   "name": "Power Distribution",
+   "description": "Cleaner wiring and load balancing for every powered building.",
+   "branch": "industry",
+   "tier": 2,
+   "cost": 450,
+   "effects": [
+    {
+     "type": "work_speed",
+     "skill": "construction",
+     "amount": 0.15
+    }
+   ]
+  },
+  {
+   "id": "field_laboratory",
+   "name": "Field Laboratory",
+   "description": "Clean benches and powered instruments. Unlocks the Laboratory.",
+   "branch": "industry",
+   "tier": 2,
+   "cost": 475,
+   "effects": [
+    {
+     "type": "research_speed",
+     "amount": 0.05
+    }
+   ]
+  },
+  {
+   "id": "precision_fabrication",
+   "name": "Precision Fabrication",
+   "description": "Print components from refined metal. Unlocks the Fabricator.",
+   "branch": "industry",
+   "tier": 3,
+   "cost": 1330
+  },
+  {
+   "id": "geothermal",
+   "name": "Geothermal Tapping",
+   "description": "Bore into the crust for limitless heat. Unlocks the Geothermal Tap.",
+   "branch": "industry",
+   "tier": 3,
+   "cost": 1400
+  },
+  {
+   "id": "automated_assembly",
+   "name": "Automated Assembly",
+   "description": "Jigs and drones that multiply every crafter. Locks Artisan Guilds.",
+   "branch": "industry",
+   "tier": 4,
+   "cost": 2170,
+   "fork": "labour_path",
+   "effects": [
+    {
+     "type": "work_speed",
+     "skill": "crafting",
+     "amount": 0.3
+    },
+    {
+     "type": "work_speed",
+     "skill": "construction",
+     "amount": 0.2
+    }
+   ]
+  },
+  {
+   "id": "orbital_mechanics",
+   "name": "Orbital Mechanics",
+   "description": "Plot the fleet's last known course from the stars.",
+   "branch": "industry",
+   "tier": 4,
+   "cost": 2310,
+   "effects": [
+    {
+     "type": "research_speed",
+     "amount": 0.1
+    }
+   ]
+  },
+  {
+   "id": "deep_space_beacon",
+   "name": "Deep-Space Beacon",
+   "description": "Design an array strong enough to call the fleet. Capstone of the Beacon future.",
+   "branch": "industry",
+   "tier": 5,
+   "cost": 5600,
+   "capstone": "beacon",
+   "fixed_prereqs": [
+    "orbital_mechanics"
+   ]
+  },
+  {
+   "id": "field_medicine",
+   "name": "Field Medicine",
+   "description": "Triage, splints and clean dressings. Unlocks the Infirmary.",
+   "branch": "medicine",
+   "tier": 1,
+   "cost": 150,
+   "always_known": true
+  },
+  {
+   "id": "herbal_remedies",
+   "name": "Herbal Remedies",
+   "description": "Native plants that dull pain and fever.",
+   "branch": "medicine",
+   "tier": 1,
+   "cost": 200,
+   "effects": [
+    {
+     "type": "heal_rate",
+     "amount": 0.2
+    }
+   ]
+  },
+  {
+   "id": "sanitation",
+   "name": "Sanitation",
+   "description": "Clean water and waste discipline keep illness away.",
+   "branch": "medicine",
+   "tier": 2,
+   "cost": 400,
+   "effects": [
+    {
+     "type": "heal_rate",
+     "amount": 0.2
+    }
+   ]
+  },
+  {
+   "id": "pharmacology",
+   "name": "Pharmacology",
+   "description": "Synthesise medicine from fibre and metal. Adds medkit printing.",
+   "branch": "medicine",
+   "tier": 2,
+   "cost": 475
+  },
+  {
+   "id": "surgery",
+   "name": "Surgery",
+   "description": "Heated wards and surgical tools. Unlocks the Hospital.",
+   "branch": "medicine",
+   "tier": 3,
+   "cost": 1260
+  },
+  {
+   "id": "xenobiology",
+   "name": "Xenobiology",
+   "description": "Understand native pathogens and fauna.",
+   "branch": "medicine",
+   "tier": 3,
+   "cost": 1330,
+   "effects": [
+    {
+     "type": "heal_rate",
+     "amount": 0.3
+    },
+    {
+     "type": "expedition_safety",
+     "amount": 0.1
+    }
+   ]
+  },
+  {
+   "id": "neural_therapy",
+   "name": "Neural Therapy",
+   "description": "Treat grief and trauma with care and chemistry.",
+   "branch": "medicine",
+   "tier": 4,
+   "cost": 2170,
+   "effects": [
+    {
+     "type": "mood",
+     "amount": 1.5
+    }
+   ]
+  },
+  {
+   "id": "longevity_studies",
+   "name": "Longevity Studies",
+   "description": "Slow the toll this world takes on the body.",
+   "branch": "medicine",
+   "tier": 4,
+   "cost": 2240,
+   "effects": [
+    {
+     "type": "heal_rate",
+     "amount": 0.3
+    },
+    {
+     "type": "need_decay",
+     "need": "rest",
+     "amount": -0.1
+    }
+   ]
+  },
+  {
+   "id": "regenerative_medicine",
+   "name": "Regenerative Medicine",
+   "description": "Regrow tissue with xenobiological catalysts.",
+   "branch": "medicine",
+   "tier": 5,
+   "cost": 3430,
+   "effects": [
+    {
+     "type": "heal_rate",
+     "amount": 0.5
+    },
+    {
+     "type": "mood",
+     "amount": 1.0
+    }
+   ]
+  },
+  {
+   "id": "communal_life",
+   "name": "Communal Life",
+   "description": "Shared rituals and a place to unwind. Unlocks the Lounge.",
+   "branch": "society",
+   "tier": 1,
+   "cost": 175
+  },
+  {
+   "id": "oral_history",
+   "name": "Oral History",
+   "description": "Stories told around the fire bind strangers into a crew.",
+   "branch": "society",
+   "tier": 1,
+   "cost": 150,
+   "always_known": true,
+   "effects": [
+    {
+     "type": "work_speed",
+     "skill": "social",
+     "amount": 0.2
+    },
+    {
+     "type": "mood",
+     "amount": 0.5
+    }
+   ]
+  },
+  {
+   "id": "kinship_customs",
+   "name": "Kinship Customs",
+   "description": "Partnerships and child-rearing on a new world. Unlocks Family Quarters.",
+   "branch": "society",
+   "tier": 2,
+   "cost": 425
+  },
+  {
+   "id": "rites_of_remembrance",
+   "name": "Rites of Remembrance",
+   "description": "Honour the dead so the living can go on. Unlocks the Memorial.",
+   "branch": "society",
+   "tier": 2,
+   "cost": 375,
+   "effects": [
+    {
+     "type": "mood",
+     "amount": 0.5
+    }
+   ]
+  },
+  {
+   "id": "landscaping",
+   "name": "Landscaping",
+   "description": "Beauty is a survival tool. Unlocks the Garden.",
+   "branch": "society",
+   "tier": 2,
+   "cost": 400
+  },
+  {
+   "id": "civic_assembly",
+   "name": "Civic Assembly",
+   "description": "A council and the rules to run it. Unlocks the Council Hall.",
+   "branch": "society",
+   "tier": 3,
+   "cost": 1260
+  },
+  {
+   "id": "mediation",
+   "name": "Mediation",
+   "description": "Structured ways to settle grievances before they fester.",
+   "branch": "society",
+   "tier": 3,
+   "cost": 1190,
+   "effects": [
+    {
+     "type": "mood",
+     "amount": 1.0
+    }
+   ]
+  },
+  {
+   "id": "artisan_guilds",
+   "name": "Artisan Guilds",
+   "description": "Craft as identity and pride. Locks Automated Assembly.",
+   "branch": "society",
+   "tier": 4,
+   "cost": 2170,
+   "fork": "labour_path",
+   "effects": [
+    {
+     "type": "work_speed",
+     "skill": "crafting",
+     "amount": 0.2
+    },
+    {
+     "type": "work_speed",
+     "skill": "cooking",
+     "amount": 0.2
+    },
+    {
+     "type": "mood",
+     "amount": 1.0
+    }
+   ]
+  },
+  {
+   "id": "shared_purpose",
+   "name": "Shared Purpose",
+   "description": "A common story of why the colony endures.",
+   "branch": "society",
+   "tier": 4,
+   "cost": 2240,
+   "effects": [
+    {
+     "type": "mood",
+     "amount": 1.5
+    }
+   ]
+  },
+  {
+   "id": "colony_charter",
+   "name": "Colony Charter",
+   "description": "The founding document of a new people.",
+   "branch": "society",
+   "tier": 5,
+   "cost": 3360,
+   "effects": [
+    {
+     "type": "mood",
+     "amount": 2.0
+    },
+    {
+     "type": "research_speed",
+     "amount": 0.1
+    }
+   ]
+  },
+  {
+   "id": "spectral_survey",
+   "name": "Spectral Survey",
+   "description": "Read the strange light of the planet's minerals.",
+   "branch": "xenology",
+   "tier": 1,
+   "cost": 200,
+   "effects": [
+    {
+     "type": "sight",
+     "amount": 1.0
+    }
+   ]
+  },
+  {
+   "id": "xenoarchaeology",
+   "name": "Xenoarchaeology",
+   "description": "Safely open and study precursor relics. Unlocks the Xeno Lab.",
+   "branch": "xenology",
+   "tier": 2,
+   "cost": 500
+  },
+  {
+   "id": "signal_analysis",
+   "name": "Signal Analysis",
+   "description": "Isolate the alien carrier wave. Unlocks the Signal Mast.",
+   "branch": "xenology",
+   "tier": 2,
+   "cost": 550
+  },
+  {
+   "id": "precursor_linguistics",
+   "name": "Precursor Linguistics",
+   "description": "The first words of a language older than humanity.",
+   "branch": "xenology",
+   "tier": 3,
+   "cost": 1330,
+   "effects": [
+    {
+     "type": "research_speed",
+     "amount": 0.15
+    }
+   ]
+  },
+  {
+   "id": "relic_harmonics",
+   "name": "Relic Harmonics",
+   "description": "Relics hum in patterns that point the way.",
+   "branch": "xenology",
+   "tier": 3,
+   "cost": 1260,
+   "relic_only": true,
+   "effects": [
+    {
+     "type": "expedition_safety",
+     "amount": 0.15
+    }
+   ]
+  },
+  {
+   "id": "spire_cartography",
+   "name": "Spire Cartography",
+   "description": "Map the precursor structure beneath the plain.",
+   "branch": "xenology",
+   "tier": 4,
+   "cost": 2310,
+   "effects": [
+    {
+     "type": "research_speed",
+     "amount": 0.1
+    }
+   ]
+  },
+  {
+   "id": "resonance_theory",
+   "name": "Resonance Theory",
+   "description": "Precursor fields can shield as well as sing.",
+   "branch": "xenology",
+   "tier": 4,
+   "cost": 2170,
+   "relic_only": true,
+   "effects": [
+    {
+     "type": "defence",
+     "amount": 0.5
+    }
+   ]
+  },
+  {
+   "id": "spire_resonance",
+   "name": "Spire Resonance",
+   "description": "Learn the song that wakes the spire. Capstone of the Ascendant future.",
+   "branch": "xenology",
+   "tier": 5,
+   "cost": 5600,
+   "capstone": "ascendant",
+   "fixed_prereqs": [
+    "spire_cartography"
+   ]
+  },
+  {
+   "id": "unified_field",
+   "name": "Unified Field",
+   "description": "Precursor physics rewrites human science.",
+   "branch": "xenology",
+   "tier": 5,
+   "cost": 3500,
+   "relic_only": true,
+   "effects": [
+    {
+     "type": "research_speed",
+     "amount": 0.3
+    }
+   ]
+  }
+ ]
+}

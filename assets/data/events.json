@@ -1,0 +1,756 @@
+{
+ "events": [
+  {
+   "id": "crash_landing",
+   "title": "Landfall",
+   "text": "The Meridian's crew section tore free and came down on an unknown world. Eight survivors crawl from the hull. MERIDIAN, the colony intelligence, wakes with them.",
+   "severity": "notable",
+   "weight": 0,
+   "effects": [],
+   "scripted": true,
+   "once": true
+  },
+  {
+   "id": "first_storm",
+   "title": "First Storm Front",
+   "text": "A wall of black cloud rolls over the ridge. Anyone caught outside will need shelter.",
+   "severity": "danger",
+   "weight": 0,
+   "effects": [
+    {
+     "type": "weather",
+     "weather": "storm",
+     "days": 1.5
+    }
+   ],
+   "scripted": true,
+   "once": true
+  },
+  {
+   "id": "roots_begin",
+   "title": "Roots",
+   "text": "The first season has passed. The survivors begin to speak of staying rather than surviving.",
+   "severity": "notable",
+   "weight": 0,
+   "effects": [
+    {
+     "type": "insight",
+     "branch": "agronomy",
+     "amount": 12
+    }
+   ],
+   "scripted": true,
+   "once": true
+  },
+  {
+   "id": "the_long_frost",
+   "title": "The Long Frost",
+   "text": "The temperature falls and keeps falling. Fires must burn and food must last.",
+   "severity": "danger",
+   "weight": 0,
+   "effects": [
+    {
+     "type": "weather",
+     "weather": "snow",
+     "days": 4
+    }
+   ],
+   "scripted": true,
+   "once": true
+  },
+  {
+   "id": "signal_heard",
+   "title": "The Signal",
+   "text": "Every radio in the colony picks up the same pulse, repeating from beneath the plain.",
+   "severity": "notable",
+   "weight": 0,
+   "effects": [
+    {
+     "type": "insight",
+     "branch": "xenology",
+     "amount": 25
+    },
+    {
+     "type": "reveal_tech"
+    }
+   ],
+   "scripted": true,
+   "once": true
+  },
+  {
+   "id": "migration",
+   "title": "The Migration",
+   "text": "The native herds are moving, and the colony stands in their path. Crops wither in their wake.",
+   "severity": "danger",
+   "weight": 0,
+   "effects": [
+    {
+     "type": "creatures",
+     "kind": "ridgeback",
+     "count": 4
+    },
+    {
+     "type": "creatures",
+     "kind": "skitter",
+     "count": 6
+    },
+    {
+     "type": "blight",
+     "fraction": 0.3
+    }
+   ],
+   "scripted": true,
+   "once": true
+  },
+  {
+   "id": "divergence",
+   "title": "Divergence",
+   "text": "The colony knows enough now to choose what it will become. The council must hear a proposal.",
+   "severity": "notable",
+   "weight": 0,
+   "effects": [],
+   "scripted": true,
+   "once": true
+  },
+  {
+   "id": "dissent",
+   "title": "Dissent",
+   "text": "Not everyone agrees with the path chosen. Arguments run late into the night.",
+   "severity": "notable",
+   "weight": 0,
+   "effects": [
+    {
+     "type": "mood",
+     "amount": -3,
+     "days": 5
+    }
+   ],
+   "scripted": true,
+   "once": true
+  },
+  {
+   "id": "final_landing",
+   "title": "The Final Landing",
+   "text": "The last project begins. Whatever the colony becomes, it becomes now.",
+   "severity": "notable",
+   "weight": 0,
+   "effects": [
+    {
+     "type": "mood",
+     "amount": 3,
+     "days": 4
+    }
+   ],
+   "scripted": true,
+   "once": true
+  },
+  {
+   "id": "fleet_static",
+   "title": "Static from the Deep",
+   "text": "The array draws the sky's anger: ion storms batter the colony as the beacon charges.",
+   "severity": "danger",
+   "weight": 0,
+   "effects": [
+    {
+     "type": "weather",
+     "weather": "storm",
+     "days": 3
+    },
+    {
+     "type": "damage",
+     "fraction": 0.15
+    }
+   ],
+   "scripted": true,
+   "once": true
+  },
+  {
+   "id": "root_fever",
+   "title": "Root Fever",
+   "text": "The network tests the colony. Fever spreads and crops sicken as the roots reach in.",
+   "severity": "danger",
+   "weight": 0,
+   "effects": [
+    {
+     "type": "illness",
+     "count": 4
+    },
+    {
+     "type": "blight",
+     "fraction": 0.5
+    }
+   ],
+   "scripted": true,
+   "once": true
+  },
+  {
+   "id": "spire_awakening",
+   "title": "The Spire Wakes",
+   "text": "The ground hums. Ancient guardians crawl from the spire's vents.",
+   "severity": "danger",
+   "weight": 0,
+   "effects": [
+    {
+     "type": "creatures",
+     "kind": "driftmaw",
+     "count": 2
+    },
+    {
+     "type": "creatures",
+     "kind": "ridgeback",
+     "count": 4
+    }
+   ],
+   "scripted": true,
+   "once": true
+  },
+  {
+   "id": "skitter_raid",
+   "title": "Skitter Raid",
+   "text": "A pack of skitters slips in to raid the stores.",
+   "severity": "notable",
+   "weight": 3,
+   "effects": [
+    {
+     "type": "creatures",
+     "kind": "skitter",
+     "count": 4
+    }
+   ],
+   "min_day": 5,
+   "cooldown_days": 6
+  },
+  {
+   "id": "skitter_swarm",
+   "title": "Skitter Swarm",
+   "text": "Dozens of chittering skitters pour over the ridge.",
+   "severity": "danger",
+   "weight": 1.5,
+   "effects": [
+    {
+     "type": "creatures",
+     "kind": "skitter",
+     "count": 8
+    }
+   ],
+   "min_day": 45,
+   "cooldown_days": 12
+  },
+  {
+   "id": "ridgeback_hunt",
+   "title": "Ridgeback Hunt",
+   "text": "A pair of ridgebacks has caught the colony's scent.",
+   "severity": "danger",
+   "weight": 2,
+   "effects": [
+    {
+     "type": "creatures",
+     "kind": "ridgeback",
+     "count": 2
+    }
+   ],
+   "min_day": 25,
+   "cooldown_days": 10
+  },
+  {
+   "id": "driftmaw_sighting",
+   "title": "Driftmaw",
+   "text": "Something enormous moves through the long grass.",
+   "severity": "danger",
+   "weight": 1,
+   "effects": [
+    {
+     "type": "creatures",
+     "kind": "driftmaw",
+     "count": 1
+    }
+   ],
+   "min_day": 120,
+   "cooldown_days": 20
+  },
+  {
+   "id": "storm_front",
+   "title": "Storm Front",
+   "text": "Thunderheads stack over the horizon.",
+   "severity": "notable",
+   "weight": 3,
+   "effects": [
+    {
+     "type": "weather",
+     "weather": "storm",
+     "days": 1
+    }
+   ],
+   "seasons": [
+    "spring",
+    "autumn"
+   ],
+   "cooldown_days": 5
+  },
+  {
+   "id": "cold_snap",
+   "title": "Cold Snap",
+   "text": "A bitter wind drives the temperature down.",
+   "severity": "notable",
+   "weight": 3,
+   "effects": [
+    {
+     "type": "weather",
+     "weather": "snow",
+     "days": 2
+    }
+   ],
+   "seasons": [
+    "winter",
+    "autumn"
+   ],
+   "cooldown_days": 5
+  },
+  {
+   "id": "heatwave",
+   "title": "Heatwave",
+   "text": "The air shimmers. Work slows under the pale sun.",
+   "severity": "calm",
+   "weight": 2,
+   "effects": [
+    {
+     "type": "weather",
+     "weather": "heatwave",
+     "days": 2
+    }
+   ],
+   "seasons": [
+    "summer"
+   ],
+   "cooldown_days": 8
+  },
+  {
+   "id": "ashfall",
+   "title": "Ashfall",
+   "text": "The volcanoes to the south breathe out. Grey ash falls like snow.",
+   "severity": "notable",
+   "weight": 3,
+   "effects": [
+    {
+     "type": "weather",
+     "weather": "ashfall",
+     "days": 1.5
+    }
+   ],
+   "sites": [
+    "ashen_steppe"
+   ],
+   "cooldown_days": 6
+  },
+  {
+   "id": "escape_pod",
+   "title": "Escape Pod",
+   "text": "A Meridian escape pod streaks down nearby. Its passenger is alive.",
+   "severity": "calm",
+   "weight": 2,
+   "effects": [
+    {
+     "type": "arrivals",
+     "count": 1
+    }
+   ],
+   "min_day": 10,
+   "cooldown_days": 12
+  },
+  {
+   "id": "survivor_band",
+   "title": "Survivor Band",
+   "text": "A ragged group of Meridian survivors walks out of the wilds.",
+   "severity": "calm",
+   "weight": 1,
+   "effects": [
+    {
+     "type": "arrivals",
+     "count": 3
+    }
+   ],
+   "min_day": 60,
+   "cooldown_days": 30
+  },
+  {
+   "id": "fever",
+   "title": "Fever",
+   "text": "A fever spreads through the bunks.",
+   "severity": "notable",
+   "weight": 2,
+   "effects": [
+    {
+     "type": "illness",
+     "count": 2
+    }
+   ],
+   "min_day": 15,
+   "cooldown_days": 15
+  },
+  {
+   "id": "blight",
+   "title": "Blight",
+   "text": "Grey rot spreads through the crops overnight.",
+   "severity": "notable",
+   "weight": 1.5,
+   "effects": [
+    {
+     "type": "blight",
+     "fraction": 0.4
+    }
+   ],
+   "seasons": [
+    "summer",
+    "autumn"
+   ],
+   "min_day": 30,
+   "cooldown_days": 20
+  },
+  {
+   "id": "meteor_shower",
+   "title": "Meteor Shower",
+   "text": "Debris from the Meridian's orbit falls as burning salvage.",
+   "severity": "calm",
+   "weight": 1.5,
+   "effects": [
+    {
+     "type": "wreckage",
+     "nodes": 4
+    }
+   ],
+   "cooldown_days": 20
+  },
+  {
+   "id": "cache_found",
+   "title": "Supply Cache",
+   "text": "A sealed crate of spare parts is found wedged in the hull.",
+   "severity": "calm",
+   "weight": 1.5,
+   "effects": [
+    {
+     "type": "resource",
+     "resource": "components",
+     "amount": 10
+    }
+   ],
+   "max_day": 120,
+   "cooldown_days": 20
+  },
+  {
+   "id": "supply_drop",
+   "title": "Cargo Pod",
+   "text": "A cargo pod from the Meridian lands intact.",
+   "severity": "calm",
+   "weight": 1,
+   "effects": [
+    {
+     "type": "resource",
+     "resource": "food",
+     "amount": 30
+    },
+    {
+     "type": "resource",
+     "resource": "medicine",
+     "amount": 4
+    }
+   ],
+   "max_day": 60,
+   "once": true
+  },
+  {
+   "id": "aurora",
+   "title": "Aurora",
+   "text": "The sky burns green and gold all night. Nobody sleeps; nobody minds.",
+   "severity": "calm",
+   "weight": 1.5,
+   "effects": [
+    {
+     "type": "mood",
+     "amount": 4,
+     "days": 2
+    }
+   ],
+   "cooldown_days": 25
+  },
+  {
+   "id": "quake",
+   "title": "Tremor",
+   "text": "The ground shakes. Walls crack and stores spill.",
+   "severity": "notable",
+   "weight": 1,
+   "effects": [
+    {
+     "type": "damage",
+     "fraction": 0.08
+    }
+   ],
+   "min_day": 40,
+   "cooldown_days": 30
+  },
+  {
+   "id": "strange_spores",
+   "title": "Strange Spores",
+   "text": "Glowing spores drift over the fields. The botanists are fascinated.",
+   "severity": "calm",
+   "weight": 1.2,
+   "effects": [
+    {
+     "type": "insight",
+     "branch": "agronomy",
+     "amount": 15
+    }
+   ],
+   "cooldown_days": 25
+  },
+  {
+   "id": "ruin_echo",
+   "title": "Ruin Echo",
+   "text": "The ruins sing for a moment, and someone writes the tune down.",
+   "severity": "calm",
+   "weight": 1.2,
+   "effects": [
+    {
+     "type": "insight",
+     "branch": "xenology",
+     "amount": 15
+    }
+   ],
+   "acts": [
+    2,
+    3,
+    4,
+    5
+   ],
+   "cooldown_days": 25
+  },
+  {
+   "id": "old_manuals",
+   "title": "Old Manuals",
+   "text": "A data slate full of engineering manuals turns up in the wreck.",
+   "severity": "calm",
+   "weight": 1.2,
+   "effects": [
+    {
+     "type": "insight",
+     "branch": "industry",
+     "amount": 15
+    }
+   ],
+   "max_day": 150,
+   "cooldown_days": 25
+  },
+  {
+   "id": "lost_signal",
+   "title": "Lost Transmission",
+   "text": "A fragment of the Meridian's science database decrypts itself.",
+   "severity": "calm",
+   "weight": 1,
+   "effects": [
+    {
+     "type": "reveal_tech"
+    }
+   ],
+   "min_day": 40,
+   "cooldown_days": 30
+  },
+  {
+   "id": "distant_smoke",
+   "title": "Distant Smoke",
+   "text": "Smoke rises far to the east. Someone else survived.",
+   "severity": "calm",
+   "weight": 1,
+   "effects": [
+    {
+     "type": "expedition",
+     "site": "survivor_camp"
+    }
+   ],
+   "min_day": 20,
+   "once": true
+  },
+  {
+   "id": "glinting_ridge",
+   "title": "Glinting Ridge",
+   "text": "Scouts report a ridge that glitters at dusk.",
+   "severity": "calm",
+   "weight": 1,
+   "effects": [
+    {
+     "type": "expedition",
+     "site": "crystal_ridge"
+    }
+   ],
+   "min_day": 50,
+   "once": true
+  },
+  {
+   "id": "answered_call",
+   "title": "Answering the Signal",
+   "text": "Drawn by the colony's signal, a straggler from the Meridian's scattered pods limps into camp.",
+   "severity": "calm",
+   "weight": 2.5,
+   "acts": [
+    3,
+    4,
+    5
+   ],
+   "cooldown_days": 10,
+   "effects": [
+    {
+     "type": "arrivals",
+     "count": 1
+    }
+   ]
+  }
+ ],
+ "expedition_sites": [
+  {
+   "id": "fibre_valley",
+   "name": "Fibre Valley",
+   "description": "A sheltered valley thick with fibre reeds and glowfruit.",
+   "danger": 0.15,
+   "days": 1.5,
+   "rewards": [
+    [
+     "fibre",
+     45
+    ],
+    [
+     "food",
+     12
+    ]
+   ],
+   "min_act": 1,
+   "repeatable": true
+  },
+  {
+   "id": "wreck_field",
+   "name": "Wreck Field",
+   "description": "Debris from the Meridian scattered over a mile of scrub.",
+   "danger": 0.2,
+   "days": 2,
+   "rewards": [
+    [
+     "salvage",
+     45
+    ],
+    [
+     "components",
+     6
+    ]
+   ],
+   "min_act": 1,
+   "repeatable": true
+  },
+  {
+   "id": "fallen_lifeboat",
+   "name": "Fallen Lifeboat",
+   "description": "A lifeboat's beacon still pings from the hills.",
+   "danger": 0.25,
+   "days": 2,
+   "rewards": [
+    [
+     "medicine",
+     10
+    ],
+    [
+     "components",
+     8
+    ]
+   ],
+   "min_act": 1,
+   "recruits": true
+  },
+  {
+   "id": "northern_caves",
+   "name": "Northern Caves",
+   "description": "Deep caves veined with ore and strange carvings.",
+   "danger": 0.4,
+   "days": 3,
+   "rewards": [
+    [
+     "stone",
+     30
+    ],
+    [
+     "metal",
+     25
+    ]
+   ],
+   "relics": 0.6,
+   "min_act": 2,
+   "reveals_tech": true,
+   "repeatable": true
+  },
+  {
+   "id": "survivor_camp",
+   "name": "Survivor Camp",
+   "description": "Smoke from another group of Meridian survivors.",
+   "danger": 0.3,
+   "days": 3,
+   "rewards": [
+    [
+     "food",
+     10
+    ]
+   ],
+   "min_act": 2,
+   "recruits": true,
+   "repeatable": true
+  },
+  {
+   "id": "precursor_ruins",
+   "name": "Precursor Ruins",
+   "description": "Collapsed towers of something that was here first.",
+   "danger": 0.5,
+   "days": 4,
+   "rewards": [
+    [
+     "components",
+     10
+    ]
+   ],
+   "relics": 3,
+   "min_act": 3,
+   "reveals_tech": true,
+   "repeatable": true
+  },
+  {
+   "id": "crystal_ridge",
+   "name": "Crystal Ridge",
+   "description": "A ridge of resonant crystal and rich metal seams.",
+   "danger": 0.55,
+   "days": 4,
+   "rewards": [
+    [
+     "metal",
+     40
+    ],
+    [
+     "components",
+     15
+    ]
+   ],
+   "relics": 1.5,
+   "min_act": 4,
+   "repeatable": true
+  },
+  {
+   "id": "spire_shadow",
+   "name": "Spire's Shadow",
+   "description": "The base of the buried spire, where the signal is loudest.",
+   "danger": 0.7,
+   "days": 5,
+   "rewards": [
+    [
+     "metal",
+     20
+    ]
+   ],
+   "relics": 6,
+   "min_act": 4,
+   "reveals_tech": true,
+   "repeatable": true
+  }
+ ]
+}

@@ -1,19 +1,36 @@
-//! state domain.
+//! Application screens and their state: title, colony setup, play, results.
 
-pub mod game_state;
-pub mod menu_state;
-pub mod persistence;
-pub mod runtime_state;
+pub mod play;
+pub mod save;
 
-use crate::state::game_state::GameplayState;
+use crate::colony::RunSetup;
+use play::PlayState;
 
-pub enum StateTransition {
-    None,
-    ToGameplay(Box<GameplayState>),
-    ToMenu { status_message: Option<String> },
+pub struct TitleState {
+    pub has_save: bool,
+    pub message: Option<String>,
 }
 
-pub trait State {
-    fn update(&mut self) -> StateTransition;
-    fn draw(&self);
+#[derive(Clone, Debug)]
+pub struct SetupState {
+    pub site: String,
+    pub difficulty: String,
+    pub seed: u64,
+}
+
+impl SetupState {
+    pub fn to_run(&self) -> RunSetup {
+        RunSetup {
+            colony_name: "New Meridian".into(),
+            site: self.site.clone(),
+            difficulty: self.difficulty.clone(),
+            seed: self.seed,
+        }
+    }
+}
+
+pub enum Screen {
+    Title(TitleState),
+    Setup(SetupState),
+    Playing(Box<PlayState>),
 }

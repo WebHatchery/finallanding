@@ -1,0 +1,602 @@
+{
+ "traits": [
+  {
+   "id": "social",
+   "name": "Social",
+   "description": "Draws energy from company and seeks people out.",
+   "modifiers": {
+    "sociability": 0.5,
+    "need_decay": {
+     "social": 0.3
+    }
+   },
+   "excludes": [
+    "loner"
+   ],
+   "bonds_with": [
+    "social",
+    "kind"
+   ]
+  },
+  {
+   "id": "loner",
+   "name": "Loner",
+   "description": "Needs quiet; crowds wear them down.",
+   "modifiers": {
+    "sociability": -0.5,
+    "need_decay": {
+     "social": -0.5
+    }
+   },
+   "excludes": [
+    "social"
+   ],
+   "clashes_with": [
+    "social"
+   ]
+  },
+  {
+   "id": "brave",
+   "name": "Brave",
+   "description": "Faces danger head-on and volunteers for the unknown.",
+   "modifiers": {
+    "bravery": 0.6
+   },
+   "excludes": [
+    "cautious"
+   ],
+   "bonds_with": [
+    "brave",
+    "leader"
+   ],
+   "ending_affinity": {
+    "ascendant": 0.15
+   }
+  },
+  {
+   "id": "cautious",
+   "name": "Cautious",
+   "description": "Avoids risk and prefers the safe plan.",
+   "modifiers": {
+    "bravery": -0.5
+   },
+   "excludes": [
+    "brave"
+   ],
+   "clashes_with": [
+    "hot_headed"
+   ],
+   "ending_affinity": {
+    "beacon": 0.15
+   }
+  },
+  {
+   "id": "kind",
+   "name": "Kind",
+   "description": "Helps without being asked and comforts the hurting.",
+   "modifiers": {
+    "kindness": 0.6,
+    "sociability": 0.1
+   },
+   "excludes": [
+    "abrasive"
+   ],
+   "bonds_with": [
+    "kind",
+    "optimist"
+   ]
+  },
+  {
+   "id": "abrasive",
+   "name": "Abrasive",
+   "description": "Says what they think, whether or not anyone wants it.",
+   "modifiers": {
+    "kindness": -0.3,
+    "temper": 0.3
+   },
+   "excludes": [
+    "kind"
+   ],
+   "clashes_with": [
+    "abrasive",
+    "stubborn",
+    "kind"
+   ]
+  },
+  {
+   "id": "optimist",
+   "name": "Optimist",
+   "description": "Finds the bright side, even here.",
+   "modifiers": {
+    "optimism": 8.0
+   },
+   "excludes": [
+    "pessimist"
+   ],
+   "bonds_with": [
+    "optimist",
+    "kind"
+   ]
+  },
+  {
+   "id": "pessimist",
+   "name": "Pessimist",
+   "description": "Expects the worst and is rarely disappointed.",
+   "modifiers": {
+    "optimism": -8.0
+   },
+   "excludes": [
+    "optimist"
+   ],
+   "clashes_with": [
+    "optimist"
+   ],
+   "ending_affinity": {
+    "beacon": 0.1
+   }
+  },
+  {
+   "id": "diligent",
+   "name": "Diligent",
+   "description": "Works long and well.",
+   "modifiers": {
+    "diligence": 0.5
+   },
+   "excludes": [
+    "lazy"
+   ],
+   "clashes_with": [
+    "lazy"
+   ],
+   "bonds_with": [
+    "diligent"
+   ]
+  },
+  {
+   "id": "lazy",
+   "name": "Lazy",
+   "description": "Finds a reason to rest.",
+   "modifiers": {
+    "diligence": -0.5,
+    "need_decay": {
+     "recreation": 0.3
+    }
+   },
+   "excludes": [
+    "diligent"
+   ]
+  },
+  {
+   "id": "curious",
+   "name": "Curious",
+   "description": "Must know how things work, especially alien things.",
+   "modifiers": {
+    "curiosity": 0.6,
+    "skill_speed": {
+     "science": 0.2
+    }
+   },
+   "bonds_with": [
+    "curious",
+    "tinkerer"
+   ],
+   "ending_affinity": {
+    "ascendant": 0.35,
+    "rootbound": 0.1
+   }
+  },
+  {
+   "id": "romantic",
+   "name": "Romantic",
+   "description": "Falls in love easily and deeply.",
+   "modifiers": {
+    "romance": 0.6
+   }
+  },
+  {
+   "id": "stubborn",
+   "name": "Stubborn",
+   "description": "Once decided, will not be moved.",
+   "modifiers": {
+    "temper": 0.2,
+    "diligence": 0.2
+   },
+   "clashes_with": [
+    "leader"
+   ]
+  },
+  {
+   "id": "gourmand",
+   "name": "Gourmand",
+   "description": "Lives for a good meal.",
+   "modifiers": {
+    "need_decay": {
+     "food": 0.2
+    },
+    "skill_speed": {
+     "cooking": 0.25
+    }
+   },
+   "bonds_with": [
+    "gourmand"
+   ]
+  },
+  {
+   "id": "green_thumb",
+   "name": "Green Thumb",
+   "description": "Plants thrive under their care.",
+   "modifiers": {
+    "skill_speed": {
+     "farming": 0.3
+    }
+   },
+   "ending_affinity": {
+    "rootbound": 0.35
+   }
+  },
+  {
+   "id": "tinkerer",
+   "name": "Tinkerer",
+   "description": "Happiest with a tool in hand.",
+   "modifiers": {
+    "skill_speed": {
+     "crafting": 0.25,
+     "construction": 0.15
+    }
+   },
+   "ending_affinity": {
+    "beacon": 0.25
+   }
+  },
+  {
+   "id": "spiritual",
+   "name": "Spiritual",
+   "description": "Senses meaning in the planet itself.",
+   "modifiers": {
+    "optimism": 3.0
+   },
+   "clashes_with": [
+    "tinkerer"
+   ],
+   "ending_affinity": {
+    "rootbound": 0.45,
+    "ascendant": -0.1
+   }
+  },
+  {
+   "id": "leader",
+   "name": "Leader",
+   "description": "Others listen when they speak.",
+   "modifiers": {
+    "leadership": 0.6,
+    "sociability": 0.2
+   },
+   "bonds_with": [
+    "diligent"
+   ],
+   "ending_affinity": {
+    "beacon": 0.1
+   }
+  },
+  {
+   "id": "hot_headed",
+   "name": "Hot-headed",
+   "description": "Quick to anger, quick to swing.",
+   "modifiers": {
+    "temper": 0.6
+   },
+   "clashes_with": [
+    "hot_headed",
+    "abrasive"
+   ]
+  },
+  {
+   "id": "night_owl",
+   "name": "Night Owl",
+   "description": "Comes alive after dark.",
+   "modifiers": {
+    "night_owl": true
+   }
+  },
+  {
+   "id": "homesick",
+   "name": "Homesick",
+   "description": "Dreams of the worlds the fleet left behind.",
+   "modifiers": {
+    "optimism": -2.0
+   },
+   "ending_affinity": {
+    "beacon": 0.5,
+    "rootbound": -0.2
+   }
+  },
+  {
+   "id": "resilient",
+   "name": "Resilient",
+   "description": "Bends but does not break.",
+   "modifiers": {
+    "optimism": 4.0,
+    "bravery": 0.2
+   }
+  }
+ ],
+ "ambitions": [
+  {
+   "id": "master_skill",
+   "kind": "master_skill",
+   "name": "Master a Craft",
+   "description": "Reach the highest level in their favourite skill.",
+   "target": 14
+  },
+  {
+   "id": "raise_family",
+   "kind": "raise_family",
+   "name": "Raise a Family",
+   "description": "Find a partner and raise a child on this world.",
+   "target": 1,
+   "ending_affinity": {
+    "rootbound": 0.15
+   }
+  },
+  {
+   "id": "befriend_colony",
+   "kind": "befriend_colony",
+   "name": "Befriend the Colony",
+   "description": "Count many of the colony as friends.",
+   "target": 5
+  },
+  {
+   "id": "map_the_wilds",
+   "kind": "map_the_wilds",
+   "name": "Map the Wilds",
+   "description": "Join several expeditions into the unknown.",
+   "target": 3,
+   "ending_affinity": {
+    "ascendant": 0.1
+   }
+  },
+  {
+   "id": "decode_spire",
+   "kind": "decode_spire",
+   "name": "Decode the Spire",
+   "description": "See the colony research the secrets of the precursors.",
+   "target": 4,
+   "ending_affinity": {
+    "ascendant": 0.35
+   }
+  },
+  {
+   "id": "build_home",
+   "kind": "build_home",
+   "name": "Build a Home",
+   "description": "Live in a comfortable, heated home.",
+   "target": 0.8,
+   "ending_affinity": {
+    "rootbound": 0.2
+   }
+  },
+  {
+   "id": "lead_council",
+   "kind": "lead_council",
+   "name": "Lead the Council",
+   "description": "Be the most respected voice in the colony.",
+   "target": 40,
+   "ending_affinity": {
+    "beacon": 0.15
+   }
+  }
+ ],
+ "names": {
+  "given": [
+   "Mara",
+   "Ilya",
+   "Eva",
+   "Charlie",
+   "Eli",
+   "Sora",
+   "Tomas",
+   "Anika",
+   "Rafael",
+   "Jun",
+   "Priya",
+   "Kofi",
+   "Lena",
+   "Mateo",
+   "Yara",
+   "Ade",
+   "Noor",
+   "Bram",
+   "Ines",
+   "Kai",
+   "Oskar",
+   "Zara",
+   "Femi",
+   "Hana",
+   "Luca",
+   "Milo",
+   "Talia",
+   "Ren",
+   "Saoirse",
+   "Dmitri",
+   "Amara",
+   "Felix",
+   "Iris",
+   "Joaquin",
+   "Leilani",
+   "Nils",
+   "Odile",
+   "Pavel",
+   "Quinn",
+   "Rosa",
+   "Sanjay",
+   "Thea",
+   "Uri",
+   "Vesna",
+   "Wren",
+   "Xiomara",
+   "Yusuf",
+   "Zoe",
+   "Asha",
+   "Bento",
+   "Cleo",
+   "Dario",
+   "Elif",
+   "Gideon",
+   "Halvard",
+   "Ivo",
+   "Juno",
+   "Kamal",
+   "Lior",
+   "Maeve",
+   "Nadia"
+  ],
+  "family": [
+   "Kovac",
+   "Petrov",
+   "Robles",
+   "Ng",
+   "Jensen",
+   "Vetri",
+   "Okafor",
+   "Lindqvist",
+   "Moreau",
+   "Takeda",
+   "Haddad",
+   "Castillo",
+   "Novak",
+   "Mensah",
+   "Rahimi",
+   "Byrne",
+   "Aaltonen",
+   "Duarte",
+   "Silva",
+   "Kim",
+   "Oyelaran",
+   "Halloran",
+   "Varga",
+   "Ibsen",
+   "Marchetti",
+   "Sato",
+   "Delacroix",
+   "Nakamura",
+   "Abara",
+   "Quist",
+   "Rocha",
+   "Strand",
+   "Tanaka",
+   "Ueda",
+   "Valdez",
+   "Wojcik",
+   "Yilmaz",
+   "Zaman",
+   "Achebe",
+   "Brandt"
+  ],
+  "origins": [
+   "the agri-decks",
+   "the engineering ring",
+   "the cryo vault",
+   "the command spine",
+   "the medical bay",
+   "the cargo holds",
+   "the school deck",
+   "the hydroponic gardens",
+   "the security wing",
+   "the fabrication bay"
+  ],
+  "former_roles": [
+   {
+    "name": "hull welder",
+    "skill": "construction"
+   },
+   {
+    "name": "botanist",
+    "skill": "farming"
+   },
+   {
+    "name": "ship's cook",
+    "skill": "cooking"
+   },
+   {
+    "name": "navigator",
+    "skill": "exploration"
+   },
+   {
+    "name": "field medic",
+    "skill": "medicine"
+   },
+   {
+    "name": "cargo handler",
+    "skill": "construction"
+   },
+   {
+    "name": "teacher",
+    "skill": "social"
+   },
+   {
+    "name": "systems engineer",
+    "skill": "crafting"
+   },
+   {
+    "name": "geologist",
+    "skill": "science"
+   },
+   {
+    "name": "quartermaster",
+    "skill": "social"
+   },
+   {
+    "name": "chaplain",
+    "skill": "social"
+   },
+   {
+    "name": "pilot",
+    "skill": "exploration"
+   },
+   {
+    "name": "biologist",
+    "skill": "science"
+   },
+   {
+    "name": "archivist",
+    "skill": "science"
+   },
+   {
+    "name": "security officer",
+    "skill": "exploration"
+   },
+   {
+    "name": "mechanic",
+    "skill": "crafting"
+   },
+   {
+    "name": "hydroponicist",
+    "skill": "farming"
+   },
+   {
+    "name": "line cook",
+    "skill": "cooking"
+   },
+   {
+    "name": "nurse",
+    "skill": "medicine"
+   },
+   {
+    "name": "fabricator tech",
+    "skill": "crafting"
+   }
+  ],
+  "memories": [
+   "still carries a photo of a sister left on Earth",
+   "kept the ship's last coffee tin and will not share it",
+   "was asleep in cryo when the hull broke",
+   "pulled two people from the burning section",
+   "heard the alien signal in their dreams before the crash",
+   "lost a partner in the descent",
+   "has never seen open sky until now",
+   "was due to be married on arrival",
+   "swears the crash was no accident",
+   "carries the captain's log chip"
+  ]
+ }
+}

@@ -1,0 +1,207 @@
+{
+  "time": {
+    "ticks_per_day": 720,
+    "days_per_season": 15,
+    "campaign_years": 5,
+    "speed_ticks_per_second": [
+      0.0,
+      1.5,
+      3.0,
+      6.0
+    ],
+    "dawn_hour": 6.0,
+    "dusk_hour": 20.0,
+    "work_start_hour": 7.0,
+    "work_end_hour": 18.0,
+    "sleep_hour": 22.0
+  },
+  "needs": {
+    "decay_per_day": {
+      "food": 95.0,
+      "rest": 80.0,
+      "warmth": 0.0,
+      "social": 40.0,
+      "recreation": 30.0,
+      "safety": 0.0
+    },
+    "comfortable_temperature": 14.0,
+    "cold_loss_per_degree": 5.0,
+    "shelter_warmth_gain_per_day": 70.0,
+    "heat_warmth_gain_per_day": 160.0,
+    "meal_restore": 55.0,
+    "raw_food_restore": 38.0,
+    "forage_restore": 30.0,
+    "bed_rest_per_day": 220.0,
+    "ground_rest_per_day": 140.0,
+    "recreation_gain_per_day": 180.0,
+    "safety_recovery_per_day": 60.0,
+    "safety_loss_on_threat": 35.0,
+    "urgent_threshold": 25.0
+  },
+  "agents": {
+    "tiles_per_tick": 1.0,
+    "sight_radius": 9.0,
+    "night_sight_factor": 0.6,
+    "storm_sight_factor": 0.5,
+    "perception_interval": 3,
+    "deliberation_interval": 10,
+    "commitment_bonus": 0.25,
+    "max_plan_attempts": 4,
+    "goal_backoff_ticks": 120,
+    "carry_capacity": 12.0,
+    "belief_forget_days": 20.0,
+    "help_wait_ticks": 90,
+    "child_growth_days": 120,
+    "adult_age_years": 18.0
+  },
+  "social": {
+    "chat_ticks": 12,
+    "chat_social_gain": 26.0,
+    "chat_opinion_range": [
+      -6.0,
+      8.0
+    ],
+    "familiarity_per_chat": 4.0,
+    "proximity_familiarity_per_day": 2.0,
+    "shared_work_opinion_per_day": 2.5,
+    "friend_threshold": 30.0,
+    "close_friend_threshold": 60.0,
+    "rival_threshold": -25.0,
+    "enemy_threshold": -55.0,
+    "romance_gain_per_flirt": 9.0,
+    "partner_romance_threshold": 60.0,
+    "gossip_weight": 0.2,
+    "trait_clash_penalty": 7.0,
+    "trait_bond_bonus": 6.0,
+    "child_chance_per_day": 0.025,
+    "opinion_decay_per_day": 0.4
+  },
+  "mood": {
+    "baseline": 50.0,
+    "need_weight": 0.3,
+    "break_threshold": 22.0,
+    "extreme_threshold": 10.0,
+    "break_chance_per_day": 0.6,
+    "break_ticks": 90,
+    "departure_threshold": 12.0,
+    "departure_days": 6.0,
+    "expectation_per_act": 4.0
+  },
+  "health": {
+    "regen_per_day": 4.0,
+    "care_regen_per_day": 20.0,
+    "illness_damage_per_day": 6.0,
+    "illness_recovery_chance_per_day": 0.12,
+    "treated_recovery_bonus": 0.3,
+    "starvation_damage_per_day": 14.0,
+    "hypothermia_damage_per_day": 12.0,
+    "care_threshold": 70.0,
+    "old_age_years": 88.0
+  },
+  "work": {
+    "construction_per_tick": 1.0,
+    "harvest_per_tick": {
+      "salvage": 0.26,
+      "fibre": 0.32,
+      "stone": 0.22,
+      "food": 0.32,
+      "metal": 0.12,
+      "relics": 0.012
+    },
+    "cook_ticks": 20,
+    "meals_per_food": 1.5,
+    "skill_speed_per_level": 0.05,
+    "xp_per_tick": 1.0,
+    "xp_per_level": 420.0,
+    "passion_xp_multiplier": 2.0,
+    "severe_weather_outdoor_factor": 0.5,
+    "unpowered_factor": 0.25,
+    "decay_per_day": 0.35,
+    "storm_damage": 7.0,
+    "repair_per_tick": 1.2,
+    "meal_stock_per_person": 3.0,
+    "food_spoilage_per_day": 0.008,
+    "meal_spoilage_per_day": 0.03
+  },
+  "research": {
+    "points_per_tick": 0.12,
+    "insight_per_tick": 0.02,
+    "eureka_threshold": 30.0,
+    "practice_discount_per_tech": 0.03,
+    "max_practice_discount": 0.3,
+    "hidden_fraction": 0.35,
+    "cross_branch_chance": 0.25,
+    "relic_study_points": 40.0
+  },
+  "farming": {
+    "plant_work": 30.0,
+    "harvest_work": 30.0,
+    "season_growth": [
+      1.0,
+      1.2,
+      0.8,
+      0.0
+    ],
+    "frost_kill_temperature": -2.0
+  },
+  "expeditions": {
+    "min_party": 2,
+    "max_party": 4,
+    "volunteer_window_ticks": 360,
+    "injury_chance_per_danger": 0.25,
+    "death_chance_per_danger": 0.06,
+    "reward_scale": 1.0,
+    "recruit_chance": 0.35,
+    "tech_chance": 0.45
+  },
+  "creatures": {
+    "skitter": {
+      "health": 20.0,
+      "damage_per_tick": 0.4,
+      "tiles_per_tick": 0.9,
+      "raid_amount": 4.0,
+      "aggressive": false,
+      "linger_ticks": 400
+    },
+    "ridgeback": {
+      "health": 60.0,
+      "damage_per_tick": 2.0,
+      "tiles_per_tick": 0.8,
+      "raid_amount": 8.0,
+      "aggressive": true,
+      "linger_ticks": 300
+    },
+    "driftmaw": {
+      "health": 140.0,
+      "damage_per_tick": 4.0,
+      "tiles_per_tick": 0.6,
+      "raid_amount": 15.0,
+      "aggressive": true,
+      "linger_ticks": 300
+    }
+  },
+  "colony": {
+    "starting_survivors": 8,
+    "starting_resources": {
+      "food": 60.0,
+      "meals": 24.0,
+      "salvage": 80.0,
+      "fibre": 20.0,
+      "metal": 10.0,
+      "components": 6.0,
+      "medicine": 6.0
+    },
+    "collapse_mood": 15.0,
+    "collapse_days": 10,
+    "daily_broadcast_hour": 6.0,
+    "max_population": 40,
+    "defence_damage_per_tick": 1.5
+  },
+  "map": {
+    "width": 112,
+    "height": 72,
+    "tile_size": 32.0,
+    "clearing_radius": 10,
+    "node_regrow_per_day": 0.05
+  }
+}

@@ -1,0 +1,919 @@
+{
+ "buildings": [
+  {
+   "id": "meridian_hull",
+   "name": "Meridian Hull",
+   "description": "The surviving crew section of the colony ship. Shelter, storage and a flickering research terminal.",
+   "category": "shelter",
+   "size": [
+    6,
+    3
+   ],
+   "cost": {},
+   "work": 0,
+   "color": [
+    120,
+    128,
+    138
+   ],
+   "beds": 4,
+   "comfort": 0.3,
+   "storage": 400,
+   "indoor": true,
+   "research": 0.6,
+   "unique": true,
+   "buildable": false
+  },
+  {
+   "id": "survival_tent",
+   "name": "Survival Tent",
+   "description": "Fibre canvas over salvaged ribs. Two cots and a little warmth.",
+   "category": "shelter",
+   "size": [
+    2,
+    2
+   ],
+   "cost": {
+    "fibre": 8,
+    "salvage": 4
+   },
+   "work": 40,
+   "color": [
+    150,
+    140,
+    96
+   ],
+   "beds": 2,
+   "comfort": 0.2,
+   "indoor": true
+  },
+  {
+   "id": "bunkhouse",
+   "name": "Bunkhouse",
+   "description": "Prefab panels bolted into a long hall of bunks.",
+   "category": "shelter",
+   "size": [
+    4,
+    3
+   ],
+   "cost": {
+    "salvage": 30,
+    "fibre": 20
+   },
+   "work": 150,
+   "color": [
+    126,
+    112,
+    90
+   ],
+   "tech": "prefab_shelters",
+   "beds": 6,
+   "comfort": 0.4,
+   "indoor": true
+  },
+  {
+   "id": "habitat_dome",
+   "name": "Habitat Dome",
+   "description": "A heated pressure dome with private bunks and a garden ring.",
+   "category": "shelter",
+   "size": [
+    3,
+    3
+   ],
+   "cost": {
+    "metal": 20,
+    "components": 6,
+    "stone": 20
+   },
+   "work": 220,
+   "color": [
+    96,
+    140,
+    170
+   ],
+   "tech": "habitat_engineering",
+   "beds": 4,
+   "comfort": 0.8,
+   "indoor": true,
+   "heat": 3,
+   "beauty": 0.3,
+   "sprite": 0
+  },
+  {
+   "id": "family_quarters",
+   "name": "Family Quarters",
+   "description": "A home for partners and the children they raise.",
+   "category": "shelter",
+   "size": [
+    3,
+    3
+   ],
+   "cost": {
+    "stone": 30,
+    "metal": 10,
+    "fibre": 20
+   },
+   "work": 200,
+   "color": [
+    170,
+    132,
+    104
+   ],
+   "tech": "kinship_customs",
+   "beds": 3,
+   "comfort": 1.0,
+   "indoor": true,
+   "heat": 2,
+   "beauty": 0.4,
+   "family_only": true
+  },
+  {
+   "id": "mess_hall",
+   "name": "Mess Hall",
+   "description": "Cooks turn raw food into meals; everyone eats and talks here.",
+   "category": "food",
+   "size": [
+    4,
+    4
+   ],
+   "cost": {
+    "salvage": 40,
+    "fibre": 10
+   },
+   "work": 180,
+   "color": [
+    196,
+    142,
+    70
+   ],
+   "kitchen": true,
+   "seats": 8,
+   "indoor": true,
+   "beauty": 0.2,
+   "sprite": 1
+  },
+  {
+   "id": "farm_plot",
+   "name": "Farm Plot",
+   "description": "Tilled ground for hardy ship-seed crops. Grows slower in autumn, not at all in winter.",
+   "category": "food",
+   "size": [
+    3,
+    3
+   ],
+   "cost": {
+    "fibre": 6
+   },
+   "work": 30,
+   "color": [
+    104,
+    86,
+    52
+   ],
+   "farm": {
+    "yield_food": 30,
+    "grow_days": 6
+   },
+   "walkable": true
+  },
+  {
+   "id": "glowfruit_orchard",
+   "name": "Glowfruit Orchard",
+   "description": "Native glowfruit trained into rows. Rich harvests once it takes.",
+   "category": "food",
+   "size": [
+    3,
+    3
+   ],
+   "cost": {
+    "fibre": 10,
+    "stone": 6
+   },
+   "work": 60,
+   "color": [
+    92,
+    120,
+    64
+   ],
+   "tech": "native_cultivation",
+   "farm": {
+    "yield_food": 46,
+    "grow_days": 8
+   },
+   "walkable": true
+  },
+  {
+   "id": "hydroponics_bay",
+   "name": "Hydroponics Bay",
+   "description": "Powered racks that grow food through every season.",
+   "category": "food",
+   "size": [
+    3,
+    3
+   ],
+   "cost": {
+    "metal": 20,
+    "components": 10
+   },
+   "work": 200,
+   "color": [
+    70,
+    150,
+    120
+   ],
+   "tech": "hydroponics",
+   "farm": {
+    "yield_food": 40,
+    "grow_days": 5,
+    "indoor": true
+   },
+   "power": -3,
+   "indoor": true
+  },
+  {
+   "id": "storage_depot",
+   "name": "Storage Depot",
+   "description": "Racks and crates where haulers drop what they gather.",
+   "category": "industry",
+   "size": [
+    3,
+    3
+   ],
+   "cost": {
+    "salvage": 20
+   },
+   "work": 80,
+   "color": [
+    110,
+    120,
+    80
+   ],
+   "storage": 300,
+   "sprite": 3
+  },
+  {
+   "id": "warehouse",
+   "name": "Warehouse",
+   "description": "A stone-walled store for a growing colony.",
+   "category": "industry",
+   "size": [
+    4,
+    4
+   ],
+   "cost": {
+    "stone": 40,
+    "metal": 10
+   },
+   "work": 160,
+   "color": [
+    100,
+    104,
+    92
+   ],
+   "tech": "logistics",
+   "storage": 800
+  },
+  {
+   "id": "workshop",
+   "name": "Workshop",
+   "description": "Strips salvage into metal stock and usable components.",
+   "category": "industry",
+   "size": [
+    3,
+    3
+   ],
+   "cost": {
+    "salvage": 30
+   },
+   "work": 120,
+   "color": [
+    150,
+    96,
+    60
+   ],
+   "station": "workshop",
+   "sprite": 2
+  },
+  {
+   "id": "smelter",
+   "name": "Smelter",
+   "description": "Burns fibre to smelt local stone into metal.",
+   "category": "industry",
+   "size": [
+    3,
+    3
+   ],
+   "cost": {
+    "stone": 30,
+    "salvage": 10
+   },
+   "work": 150,
+   "color": [
+    170,
+    80,
+    50
+   ],
+   "tech": "smelting",
+   "station": "smelter",
+   "heat": 2
+  },
+  {
+   "id": "fabricator",
+   "name": "Fabricator",
+   "description": "Powered precision tools that print components and medkits.",
+   "category": "industry",
+   "size": [
+    3,
+    3
+   ],
+   "cost": {
+    "metal": 30,
+    "components": 10
+   },
+   "work": 220,
+   "color": [
+    90,
+    120,
+    170
+   ],
+   "tech": "precision_fabrication",
+   "station": "fabricator",
+   "power": -4,
+   "indoor": true
+  },
+  {
+   "id": "research_bench",
+   "name": "Research Bench",
+   "description": "A salvaged bench of sensors and notebooks.",
+   "category": "science",
+   "size": [
+    2,
+    2
+   ],
+   "cost": {
+    "salvage": 15,
+    "components": 2
+   },
+   "work": 60,
+   "color": [
+    100,
+    130,
+    180
+   ],
+   "research": 1.0
+  },
+  {
+   "id": "laboratory",
+   "name": "Laboratory",
+   "description": "Clean benches and powered instruments for serious work.",
+   "category": "science",
+   "size": [
+    4,
+    3
+   ],
+   "cost": {
+    "metal": 20,
+    "components": 12,
+    "stone": 20
+   },
+   "work": 240,
+   "color": [
+    120,
+    150,
+    200
+   ],
+   "tech": "field_laboratory",
+   "research": 1.6,
+   "power": -3,
+   "indoor": true
+  },
+  {
+   "id": "xeno_lab",
+   "name": "Xeno Lab",
+   "description": "Shielded vaults for studying precursor relics.",
+   "category": "science",
+   "size": [
+    4,
+    4
+   ],
+   "cost": {
+    "metal": 30,
+    "components": 20,
+    "relics": 2
+   },
+   "work": 320,
+   "color": [
+    150,
+    110,
+    200
+   ],
+   "tech": "xenoarchaeology",
+   "research": 1.7,
+   "research_branch": "xenology",
+   "power": -4,
+   "indoor": true
+  },
+  {
+   "id": "signal_mast",
+   "name": "Signal Mast",
+   "description": "A tall antenna tuned to the alien carrier wave.",
+   "category": "science",
+   "size": [
+    2,
+    2
+   ],
+   "cost": {
+    "metal": 40,
+    "components": 20
+   },
+   "work": 260,
+   "color": [
+    180,
+    170,
+    220
+   ],
+   "tech": "signal_analysis",
+   "power": -5,
+   "unique": true,
+   "research": 0.8,
+   "research_branch": "xenology"
+  },
+  {
+   "id": "infirmary",
+   "name": "Infirmary",
+   "description": "Cots for the sick and a bench for brewing medicine.",
+   "category": "care",
+   "size": [
+    3,
+    3
+   ],
+   "cost": {
+    "salvage": 20,
+    "fibre": 10,
+    "medicine": 2
+   },
+   "work": 120,
+   "color": [
+    200,
+    200,
+    210
+   ],
+   "tech": "field_medicine",
+   "care_beds": 3,
+   "indoor": true,
+   "station": "apothecary"
+  },
+  {
+   "id": "hospital",
+   "name": "Hospital",
+   "description": "Heated wards and surgical tools.",
+   "category": "care",
+   "size": [
+    4,
+    4
+   ],
+   "cost": {
+    "metal": 30,
+    "components": 15,
+    "stone": 20
+   },
+   "work": 280,
+   "color": [
+    220,
+    220,
+    230
+   ],
+   "tech": "surgery",
+   "care_beds": 6,
+   "indoor": true,
+   "heat": 2,
+   "power": -3
+  },
+  {
+   "id": "solar_array",
+   "name": "Solar Array",
+   "description": "Ship panels angled at the pale sun. Power by day only.",
+   "category": "power",
+   "size": [
+    2,
+    2
+   ],
+   "cost": {
+    "salvage": 10,
+    "components": 4
+   },
+   "work": 70,
+   "color": [
+    60,
+    90,
+    150
+   ],
+   "power": 4,
+   "solar": true,
+   "walkable": false
+  },
+  {
+   "id": "fibre_burner",
+   "name": "Fibre Burner",
+   "description": "Burns fibre day and night for steady power and heat.",
+   "category": "power",
+   "size": [
+    2,
+    2
+   ],
+   "cost": {
+    "stone": 10,
+    "salvage": 10
+   },
+   "work": 70,
+   "color": [
+    150,
+    70,
+    40
+   ],
+   "tech": "combustion",
+   "power": 6,
+   "fuel_per_day": 3,
+   "heat": 2
+  },
+  {
+   "id": "geothermal_tap",
+   "name": "Geothermal Tap",
+   "description": "A deep bore that draws heat from the planet's core.",
+   "category": "power",
+   "size": [
+    3,
+    3
+   ],
+   "cost": {
+    "metal": 40,
+    "components": 20
+   },
+   "work": 300,
+   "color": [
+    200,
+    110,
+    60
+   ],
+   "tech": "geothermal",
+   "power": 18,
+   "heat": 3
+  },
+  {
+   "id": "campfire",
+   "name": "Campfire",
+   "description": "A ring of stones and fibre logs. Warmth, light and stories.",
+   "category": "social",
+   "size": [
+    1,
+    1
+   ],
+   "cost": {
+    "fibre": 6
+   },
+   "work": 15,
+   "color": [
+    230,
+    140,
+    50
+   ],
+   "heat": 3,
+   "recreation": 0.6
+  },
+  {
+   "id": "lounge",
+   "name": "Lounge",
+   "description": "Couches, games and music salvaged from the ship's rec deck.",
+   "category": "social",
+   "size": [
+    3,
+    3
+   ],
+   "cost": {
+    "fibre": 20,
+    "salvage": 15
+   },
+   "work": 120,
+   "color": [
+    170,
+    110,
+    150
+   ],
+   "tech": "communal_life",
+   "recreation": 1.0,
+   "indoor": true,
+   "beauty": 0.3
+  },
+  {
+   "id": "garden",
+   "name": "Garden",
+   "description": "Paths among native blooms. A quiet place to walk and talk.",
+   "category": "social",
+   "size": [
+    3,
+    3
+   ],
+   "cost": {
+    "fibre": 10,
+    "stone": 10
+   },
+   "work": 80,
+   "color": [
+    90,
+    160,
+    100
+   ],
+   "tech": "landscaping",
+   "recreation": 0.8,
+   "beauty": 1.0,
+   "walkable": true
+  },
+  {
+   "id": "memorial",
+   "name": "Memorial",
+   "description": "A carved stone for those the colony has lost.",
+   "category": "social",
+   "size": [
+    1,
+    1
+   ],
+   "cost": {
+    "stone": 15
+   },
+   "work": 60,
+   "color": [
+    160,
+    160,
+    170
+   ],
+   "tech": "rites_of_remembrance",
+   "beauty": 0.8,
+   "recreation": 0.3
+  },
+  {
+   "id": "council_hall",
+   "name": "Council Hall",
+   "description": "Where the colony argues, votes and decides its future.",
+   "category": "social",
+   "size": [
+    4,
+    3
+   ],
+   "cost": {
+    "stone": 40,
+    "metal": 15,
+    "fibre": 20
+   },
+   "work": 260,
+   "color": [
+    180,
+    150,
+    100
+   ],
+   "tech": "civic_assembly",
+   "recreation": 0.6,
+   "beauty": 0.5,
+   "indoor": true,
+   "unique": true
+  },
+  {
+   "id": "watchtower",
+   "name": "Watchtower",
+   "description": "A lookout with flare guns. Spots and drives off fauna.",
+   "category": "defence",
+   "size": [
+    2,
+    2
+   ],
+   "cost": {
+    "fibre": 15,
+    "stone": 10
+   },
+   "work": 90,
+   "color": [
+    130,
+    110,
+    80
+   ],
+   "tech": "perimeter_watch",
+   "defence": 1.0,
+   "defence_range": 8
+  },
+  {
+   "id": "arc_turret",
+   "name": "Arc Turret",
+   "description": "A powered emitter that drives large fauna back.",
+   "category": "defence",
+   "size": [
+    1,
+    1
+   ],
+   "cost": {
+    "metal": 20,
+    "components": 12
+   },
+   "work": 160,
+   "color": [
+    120,
+    180,
+    220
+   ],
+   "tech": "arc_weapons",
+   "defence": 3.0,
+   "defence_range": 7,
+   "power": -2
+  },
+  {
+   "id": "expedition_gate",
+   "name": "Expedition Gate",
+   "description": "Packs, maps and a radio. Survivors leave from here to explore.",
+   "category": "expedition",
+   "size": [
+    3,
+    3
+   ],
+   "cost": {
+    "salvage": 40,
+    "components": 6
+   },
+   "work": 200,
+   "color": [
+    150,
+    110,
+    210
+   ],
+   "tech": "field_survey",
+   "expedition": true,
+   "unique": true,
+   "sprite": 4
+  },
+  {
+   "id": "beacon_array",
+   "name": "Beacon Array",
+   "description": "A long-range array strong enough to reach the fleet.",
+   "category": "capstone",
+   "size": [
+    6,
+    6
+   ],
+   "cost": {
+    "metal": 440,
+    "components": 280,
+    "relics": 14
+   },
+   "work": 18000,
+   "color": [
+    200,
+    210,
+    240
+   ],
+   "tech": "deep_space_beacon",
+   "capstone": "beacon",
+   "power": -20,
+   "unique": true
+  },
+  {
+   "id": "verdant_heart",
+   "name": "Verdant Heart",
+   "description": "A living grove where the colony joins the planet's root network.",
+   "category": "capstone",
+   "size": [
+    6,
+    6
+   ],
+   "cost": {
+    "fibre": 640,
+    "stone": 280,
+    "medicine": 80,
+    "relics": 16
+   },
+   "work": 18000,
+   "color": [
+    110,
+    200,
+    120
+   ],
+   "tech": "biosphere_communion",
+   "capstone": "rootbound",
+   "unique": true
+  },
+  {
+   "id": "spire_conduit",
+   "name": "Spire Conduit",
+   "description": "A conduit that wakes the precursor spire beneath the colony.",
+   "category": "capstone",
+   "size": [
+    6,
+    6
+   ],
+   "cost": {
+    "metal": 320,
+    "components": 180,
+    "relics": 24
+   },
+   "work": 18000,
+   "color": [
+    170,
+    120,
+    240
+   ],
+   "tech": "spire_resonance",
+   "capstone": "ascendant",
+   "power": -25,
+   "unique": true
+  }
+ ],
+ "recipes": [
+  {
+   "id": "strip_components",
+   "name": "Strip components",
+   "station": "workshop",
+   "inputs": {
+    "salvage": 6
+   },
+   "outputs": {
+    "components": 2
+   },
+   "work": 40,
+   "skill": "crafting",
+   "target_stock": 30
+  },
+  {
+   "id": "salvage_metal",
+   "name": "Reclaim metal",
+   "station": "workshop",
+   "inputs": {
+    "salvage": 8
+   },
+   "outputs": {
+    "metal": 3
+   },
+   "work": 40,
+   "skill": "crafting",
+   "target_stock": 40
+  },
+  {
+   "id": "smelt_metal",
+   "name": "Smelt metal",
+   "station": "smelter",
+   "inputs": {
+    "stone": 6,
+    "fibre": 2
+   },
+   "outputs": {
+    "metal": 4
+   },
+   "work": 50,
+   "skill": "crafting",
+   "tech": "smelting",
+   "target_stock": 120
+  },
+  {
+   "id": "print_components",
+   "name": "Print components",
+   "station": "fabricator",
+   "inputs": {
+    "metal": 4
+   },
+   "outputs": {
+    "components": 4
+   },
+   "work": 50,
+   "skill": "crafting",
+   "tech": "precision_fabrication",
+   "target_stock": 140
+  },
+  {
+   "id": "brew_medicine",
+   "name": "Brew medicine",
+   "station": "apothecary",
+   "inputs": {
+    "fibre": 4,
+    "food": 2
+   },
+   "outputs": {
+    "medicine": 2
+   },
+   "work": 50,
+   "skill": "medicine",
+   "target_stock": 20
+  },
+  {
+   "id": "print_medkits",
+   "name": "Print medkits",
+   "station": "fabricator",
+   "inputs": {
+    "metal": 1,
+    "components": 1,
+    "fibre": 2
+   },
+   "outputs": {
+    "medicine": 4
+   },
+   "work": 50,
+   "skill": "medicine",
+   "tech": "pharmacology",
+   "target_stock": 50
+  }
+ ]
+}

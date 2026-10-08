@@ -1,20 +1,18 @@
-//! data domain.
+//! Data definitions and the embedded JSON catalog. Data types know nothing of
+//! the simulation or UI.
 
-pub mod schedule;
-pub mod types;
-
-pub mod assign_roster;
-pub mod building;
-pub mod colonist;
-pub mod config;
-pub mod event_log;
-pub mod game_state;
-pub mod grid;
-pub mod incident;
-pub mod mission;
-pub mod priority;
+pub mod balance;
+pub mod buildings;
+pub mod campaign;
+pub mod catalog;
+pub mod events;
+pub mod kinds;
+pub mod people;
 pub mod resources;
-pub mod scenario;
-pub mod simulation_rng;
-pub mod technology;
-pub mod text;
+pub mod society;
+pub mod techs;
+pub mod validation;
+
+pub use catalog::{fill_template, game_data, GameData};
+pub use kinds::*;
+pub use resources::{Resource, ResourceBag};

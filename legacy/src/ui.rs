@@ -1,0 +1,36 @@
+//! UI module for The Final Landing
+//!
+//! Provides modular UI components using macroquad-toolkit.
+
+pub mod advisor_overlay;
+pub mod art;
+pub mod bottom_toolbar;
+pub mod camera_controls;
+pub mod colonist_inspector;
+pub mod debug_overlay;
+pub mod font;
+pub mod gameplay;
+pub mod hit_zones;
+pub mod introduction;
+pub mod isometric;
+pub mod layout;
+pub mod right_rail;
+pub mod style;
+pub mod toolbar_panel;
+pub mod tooltip;
+pub mod top_bar;
+
+pub use advisor_overlay::*;
+pub use art::*;
+pub use bottom_toolbar::*;
+pub use camera_controls::*;
+pub use colonist_inspector::*;
+pub use debug_overlay::*;
+pub use hit_zones::*;
+pub use introduction::*;
+pub use isometric::*;
+pub use layout::*;
+pub use right_rail::*;
+pub use toolbar_panel::*;
+pub use tooltip::*;
+pub use top_bar::*;
