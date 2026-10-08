@@ -230,15 +230,6 @@ fn draw_built(structure: &Structure, rect: Rect, art: &Art, night: f32) {
     } else if structure.kind == "survival_tent" {
         draw_tent(rect, base);
     } else if let Some(sprite) = def.sprite {
-        let c = rect.center();
-        draw_ellipse(
-            c.x + 4.0,
-            rect.y + rect.h * 0.78,
-            rect.w * 0.56,
-            rect.h * 0.3,
-            0.0,
-            Color::new(0.0, 0.0, 0.0, 0.4),
-        );
         art.draw_building(
             sprite,
             rect,

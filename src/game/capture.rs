@@ -4,11 +4,13 @@
 use super::Game;
 use crate::autoplay;
 use crate::colony::RunSetup;
+use crate::data::{game_data, CreatureKind, NodeKind};
 use crate::sim::Sim;
 use crate::state::play::PlayState;
 use crate::state::{Screen, SetupState, TitleState};
 use crate::ui::actions::{InspectorTab, Overlay, Selection};
-use crate::world::Calendar;
+use crate::world::{Calendar, Creature, CreatureMood, Point, ResourceNode, Terrain, Tile};
+use std::collections::VecDeque;
 
 const PLANS_PER_DAY: u64 = 6;
 
@@ -45,6 +47,79 @@ fn busiest_mind(sim: &Sim) -> Option<u32> {
         .map(|a| a.id)
 }
 
+/// Every building, landscape feature and creature on cleared grass, so each
+/// painted or drawn asset can be checked against the ground it stands on.
+fn asset_gallery(mut sim: Sim) -> Sim {
+    let world = &mut sim.world;
+    let structures: Vec<u32> = world.structures.iter().map(|s| s.id).collect();
+    for id in structures {
+        world.remove_structure(id);
+    }
+    let nodes: Vec<u32> = world.nodes.iter().map(|n| n.id).collect();
+    for id in nodes {
+        world.remove_node(id);
+    }
+    world.items.clear();
+    for index in 0..world.map.terrain.len() {
+        world.map.terrain[index] = Terrain::Grass;
+        world.map.explored[index] = true;
+    }
+    // The first row starts clear of the act tracker in the upper left.
+    let (left, right) = (4, 60);
+    let (mut x, mut y, mut row_height) = (left + 14, 4, 0);
+    for def in &game_data().buildings {
+        let [w, h] = def.size;
+        if x + w > right {
+            x = left;
+            y += row_height + 2;
+            row_height = 0;
+        }
+        world.add_structure(def, Tile::new(x, y), 1, true);
+        x += w + 2;
+        row_height = row_height.max(h);
+    }
+    let mut x = left;
+    let y = y + row_height + 3;
+    for kind in NodeKind::ALL {
+        for depleted in [false, true] {
+            let id = world.allocate_node_id();
+            world.add_node(ResourceNode {
+                id,
+                kind,
+                tile: Tile::new(x, y),
+                amount: if depleted { 0.0 } else { 40.0 },
+                max_amount: 40.0,
+            });
+            x += 2;
+        }
+        x += 1;
+    }
+    for kind in [
+        CreatureKind::Skitter,
+        CreatureKind::Ridgeback,
+        CreatureKind::Driftmaw,
+    ] {
+        let tile = Tile::new(x, y);
+        let id = world.next_creature_id;
+        world.next_creature_id += 1;
+        world.creatures.push(Creature {
+            id,
+            kind,
+            tile,
+            position: Point::of_tile(tile),
+            path: VecDeque::new(),
+            move_budget: 0.0,
+            health: 10.0,
+            mood: CreatureMood::Approaching,
+            target: None,
+            ticks_alive: 0,
+            stolen: 0.0,
+        });
+        x += 3;
+    }
+    sim
+}
+
 fn playing(game: &mut Game, sim: Sim) -> &mut PlayState {
     game.screen = Screen::Playing(Box::new(PlayState::new(sim, false)));
     match &mut game.screen {
@@ -74,6 +149,13 @@ pub fn begin_scene(game: &mut Game, scene: &str) {
         "landing" => {
             let play = playing(game, at_hour(played_to(1), 9.0));
             play.tutorial_step = Some(0);
+        }
+        "assets" => {
+            let play = playing(game, asset_gallery(at_hour(played_to(1), 11.0)));
+            play.speed = crate::state::play::SPEED_PAUSED;
+            play.tracker_open = false;
+            play.camera.zoom = 0.9;
+            play.camera.target = crate::ui::camera::tile_center(Tile::new(32, 19));
         }
         "colony" => {
             playing(game, at_hour(played_to(14), 10.0));
