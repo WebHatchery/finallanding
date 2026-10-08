@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 const GAME: &str = "finallanding";
 const SLOT: &str = "colony";
 const PREFERENCES: &str = "preferences";
-pub const SAVE_VERSION: u32 = 2;
+pub const SAVE_VERSION: u32 = 3;
 
 #[derive(Serialize, Deserialize)]
 struct SaveFile {

@@ -252,7 +252,7 @@ pub enum NodeKind {
     FibreGrove,
     StoneOutcrop,
     OreVein,
-    Glowfruit,
+    Forage,
     Ruin,
 }
 
@@ -262,7 +262,7 @@ impl NodeKind {
         NodeKind::FibreGrove,
         NodeKind::StoneOutcrop,
         NodeKind::OreVein,
-        NodeKind::Glowfruit,
+        NodeKind::Forage,
         NodeKind::Ruin,
     ];
 
@@ -272,7 +272,7 @@ impl NodeKind {
             NodeKind::FibreGrove => "fibre_grove",
             NodeKind::StoneOutcrop => "stone_outcrop",
             NodeKind::OreVein => "ore_vein",
-            NodeKind::Glowfruit => "glowfruit",
+            NodeKind::Forage => "forage",
             NodeKind::Ruin => "ruin",
         }
     }

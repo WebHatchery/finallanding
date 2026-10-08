@@ -8,7 +8,7 @@ use super::theme::*;
 use crate::data::{fill_template, game_data};
 use crate::sim::commands::Command;
 use crate::sim::Sim;
-use crate::world::{CropStage, Structure};
+use crate::world::{CropStage, ResourceNode, Structure};
 use macroquad::prelude::*;
 
 pub fn inspector_rect() -> Rect {
@@ -137,6 +137,15 @@ fn draw_function(sim: &Sim, structure: &Structure, x: f32, mut y: f32, width: f3
             GOOD,
         );
         y += 34.0;
+        if let Some(find) = structure
+            .crop_species
+            .as_deref()
+            .and_then(|id| data.find(id))
+        {
+            let text = fill_template(data.label("crop_species"), &[("find", &find.name)]);
+            label_fit(&text, x, y, width, TEXT_SMALL, TEXT_DIM);
+            y += 28.0;
+        }
     }
     if let Some(recipe) = structure.craft_recipe.as_ref().and_then(|r| data.recipe(r)) {
         label_fit(&recipe.name, x, y, 160.0, TEXT_BODY, TEXT);
@@ -208,6 +217,65 @@ fn draw_residents(ui: &mut Ui, sim: &Sim, structure: &Structure, x: f32, mut y: 
     }
 }
 
+/// A landscape feature: its species once the colony has found it, what
+/// gathering it has given and will give, and how much is left.
+fn node_lines(sim: &Sim, node: &ResourceNode) -> (String, Vec<String>) {
+    let data = game_data();
+    let kind = data.label(&format!("node_{}", node.kind.key())).to_owned();
+    let found = node
+        .find
+        .as_deref()
+        .and_then(|id| sim.colony.finds.get(id))
+        .and_then(|found| Some((found, data.find(&found.id)?)));
+    let mut lines = Vec::new();
+    let title = match found {
+        Some((found, find)) => {
+            lines.push(find.description.clone());
+            lines.push(fill_template(
+                data.label("species_gathered"),
+                &[("amount", &format!("{:.0}", found.gathered))],
+            ));
+            let waiting = sim.colony.tree.awaiting_inspiration(&find.id).len();
+            if waiting > 0 {
+                lines.push(fill_template(
+                    data.label("species_inspires"),
+                    &[("count", &waiting.to_string())],
+                ));
+            }
+            find.name.clone()
+        }
+        None => {
+            if node.find.is_some() {
+                lines.push(data.label("species_unknown").to_owned());
+            }
+            kind
+        }
+    };
+    let knowers = sim
+        .agents
+        .iter()
+        .filter(|a| a.is_alive() && a.beliefs.nodes.contains_key(&node.id))
+        .count();
+    lines.push(fill_template(
+        data.label("node_amount"),
+        &[
+            ("amount", &format!("{:.0}", node.amount)),
+            ("resource", data.label(node.resource().key())),
+        ],
+    ));
+    let regrowth = if node.regrows() {
+        "node_regrows"
+    } else {
+        "node_spent"
+    };
+    lines.push(data.label(regrowth).to_owned());
+    lines.push(fill_template(
+        data.label("node_known"),
+        &[("count", &knowers.to_string())],
+    ));
+    (title, lines)
+}
+
 fn draw_simple(ui: &mut Ui, title: &str, lines: &[String], rect: Rect) {
     let data = game_data();
     let x = rect.x + 14.0;
@@ -256,28 +324,7 @@ pub fn draw(
         }
         Selection::Node(id) => {
             if let Some(node) = sim.world.node(id) {
-                let title = data.label(&format!("node_{}", node.kind.key())).to_owned();
-                let knowers = sim
-                    .agents
-                    .iter()
-                    .filter(|a| a.is_alive() && a.beliefs.nodes.contains_key(&id))
-                    .count();
-                let lines = vec![
-                    fill_template(
-                        data.label("node_amount"),
-                        &[
-                            ("amount", &format!("{:.0}", node.amount)),
-                            ("resource", data.label(node.resource().key())),
-                        ],
-                    ),
-                    data.label(if node.regrows() {
-                        "node_regrows"
-                    } else {
-                        "node_spent"
-                    })
-                    .to_owned(),
-                    fill_template(data.label("node_known"), &[("count", &knowers.to_string())]),
-                ];
+                let (title, lines) = node_lines(sim, node);
                 draw_simple(ui, &title, &lines, rect);
             }
         }

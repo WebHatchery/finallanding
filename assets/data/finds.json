@@ -1,0 +1,312 @@
+{
+ "species_per_run": {
+  "forage": 3,
+  "fibre_grove": 2,
+  "stone_outcrop": 2,
+  "ore_vein": 2,
+  "ruin": 2
+ },
+ "finds": [
+  {
+   "id": "glowfruit",
+   "node": "forage",
+   "name": "Glowfruit",
+   "description": "Soft fruit that glows faintly at dusk. Sweet, filling and easy to pick.",
+   "color": [
+    236,
+    200,
+    92
+   ],
+   "yield_scale": 1.0,
+   "crop": {
+    "yield_scale": 1.0,
+    "grow_scale": 1.0
+   }
+  },
+  {
+   "id": "ember_tuber",
+   "node": "forage",
+   "name": "Ember Tubers",
+   "description": "Warm-skinned roots dug from loose soil. Heavy, starchy and bland.",
+   "color": [
+    204,
+    112,
+    64
+   ],
+   "yield_scale": 1.3,
+   "near": "soil",
+   "crop": {
+    "yield_scale": 1.25,
+    "grow_scale": 1.3
+   }
+  },
+  {
+   "id": "veilcap",
+   "node": "forage",
+   "name": "Veilcaps",
+   "description": "Pale fungus that grows in damp shade. Thin fare, but its spores dull pain.",
+   "color": [
+    214,
+    204,
+    232
+   ],
+   "yield_scale": 0.8,
+   "near": "water",
+   "crop": {
+    "yield_scale": 0.9,
+    "grow_scale": 0.7
+   }
+  },
+  {
+   "id": "reedgrain",
+   "node": "forage",
+   "name": "Reedgrain",
+   "description": "Seed heads from marsh reeds. They dry well and grind into flour.",
+   "color": [
+    214,
+    190,
+    118
+   ],
+   "yield_scale": 0.9,
+   "near": "water",
+   "crop": {
+    "yield_scale": 1.15,
+    "grow_scale": 1.0
+   }
+  },
+  {
+   "id": "bitterleaf",
+   "node": "forage",
+   "name": "Bitterleaf",
+   "description": "A sharp herb few enjoy eating. Steeped, it settles fevers.",
+   "color": [
+    126,
+    176,
+    92
+   ],
+   "yield_scale": 0.6,
+   "crop": {
+    "yield_scale": 0.7,
+    "grow_scale": 0.8
+   }
+  },
+  {
+   "id": "sweetpod",
+   "node": "forage",
+   "name": "Sweetpods",
+   "description": "Sugary vine pods the crew craves. They ferment if left in the sun.",
+   "color": [
+    228,
+    124,
+    170
+   ],
+   "yield_scale": 1.1,
+   "crop": {
+    "yield_scale": 1.0,
+    "grow_scale": 1.1
+   }
+  },
+  {
+   "id": "shellback",
+   "node": "forage",
+   "name": "Shellbacks",
+   "description": "Slow, hard-shelled grazers that cluster on warm stones. Rich meat, but they cannot be farmed.",
+   "color": [
+    150,
+    172,
+    196
+   ],
+   "yield_scale": 1.4,
+   "near": "water"
+  },
+  {
+   "id": "silkreed",
+   "node": "fibre_grove",
+   "name": "Silkreed",
+   "description": "Fine, glossy fibre that weaves into soft cloth.",
+   "color": [
+    232,
+    228,
+    196
+   ],
+   "yield_scale": 1.0,
+   "near": "water"
+  },
+  {
+   "id": "barkweave",
+   "node": "fibre_grove",
+   "name": "Barkweave",
+   "description": "Stringy bark that braids into strong rope.",
+   "color": [
+    146,
+    114,
+    82
+   ],
+   "yield_scale": 1.2
+  },
+  {
+   "id": "spinegrass",
+   "node": "fibre_grove",
+   "name": "Spinegrass",
+   "description": "Tough barbed grass. It cuts hands but makes fine netting.",
+   "color": [
+    172,
+    192,
+    112
+   ],
+   "yield_scale": 0.9,
+   "near": "sand"
+  },
+  {
+   "id": "glassvine",
+   "node": "fibre_grove",
+   "name": "Glassvine",
+   "description": "A translucent vine that carries light along its length.",
+   "color": [
+    150,
+    222,
+    222
+   ],
+   "yield_scale": 0.8,
+   "near": "rock"
+  },
+  {
+   "id": "basalt",
+   "node": "stone_outcrop",
+   "name": "Basalt",
+   "description": "Dense dark stone that splits into clean blocks.",
+   "color": [
+    88,
+    88,
+    98
+   ],
+   "yield_scale": 1.0,
+   "near": "rock"
+  },
+  {
+   "id": "limestone",
+   "node": "stone_outcrop",
+   "name": "Limestone",
+   "description": "Soft pale stone. Burned, it makes lime for plaster.",
+   "color": [
+    214,
+    208,
+    188
+   ],
+   "yield_scale": 1.2
+  },
+  {
+   "id": "glassrock",
+   "node": "stone_outcrop",
+   "name": "Glassrock",
+   "description": "Black volcanic glass that flakes to razor edges.",
+   "color": [
+    64,
+    54,
+    86
+   ],
+   "yield_scale": 0.8,
+   "near": "rock"
+  },
+  {
+   "id": "sunstone",
+   "node": "stone_outcrop",
+   "name": "Sunstone",
+   "description": "Amber stone that holds the day's heat long after dark.",
+   "color": [
+    208,
+    156,
+    96
+   ],
+   "yield_scale": 0.9,
+   "near": "sand"
+  },
+  {
+   "id": "verdigris",
+   "node": "ore_vein",
+   "name": "Verdigris Copper",
+   "description": "Green-streaked copper ore, soft and conductive.",
+   "color": [
+    92,
+    172,
+    142
+   ],
+   "yield_scale": 1.0
+  },
+  {
+   "id": "rustiron",
+   "node": "ore_vein",
+   "name": "Rust Iron",
+   "description": "Red bog iron. Plentiful, and it smelts into tough tools.",
+   "color": [
+    164,
+    84,
+    54
+   ],
+   "yield_scale": 1.2,
+   "near": "water"
+  },
+  {
+   "id": "cobalt_glass",
+   "node": "ore_vein",
+   "name": "Cobalt Glass",
+   "description": "Blue crystalline ore that bends light like a lens.",
+   "color": [
+    74,
+    104,
+    204
+   ],
+   "yield_scale": 0.8,
+   "near": "rock"
+  },
+  {
+   "id": "singing_quartz",
+   "node": "ore_vein",
+   "name": "Singing Quartz",
+   "description": "Quartz that hums when struck, at a pitch no one can explain.",
+   "color": [
+    214,
+    204,
+    244
+   ],
+   "yield_scale": 0.7,
+   "near": "rock"
+  },
+  {
+   "id": "glyph_stones",
+   "node": "ruin",
+   "name": "Glyph Stones",
+   "description": "Standing stones carved with dense, repeating script.",
+   "color": [
+    170,
+    160,
+    200
+   ],
+   "yield_scale": 1.0
+  },
+  {
+   "id": "dormant_engine",
+   "node": "ruin",
+   "name": "Dormant Engine",
+   "description": "A buried machine, cold but intact, older than any record.",
+   "color": [
+    120,
+    140,
+    160
+   ],
+   "yield_scale": 1.0
+  },
+  {
+   "id": "crystal_archive",
+   "node": "ruin",
+   "name": "Crystal Archive",
+   "description": "Lattices of crystal that store patterns of light.",
+   "color": [
+    150,
+    200,
+    230
+   ],
+   "yield_scale": 1.0
+  }
+ ]
+}

@@ -7,6 +7,7 @@ use finallanding::agents::goals::{Goal, HelpNeed};
 use finallanding::agents::intention::{DecisionKind, Intention};
 use finallanding::agents::messages::{Message, MessageKind};
 use finallanding::agents::plans::Topic;
+use finallanding::agents::Activity;
 use finallanding::colony::RunSetup;
 use finallanding::data::{CreatureKind, Need, NodeKind, Resource};
 use finallanding::sim::cognition::should_switch;
@@ -49,8 +50,12 @@ fn survivors_only_know_what_they_have_perceived() {
 fn a_sighted_predator_interrupts_and_warns_others() {
     let mut sim = colony(5);
     sim.run_ticks(3);
-    let watcher = sim.agents[0].id;
-    let tile = sim.agents[0].tile;
+    // A sleeper perceives nothing, so the watcher is someone awake.
+    let awake = sim
+        .present()
+        .find(|a| a.activity != Activity::Sleeping)
+        .expect("someone is awake at landing");
+    let (watcher, tile) = (awake.id, awake.tile);
     creatures::spawn(&mut sim, CreatureKind::Ridgeback, 1);
     let spot = sim
         .world
@@ -87,7 +92,7 @@ fn a_failed_plan_corrects_beliefs_and_tries_another_way() {
     agent.beliefs.note_node(
         ghost,
         NodeBelief {
-            kind: NodeKind::Glowfruit,
+            kind: NodeKind::Forage,
             tile: agent.tile.offset(2, 0),
             amount: 20.0,
             seen_tick: 0,

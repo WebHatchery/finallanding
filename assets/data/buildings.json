@@ -177,9 +177,9 @@
    "walkable": true
   },
   {
-   "id": "glowfruit_orchard",
-   "name": "Glowfruit Orchard",
-   "description": "Native glowfruit trained into rows. Rich harvests once it takes.",
+   "id": "native_orchard",
+   "name": "Native Orchard",
+   "description": "Rows of the native food the crew gathers most. What grows here depends on what this world offered.",
    "category": "food",
    "size": [
     3,
@@ -198,7 +198,8 @@
    "tech": "native_cultivation",
    "farm": {
     "yield_food": 46,
-    "grow_days": 8
+    "grow_days": 8,
+    "native": true
    },
    "walkable": true
   },
@@ -761,7 +762,7 @@
     "components": 280,
     "relics": 14
    },
-   "work": 18000,
+   "work": 21000,
    "color": [
     200,
     210,
@@ -787,7 +788,7 @@
     "medicine": 80,
     "relics": 16
    },
-   "work": 18000,
+   "work": 21000,
    "color": [
     110,
     200,
@@ -811,7 +812,7 @@
     "components": 180,
     "relics": 24
    },
-   "work": 18000,
+   "work": 21000,
    "color": [
     170,
     120,

@@ -15,12 +15,12 @@ fn experience(sim: &Sim, ending: &str) -> f32 {
     let colony = &sim.colony;
     match ending {
         "ascendant" => {
-            (colony.stats.relics_found * 0.02).min(0.2)
+            (colony.stats.relics_found / 600.0).min(0.2)
                 + colony.tree.researched_in(Branch::Xenology) as f32 * 0.02
         }
         "beacon" => {
             (colony.stats.deaths as f32 * 0.04).min(0.25)
-                + colony.tree.researched_in(Branch::Industry) as f32 * 0.015
+                + colony.tree.researched_in(Branch::Industry) as f32 * 0.02
         }
         "rootbound" => {
             (sim.world.built().filter(|s| s.crop.is_some()).count() as f32 * 0.02).min(0.2)

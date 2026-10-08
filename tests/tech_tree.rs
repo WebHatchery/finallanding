@@ -4,6 +4,12 @@ use finallanding::colony::tech_tree::{TechStatus, TechTree};
 use finallanding::data::{game_data, Branch};
 use macroquad_toolkit::rng::SeededRng;
 
+/// A tree for a landing that holds every species, so nothing is absent.
+fn tree_for(seed: u64) -> TechTree {
+    let every: Vec<String> = game_data().finds.iter().map(|f| f.id.clone()).collect();
+    TechTree::generate(&mut SeededRng::new(seed), &every)
+}
+
 fn prereq_signature(tree: &TechTree) -> Vec<(String, Vec<String>)> {
     tree.nodes
         .iter()
@@ -13,9 +19,9 @@ fn prereq_signature(tree: &TechTree) -> Vec<(String, Vec<String>)> {
 
 #[test]
 fn the_tree_is_reproducible_per_seed_and_different_between_seeds() {
-    let first = TechTree::generate(&mut SeededRng::new(1));
-    let again = TechTree::generate(&mut SeededRng::new(1));
-    let other = TechTree::generate(&mut SeededRng::new(2));
+    let first = tree_for(1);
+    let again = tree_for(1);
+    let other = tree_for(2);
     assert_eq!(prereq_signature(&first), prereq_signature(&again));
     assert_ne!(prereq_signature(&first), prereq_signature(&other));
     let hidden = |tree: &TechTree| {
@@ -35,7 +41,7 @@ fn the_tree_is_reproducible_per_seed_and_different_between_seeds() {
 fn prerequisites_always_come_from_earlier_tiers() {
     let data = game_data();
     for seed in 1..20 {
-        let tree = TechTree::generate(&mut SeededRng::new(seed));
+        let tree = tree_for(seed);
         for node in &tree.nodes {
             let tier = data.tech(&node.id).expect("known tech").tier;
             for prereq in &node.prereqs {
@@ -52,7 +58,7 @@ fn prerequisites_always_come_from_earlier_tiers() {
 
 #[test]
 fn researching_a_fork_locks_its_alternative() {
-    let mut tree = TechTree::generate(&mut SeededRng::new(5));
+    let mut tree = tree_for(5);
     let locked = tree.complete("fungal_symbiosis", 10);
     assert_eq!(locked, vec!["gene_tailored_crops".to_owned()]);
     assert_eq!(tree.status("gene_tailored_crops"), TechStatus::Locked);
@@ -61,7 +67,7 @@ fn researching_a_fork_locks_its_alternative() {
 
 #[test]
 fn capstones_are_visible_and_relic_knowledge_must_be_found() {
-    let tree = TechTree::generate(&mut SeededRng::new(8));
+    let tree = tree_for(8);
     for ending in &game_data().campaign.endings {
         assert!(tree.node(&ending.capstone_tech).is_some_and(|n| n.revealed));
     }
@@ -81,7 +87,7 @@ fn capstones_are_visible_and_relic_knowledge_must_be_found() {
 
 #[test]
 fn practice_in_a_branch_makes_its_research_cheaper() {
-    let mut tree = TechTree::generate(&mut SeededRng::new(4));
+    let mut tree = tree_for(4);
     let before = tree.cost("hydroponics", 1.0);
     for id in ["seed_vault_records", "native_cultivation", "soil_chemistry"] {
         tree.complete(id, 1);

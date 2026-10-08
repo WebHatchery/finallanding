@@ -42,6 +42,20 @@ pub struct TechDef {
     /// Only expeditions and relic study can reveal it.
     #[serde(default)]
     pub relic_only: bool,
+    /// Species whose gathering inspires this technology; any one will do.
+    /// Empty for knowledge the crew brought with them.
+    #[serde(default)]
+    pub inspired_by: Vec<String>,
+    /// Units of those species the colony must gather before it is inspired.
+    #[serde(default)]
+    pub inspiration: f32,
     #[serde(default)]
     pub effects: Vec<TechEffect>,
+}
+
+impl TechDef {
+    /// Revealed by gathering native species rather than by study alone.
+    pub fn is_inspired(&self) -> bool {
+        !self.inspired_by.is_empty()
+    }
 }

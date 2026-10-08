@@ -75,7 +75,14 @@
      "need": "warmth",
      "amount": -0.3
     }
-   ]
+   ],
+   "inspired_by": [
+    "silkreed",
+    "barkweave",
+    "spinegrass",
+    "glassvine"
+   ],
+   "inspiration": 40
   },
   {
    "id": "pathfinder_kits",
@@ -101,7 +108,14 @@
    "description": "Pressure domes with heated private bunks. Unlocks the Habitat Dome.",
    "branch": "survival",
    "tier": 3,
-   "cost": 1260
+   "cost": 1260,
+   "inspired_by": [
+    "basalt",
+    "limestone",
+    "glassrock",
+    "sunstone"
+   ],
+   "inspiration": 60
   },
   {
    "id": "arc_weapons",
@@ -138,6 +152,93 @@
    ]
   },
   {
+   "id": "shellback_armour",
+   "name": "Shellback Armour",
+   "description": "Shed shellback plates lashed into vests that turn claws.",
+   "branch": "survival",
+   "tier": 3,
+   "cost": 1150,
+   "inspired_by": [
+    "shellback"
+   ],
+   "inspiration": 20,
+   "effects": [
+    {
+     "type": "defence",
+     "amount": 0.15
+    },
+    {
+     "type": "expedition_safety",
+     "amount": 0.05
+    }
+   ]
+  },
+  {
+   "id": "spine_nets",
+   "name": "Spine Nets",
+   "description": "Spinegrass netting keeps pests off the crops and small raiders out of the stores.",
+   "branch": "survival",
+   "tier": 2,
+   "cost": 380,
+   "inspired_by": [
+    "spinegrass"
+   ],
+   "inspiration": 30,
+   "effects": [
+    {
+     "type": "defence",
+     "amount": 0.1
+    },
+    {
+     "type": "work_speed",
+     "skill": "farming",
+     "amount": 0.08
+    }
+   ]
+  },
+  {
+   "id": "glassrock_edges",
+   "name": "Glassrock Edges",
+   "description": "Flaked glassrock blades for tools and spears, sharper than ship steel.",
+   "branch": "survival",
+   "tier": 2,
+   "cost": 400,
+   "inspired_by": [
+    "glassrock"
+   ],
+   "inspiration": 25,
+   "effects": [
+    {
+     "type": "defence",
+     "amount": 0.15
+    },
+    {
+     "type": "work_speed",
+     "skill": "crafting",
+     "amount": 0.05
+    }
+   ]
+  },
+  {
+   "id": "sunstone_hearths",
+   "name": "Sunstone Hearths",
+   "description": "Sunstone slabs warmed by day line the sleeping quarters through the night.",
+   "branch": "survival",
+   "tier": 2,
+   "cost": 420,
+   "inspired_by": [
+    "sunstone"
+   ],
+   "inspiration": 30,
+   "effects": [
+    {
+     "type": "need_decay",
+     "need": "warmth",
+     "amount": -0.1
+    }
+   ]
+  },
+  {
    "id": "seed_vault_records",
    "name": "Seed Vault Records",
    "description": "The ship's crop notes, recovered from the hull's memory.",
@@ -155,10 +256,19 @@
   {
    "id": "native_cultivation",
    "name": "Native Cultivation",
-   "description": "Train wild glowfruit into orchards. Unlocks the Glowfruit Orchard.",
+   "description": "Train the native food the crew gathers most into orchard rows. Unlocks the Native Orchard.",
    "branch": "agronomy",
    "tier": 1,
-   "cost": 225
+   "cost": 225,
+   "inspired_by": [
+    "glowfruit",
+    "ember_tuber",
+    "veilcap",
+    "reedgrain",
+    "bitterleaf",
+    "sweetpod"
+   ],
+   "inspiration": 20
   },
   {
    "id": "soil_chemistry",
@@ -192,7 +302,17 @@
      "need": "food",
      "amount": -0.05
     }
-   ]
+   ],
+   "inspired_by": [
+    "glowfruit",
+    "ember_tuber",
+    "veilcap",
+    "reedgrain",
+    "bitterleaf",
+    "sweetpod",
+    "shellback"
+   ],
+   "inspiration": 60
   },
   {
    "id": "hydroponics",
@@ -219,7 +339,11 @@
      "type": "mood",
      "amount": 0.5
     }
-   ]
+   ],
+   "inspired_by": [
+    "veilcap"
+   ],
+   "inspiration": 25
   },
   {
    "id": "gene_tailored_crops",
@@ -256,10 +380,75 @@
    "description": "Join the colony to the planet's living network. Capstone of the Rootbound future.",
    "branch": "agronomy",
    "tier": 5,
-   "cost": 5600,
+   "cost": 6800,
    "capstone": "rootbound",
    "fixed_prereqs": [
     "rootnet_listening"
+   ]
+  },
+  {
+   "id": "glowfruit_preserves",
+   "name": "Glowfruit Preserves",
+   "description": "Glowfruit candied in its own syrup keeps for a season and lifts the mood of anyone who eats it.",
+   "branch": "agronomy",
+   "tier": 2,
+   "cost": 380,
+   "inspired_by": [
+    "glowfruit"
+   ],
+   "inspiration": 25,
+   "effects": [
+    {
+     "type": "need_decay",
+     "need": "food",
+     "amount": -0.06
+    },
+    {
+     "type": "mood",
+     "amount": 0.5
+    }
+   ]
+  },
+  {
+   "id": "tuber_beds",
+   "name": "Tuber Beds",
+   "description": "Raised beds of ember tubers between crop rows; the warm roots quicken everything planted beside them.",
+   "branch": "agronomy",
+   "tier": 2,
+   "cost": 400,
+   "inspired_by": [
+    "ember_tuber"
+   ],
+   "inspiration": 25,
+   "effects": [
+    {
+     "type": "farm_yield",
+     "amount": 0.12
+    }
+   ]
+  },
+  {
+   "id": "grain_milling",
+   "name": "Reedgrain Milling",
+   "description": "Hand querns grind reedgrain into flour, and the cooks finally have bread.",
+   "branch": "agronomy",
+   "tier": 3,
+   "cost": 1150,
+   "inspired_by": [
+    "reedgrain"
+   ],
+   "inspiration": 25,
+   "effects": [
+    {
+     "type": "work_speed",
+     "skill": "cooking",
+     "amount": 0.15
+    },
+    {
+     "type": "need_decay",
+     "need": "food",
+     "amount": -0.04
+    }
    ]
   },
   {
@@ -285,10 +474,17 @@
   {
    "id": "smelting",
    "name": "Smelting",
-   "description": "Smelt local stone into metal with fibre fire. Unlocks the Smelter.",
+   "description": "Smelt the ore the crew has dug into metal over fibre fire. Unlocks the Smelter.",
    "branch": "industry",
    "tier": 1,
-   "cost": 225
+   "cost": 225,
+   "inspired_by": [
+    "verdigris",
+    "rustiron",
+    "cobalt_glass",
+    "singing_quartz"
+   ],
+   "inspiration": 15
   },
   {
    "id": "logistics",
@@ -390,10 +586,114 @@
    "description": "Design an array strong enough to call the fleet. Capstone of the Beacon future.",
    "branch": "industry",
    "tier": 5,
-   "cost": 5600,
+   "cost": 6800,
    "capstone": "beacon",
    "fixed_prereqs": [
     "orbital_mechanics"
+   ]
+  },
+  {
+   "id": "bark_rope",
+   "name": "Bark Rope",
+   "description": "Braided barkweave rope for hoists, slings and bundles.",
+   "branch": "industry",
+   "tier": 2,
+   "cost": 380,
+   "inspired_by": [
+    "barkweave"
+   ],
+   "inspiration": 30,
+   "effects": [
+    {
+     "type": "work_speed",
+     "skill": "construction",
+     "amount": 0.1
+    },
+    {
+     "type": "carry",
+     "amount": 2.0
+    }
+   ]
+  },
+  {
+   "id": "basalt_footings",
+   "name": "Basalt Footings",
+   "description": "Cut basalt footings let buildings go up faster and stand longer.",
+   "branch": "industry",
+   "tier": 2,
+   "cost": 400,
+   "inspired_by": [
+    "basalt"
+   ],
+   "inspiration": 40,
+   "effects": [
+    {
+     "type": "work_speed",
+     "skill": "construction",
+     "amount": 0.12
+    }
+   ]
+  },
+  {
+   "id": "copper_wiring",
+   "name": "Copper Wiring",
+   "description": "Drawn copper wire for workbenches, lamps and the fabricators' fine work.",
+   "branch": "industry",
+   "tier": 3,
+   "cost": 1200,
+   "inspired_by": [
+    "verdigris"
+   ],
+   "inspiration": 25,
+   "effects": [
+    {
+     "type": "work_speed",
+     "skill": "crafting",
+     "amount": 0.1
+    }
+   ]
+  },
+  {
+   "id": "bloomery_tools",
+   "name": "Bloomery Tools",
+   "description": "Rust iron, hammered into spades, picks and saws for every crew.",
+   "branch": "industry",
+   "tier": 2,
+   "cost": 420,
+   "inspired_by": [
+    "rustiron"
+   ],
+   "inspiration": 30,
+   "effects": [
+    {
+     "type": "work_speed",
+     "skill": "construction",
+     "amount": 0.08
+    },
+    {
+     "type": "work_speed",
+     "skill": "farming",
+     "amount": 0.06
+    }
+   ]
+  },
+  {
+   "id": "engine_autopsy",
+   "name": "Engine Autopsy",
+   "description": "Taking the dormant engine apart, one impossible part at a time.",
+   "branch": "industry",
+   "tier": 4,
+   "cost": 2100,
+   "inspired_by": [
+    "dormant_engine"
+   ],
+   "inspiration": 2,
+   "effects": [
+    {
+     "type": "work_speed",
+     "skill": "crafting",
+     "amount": 0.15
+    }
    ]
   },
   {
@@ -417,7 +717,12 @@
      "type": "heal_rate",
      "amount": 0.2
     }
-   ]
+   ],
+   "inspired_by": [
+    "bitterleaf",
+    "veilcap"
+   ],
+   "inspiration": 12
   },
   {
    "id": "sanitation",
@@ -515,6 +820,70 @@
     {
      "type": "mood",
      "amount": 1.0
+    }
+   ]
+  },
+  {
+   "id": "spore_tinctures",
+   "name": "Spore Tinctures",
+   "description": "Veilcap spores steeped in spirit make a painkiller the infirmary can rely on.",
+   "branch": "medicine",
+   "tier": 2,
+   "cost": 420,
+   "inspired_by": [
+    "veilcap"
+   ],
+   "inspiration": 20,
+   "effects": [
+    {
+     "type": "heal_rate",
+     "amount": 0.15
+    }
+   ]
+  },
+  {
+   "id": "bitter_tonic",
+   "name": "Bitter Tonic",
+   "description": "A daily cup of bitterleaf tea keeps fevers short and sleep deep.",
+   "branch": "medicine",
+   "tier": 2,
+   "cost": 380,
+   "inspired_by": [
+    "bitterleaf"
+   ],
+   "inspiration": 15,
+   "effects": [
+    {
+     "type": "heal_rate",
+     "amount": 0.1
+    },
+    {
+     "type": "need_decay",
+     "need": "rest",
+     "amount": -0.04
+    }
+   ]
+  },
+  {
+   "id": "lime_plaster",
+   "name": "Lime Plaster",
+   "description": "Lime-washed walls keep out drafts and the damp that breeds sickness.",
+   "branch": "medicine",
+   "tier": 3,
+   "cost": 1150,
+   "inspired_by": [
+    "limestone"
+   ],
+   "inspiration": 40,
+   "effects": [
+    {
+     "type": "need_decay",
+     "need": "warmth",
+     "amount": -0.06
+    },
+    {
+     "type": "heal_rate",
+     "amount": 0.08
     }
    ]
   },
@@ -656,6 +1025,75 @@
    ]
   },
   {
+   "id": "sweetpod_wine",
+   "name": "Sweetpod Wine",
+   "description": "Fermented sweetpods, shared on rest days. Arguments get louder and friendships stronger.",
+   "branch": "society",
+   "tier": 2,
+   "cost": 400,
+   "inspired_by": [
+    "sweetpod"
+   ],
+   "inspiration": 25,
+   "effects": [
+    {
+     "type": "mood",
+     "amount": 1.0
+    },
+    {
+     "type": "need_decay",
+     "need": "recreation",
+     "amount": -0.08
+    }
+   ]
+  },
+  {
+   "id": "silk_weaving",
+   "name": "Silk Weaving",
+   "description": "Silkreed cloth for bedding and shirts: warm, light and a small luxury.",
+   "branch": "society",
+   "tier": 3,
+   "cost": 1150,
+   "inspired_by": [
+    "silkreed"
+   ],
+   "inspiration": 30,
+   "effects": [
+    {
+     "type": "mood",
+     "amount": 0.5
+    },
+    {
+     "type": "need_decay",
+     "need": "warmth",
+     "amount": -0.05
+    }
+   ]
+  },
+  {
+   "id": "glyph_rubbings",
+   "name": "Glyph Rubbings",
+   "description": "Charcoal rubbings of the glyph stones, pored over every evening.",
+   "branch": "society",
+   "tier": 3,
+   "cost": 1200,
+   "inspired_by": [
+    "glyph_stones"
+   ],
+   "inspiration": 2,
+   "effects": [
+    {
+     "type": "mood",
+     "amount": 0.5
+    },
+    {
+     "type": "need_decay",
+     "need": "recreation",
+     "amount": -0.05
+    }
+   ]
+  },
+  {
    "id": "spectral_survey",
    "name": "Spectral Survey",
    "description": "Read the strange light of the planet's minerals.",
@@ -667,7 +1105,14 @@
      "type": "sight",
      "amount": 1.0
     }
-   ]
+   ],
+   "inspired_by": [
+    "cobalt_glass",
+    "singing_quartz",
+    "glassvine",
+    "glassrock"
+   ],
+   "inspiration": 6
   },
   {
    "id": "xenoarchaeology",
@@ -675,7 +1120,13 @@
    "description": "Safely open and study precursor relics. Unlocks the Xeno Lab.",
    "branch": "xenology",
    "tier": 2,
-   "cost": 500
+   "cost": 500,
+   "inspired_by": [
+    "glyph_stones",
+    "dormant_engine",
+    "crystal_archive"
+   ],
+   "inspiration": 1
   },
   {
    "id": "signal_analysis",
@@ -697,7 +1148,12 @@
      "type": "research_speed",
      "amount": 0.15
     }
-   ]
+   ],
+   "inspired_by": [
+    "glyph_stones",
+    "crystal_archive"
+   ],
+   "inspiration": 2
   },
   {
    "id": "relic_harmonics",
@@ -749,7 +1205,7 @@
    "description": "Learn the song that wakes the spire. Capstone of the Ascendant future.",
    "branch": "xenology",
    "tier": 5,
-   "cost": 5600,
+   "cost": 6800,
    "capstone": "ascendant",
    "fixed_prereqs": [
     "spire_cartography"
@@ -767,6 +1223,82 @@
     {
      "type": "research_speed",
      "amount": 0.3
+    }
+   ]
+  },
+  {
+   "id": "light_threads",
+   "name": "Light Threads",
+   "description": "Glassvine strands carry signal lamps across the colony and far into the dark.",
+   "branch": "xenology",
+   "tier": 3,
+   "cost": 1150,
+   "inspired_by": [
+    "glassvine"
+   ],
+   "inspiration": 20,
+   "effects": [
+    {
+     "type": "sight",
+     "amount": 2.0
+    }
+   ]
+  },
+  {
+   "id": "cobalt_lenses",
+   "name": "Cobalt Lenses",
+   "description": "Ground cobalt glass makes microscopes and long sights.",
+   "branch": "xenology",
+   "tier": 3,
+   "cost": 1200,
+   "inspired_by": [
+    "cobalt_glass"
+   ],
+   "inspiration": 20,
+   "effects": [
+    {
+     "type": "research_speed",
+     "amount": 0.05
+    },
+    {
+     "type": "sight",
+     "amount": 1.0
+    }
+   ]
+  },
+  {
+   "id": "quartz_tuning",
+   "name": "Quartz Tuning",
+   "description": "Struck in sequence, singing quartz settles the mind; evenings in the colony are calmer for it.",
+   "branch": "xenology",
+   "tier": 4,
+   "cost": 2100,
+   "inspired_by": [
+    "singing_quartz"
+   ],
+   "inspiration": 15,
+   "effects": [
+    {
+     "type": "mood",
+     "amount": 0.6
+    }
+   ]
+  },
+  {
+   "id": "archive_reading",
+   "name": "Archive Reading",
+   "description": "Light passed through the crystal archive projects diagrams no one drew.",
+   "branch": "xenology",
+   "tier": 4,
+   "cost": 2150,
+   "inspired_by": [
+    "crystal_archive"
+   ],
+   "inspiration": 2,
+   "effects": [
+    {
+     "type": "research_speed",
+     "amount": 0.06
     }
    ]
   }

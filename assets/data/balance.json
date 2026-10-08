@@ -152,7 +152,10 @@
     "death_chance_per_danger": 0.06,
     "reward_scale": 1.0,
     "recruit_chance": 0.35,
-    "tech_chance": 0.45
+    "tech_chance": 0.45,
+    "sample_chance": 0.2,
+    "sample_amount": 20.0,
+    "max_samples": 3
   },
   "creatures": {
     "skitter": {

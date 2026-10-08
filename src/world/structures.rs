@@ -2,6 +2,7 @@
 
 use super::geometry::{AgentId, Footprint, StructureId, Tile};
 use crate::data::buildings::BuildingDef;
+use crate::data::finds::CropTraits;
 use crate::data::{game_data, ResourceBag};
 use serde::{Deserialize, Serialize};
 
@@ -45,6 +46,9 @@ pub struct Structure {
     pub progress: f32,
     pub condition: f32,
     pub crop: Option<Crop>,
+    /// The native species a native orchard is growing.
+    #[serde(default)]
+    pub crop_species: Option<String>,
     pub craft_progress: f32,
     pub craft_recipe: Option<String>,
     pub residents: Vec<AgentId>,
@@ -63,12 +67,25 @@ impl Structure {
             progress: 0.0,
             condition: 100.0,
             crop: def.farm.as_ref().map(|_| Crop::default()),
+            crop_species: None,
             craft_progress: 0.0,
             craft_recipe: None,
             residents: Vec::new(),
             powered: true,
             placed_day: day,
         }
+    }
+
+    /// Yield and growing time of what is planted here.
+    pub fn crop_traits(&self) -> CropTraits {
+        self.crop_species
+            .as_deref()
+            .and_then(|id| game_data().find(id))
+            .and_then(|find| find.crop)
+            .unwrap_or(CropTraits {
+                yield_scale: 1.0,
+                grow_scale: 1.0,
+            })
     }
 
     pub fn def(&self) -> &'static BuildingDef {

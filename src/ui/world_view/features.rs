@@ -1,6 +1,6 @@
 //! Drawing landscape features and buildings in world space.
 
-use crate::data::NodeKind;
+use crate::data::{game_data, NodeKind};
 use crate::ui::art::Art;
 use crate::ui::camera::{tile_center, tile_size};
 use crate::ui::theme::*;
@@ -20,10 +20,16 @@ fn rgb(r: f32, g: f32, b: f32) -> Color {
     Color::new(r, g, b, 1.0)
 }
 
+/// A node takes its species' colour, so a landing's fibres, stones, ores,
+/// foods and ruins look like what they are.
 pub fn draw_node(node: &ResourceNode, time: f32) {
     let c = tile_center(node.tile);
     let s = tile_size();
     let fullness = (node.amount / node.max_amount.max(1.0)).clamp(0.15, 1.0);
+    let species = node
+        .find_def()
+        .map(|find| Color::from_rgba(find.color[0], find.color[1], find.color[2], 255));
+    let tint = |fallback: Color| species.unwrap_or(fallback);
     match node.kind {
         NodeKind::Wreckage => {
             let r = s * (0.3 + fullness * 0.25);
@@ -58,21 +64,18 @@ pub fn draw_node(node: &ResourceNode, time: f32) {
                         sway + ox * 0.2,
                         -s * (0.45 + hash(node.tile, i as u32 + 9) * 0.3),
                     );
-                draw_line(base.x, base.y, tip.x, tip.y, 2.5, rgb(0.55, 0.7, 0.32));
-                draw_circle(tip.x, tip.y, 2.0, rgb(0.8, 0.78, 0.45));
+                let stem = darken(tint(rgb(0.55, 0.7, 0.32)), 0.25);
+                draw_line(base.x, base.y, tip.x, tip.y, 2.5, stem);
+                draw_circle(tip.x, tip.y, 2.0, tint(rgb(0.8, 0.78, 0.45)));
             }
         }
         NodeKind::StoneOutcrop => {
             let r = s * (0.28 + fullness * 0.22);
             draw_circle(c.x + 3.0, c.y + 4.0, r, Color::new(0.0, 0.0, 0.0, 0.3));
-            draw_circle(c.x, c.y, r, rgb(0.52, 0.5, 0.46));
-            draw_circle(
-                c.x - r * 0.45,
-                c.y + r * 0.2,
-                r * 0.6,
-                rgb(0.46, 0.44, 0.41),
-            );
-            draw_circle(c.x - r * 0.25, c.y - r * 0.3, r * 0.3, rgb(0.62, 0.6, 0.56));
+            let rock = tint(rgb(0.52, 0.5, 0.46));
+            draw_circle(c.x, c.y, r, rock);
+            draw_circle(c.x - r * 0.45, c.y + r * 0.2, r * 0.6, darken(rock, 0.12));
+            draw_circle(c.x - r * 0.25, c.y - r * 0.3, r * 0.3, lighten(rock, 0.12));
         }
         NodeKind::OreVein => {
             let r = s * 0.42;
@@ -83,10 +86,17 @@ pub fn draw_node(node: &ResourceNode, time: f32) {
                 let a = hash(node.tile, i as u32) * std::f32::consts::TAU;
                 let p = c + vec2(a.cos(), a.sin()) * r * 0.55;
                 let pulse = 0.6 + 0.4 * (time * 2.0 + i as f32).sin();
-                draw_poly(p.x, p.y, 4, 3.5, a.to_degrees(), with_alpha(CYAN, pulse));
+                draw_poly(
+                    p.x,
+                    p.y,
+                    4,
+                    3.5,
+                    a.to_degrees(),
+                    with_alpha(tint(CYAN), pulse),
+                );
             }
         }
-        NodeKind::Glowfruit => {
+        NodeKind::Forage => {
             let r = s * 0.42;
             draw_circle(c.x, c.y, r, rgb(0.17, 0.32, 0.18));
             draw_circle(c.x + r * 0.3, c.y - r * 0.2, r * 0.6, rgb(0.21, 0.4, 0.22));
@@ -94,8 +104,9 @@ pub fn draw_node(node: &ResourceNode, time: f32) {
             for i in 0..fruit {
                 let a = hash(node.tile, i as u32 + 3) * std::f32::consts::TAU;
                 let p = c + vec2(a.cos(), a.sin()) * r * 0.6;
-                draw_circle(p.x, p.y, 3.0, rgb(0.98, 0.86, 0.35));
-                draw_circle(p.x, p.y, 6.0, Color::new(1.0, 0.85, 0.35, 0.18));
+                let fruit = tint(rgb(0.98, 0.86, 0.35));
+                draw_circle(p.x, p.y, 3.0, fruit);
+                draw_circle(p.x, p.y, 6.0, with_alpha(fruit, 0.18));
             }
         }
         NodeKind::Ruin => {
@@ -110,7 +121,8 @@ pub fn draw_node(node: &ResourceNode, time: f32) {
                 let x = c.x - s * 0.35 + i as f32 * s * 0.35;
                 let h = s * (0.5 + hash(node.tile, i) * 0.5);
                 draw_rectangle(x - 4.0, c.y + s * 0.3 - h, 8.0, h, rgb(0.42, 0.38, 0.5));
-                draw_rectangle(x - 4.0, c.y + s * 0.3 - h, 8.0, 3.0, rgb(0.75, 0.6, 0.95));
+                let carving = tint(rgb(0.75, 0.6, 0.95));
+                draw_rectangle(x - 4.0, c.y + s * 0.3 - h, 8.0, 3.0, carving);
             }
         }
     }
@@ -204,7 +216,13 @@ fn draw_farm(structure: &Structure, rect: Rect) {
         }
         let size = 1.5 + crop.growth.min(1.0) * 3.5;
         let color = if crop.stage == CropStage::Ripe {
-            rgb(0.9, 0.78, 0.3)
+            structure
+                .crop_species
+                .as_deref()
+                .and_then(|id| game_data().find(id))
+                .map_or(rgb(0.9, 0.78, 0.3), |f| {
+                    Color::from_rgba(f.color[0], f.color[1], f.color[2], 255)
+                })
         } else {
             rgb(0.4, 0.68, 0.3)
         };
@@ -230,15 +248,6 @@ fn draw_built(structure: &Structure, rect: Rect, art: &Art, night: f32) {
     } else if structure.kind == "survival_tent" {
         draw_tent(rect, base);
     } else if let Some(sprite) = def.sprite {
-        let c = rect.center();
-        draw_ellipse(
-            c.x + 4.0,
-            rect.y + rect.h * 0.78,
-            rect.w * 0.56,
-            rect.h * 0.3,
-            0.0,
-            Color::new(0.0, 0.0, 0.0, 0.4),
-        );
         art.draw_building(
             sprite,
             rect,

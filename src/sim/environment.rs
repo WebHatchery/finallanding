@@ -152,6 +152,7 @@ pub fn per_tick(sim: &mut Sim) {
             continue;
         };
         let operational = structure.is_operational();
+        let grow_days = spec.grow_days * structure.crop_traits().grow_scale;
         let Some(crop) = structure.crop.as_mut() else {
             continue;
         };
@@ -167,7 +168,7 @@ pub fn per_tick(sim: &mut Sim) {
         } else {
             season_growth
         };
-        crop.growth += rate / (spec.grow_days * ticks_per_day);
+        crop.growth += rate / (grow_days * ticks_per_day);
         if crop.growth >= 1.0 {
             crop.stage = CropStage::Ripe;
         }

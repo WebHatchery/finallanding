@@ -213,7 +213,7 @@ pub fn gathered_resource(kind: NodeKind) -> Resource {
         NodeKind::FibreGrove => Resource::Fibre,
         NodeKind::StoneOutcrop => Resource::Stone,
         NodeKind::OreVein => Resource::Metal,
-        NodeKind::Glowfruit => Resource::Food,
+        NodeKind::Forage => Resource::Food,
         NodeKind::Ruin => Resource::Relics,
     }
 }

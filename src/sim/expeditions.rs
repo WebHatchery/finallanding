@@ -1,7 +1,7 @@
 //! Expeditions: calls for volunteers, departure, and what parties bring home.
 
 use super::chronicle_text::line;
-use super::research::reveal_any;
+use super::research::{inspire, reveal_any};
 use super::{Ctx, Sim};
 use crate::agents::{Agent, LifeState};
 use crate::colony::chronicle::Category;
@@ -184,6 +184,10 @@ fn return_home(sim: &mut Sim, expedition: ActiveExpedition) {
         }
     }
     let mut notes = resolve_casualties(sim, site, &expedition.members);
+    let room_for_samples = sim.colony.stats.samples_brought_home < balance.max_samples;
+    if room_for_samples && sim.rng.chance(balance.sample_chance) {
+        notes.extend(bring_home_sample(sim, &site.name));
+    }
     if site.reveals_tech && sim.rng.chance(balance.tech_chance) {
         if let Some(tech) = reveal_any(&mut sim.colony, &mut sim.rng, true) {
             let name = game_data()
@@ -251,8 +255,10 @@ pub fn update(sim: &mut Sim) {
         let window_over = elapsed >= balance.volunteer_window_ticks as u64;
         if full || (window_over && call.volunteers.len() >= balance.min_party) {
             sim.colony.expeditions.call = None;
+            sim.colony.expeditions.unanswered_calls = 0;
             depart(sim, call);
         } else if window_over {
+            sim.colony.expeditions.unanswered_calls += 1;
             cancel_call(sim);
             let site = game_data()
                 .expedition_site(&call.site)
@@ -275,4 +281,38 @@ pub fn update(sim: &mut Sim) {
     for expedition in returning {
         return_home(sim, expedition);
     }
+}
+
+/// A species that does not grow near the colony, carried home by a party. It
+/// joins the landing's species, so the technologies it inspires can appear.
+fn bring_home_sample(sim: &mut Sim, site_name: &str) -> Vec<String> {
+    let candidates: Vec<String> = game_data()
+        .finds
+        .iter()
+        .filter(|f| !sim.world.species.contains(&f.id))
+        .map(|f| f.id.clone())
+        .collect();
+    let Some(id) = sim.rng.choose(&candidates).cloned() else {
+        return Vec::new();
+    };
+    let Some(find) = game_data().find(&id) else {
+        return Vec::new();
+    };
+    let amount = game_data().balance.expeditions.sample_amount;
+    let day = sim.calendar.day();
+    sim.world.species.push(id.clone());
+    sim.colony.stats.samples_brought_home += 1;
+    sim.colony.tree.introduce(&id);
+    sim.colony.finds.record(&id, amount, day, site_name);
+    let tick = sim.calendar.tick;
+    let mut notes = vec![line("expedition_sample", tick, &[("find", &find.name)])];
+    for tech in inspire(&mut sim.colony, &id) {
+        let name = game_data().tech(&tech).map_or(tech.as_str(), |t| &t.name);
+        notes.push(line(
+            "tech_inspired",
+            tick,
+            &[("find", &find.name), ("tech", name)],
+        ));
+    }
+    notes
 }

@@ -52,7 +52,7 @@ pub(super) fn eat_plans(agent: &Agent, view: &View) -> Vec<PlanOption> {
             ));
         }
     }
-    if let Some(node) = known_nodes(agent, view, NodeKind::Glowfruit).first() {
+    if let Some(node) = known_nodes(agent, view, NodeKind::Forage).first() {
         plans.push(option(
             "forage",
             0.45,

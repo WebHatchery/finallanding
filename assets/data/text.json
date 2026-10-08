@@ -244,7 +244,6 @@
   "heat": "heat",
   "help": "Help",
   "help_subtitle": "How the colony thinks",
-  "hidden_help": "Nobody in the colony has imagined this yet. Survivors practising related work build insight; a eureka, an expedition or a relic can reveal it.",
   "in_progress": "Underway",
   "insight": "Insight",
   "inspect": "Inspect",
@@ -311,8 +310,8 @@
   "requires_heading": "Requires",
   "reroll": "New seed",
   "research": "research",
-  "research_help": "Select a technology. Researchers advance your focus; without one, they follow their own interests. Practice in a branch builds insight toward eurekas.",
-  "research_subtitle": "This run's tree — reshaped every landing",
+  "research_help": "Select a technology. Gathering native species inspires most technologies, so each colony's tree grows from what it finds. Researchers advance your focus; without one, they follow their own interests.",
+  "research_subtitle": "Grown from what this colony has found",
   "researched_count": "{count} researched",
   "researching": "Researching",
   "residents": "Residents",
@@ -382,7 +381,6 @@
   "tool_relations": "Relations",
   "tool_research": "Research",
   "under_construction": "Under construction ({percent}%)",
-  "unknown_tech": "Undiscovered",
   "unlocks": "Unlocks",
   "unpowered": "No power",
   "version": "Rebuild 0.2",
@@ -403,7 +401,7 @@
   "node_fibre_grove": "fibre grove",
   "node_stone_outcrop": "stone outcrop",
   "node_ore_vein": "ore vein",
-  "node_glowfruit": "glowfruit bush",
+  "node_forage": "wild food",
   "node_ruin": "precursor ruin",
   "creature_skitter": "Skitter",
   "creature_ridgeback": "Ridgeback",
@@ -414,7 +412,7 @@
   "plan_eat_carried": "eat what they carry",
   "plan_mess_meal": "a meal at the mess hall",
   "plan_raw_stores": "raw food from the stores",
-  "plan_forage": "forage glowfruit",
+  "plan_forage": "forage wild food",
   "plan_ask_friend_for_food": "ask a friend for food",
   "plan_own_bed": "their own bed",
   "plan_free_bed": "a free bed",
@@ -481,7 +479,19 @@
   "many": "many",
   "some": "some",
   "few": "few",
-  "highlights": "Highlights"
+  "highlights": "Highlights",
+  "unknown_in_branch": "{count} still to find",
+  "finds_heading": "Native finds",
+  "finds_none": "Nothing gathered yet. Survivors learn what this world offers by gathering it, and what they gather inspires new technologies.",
+  "finds_unfound": "{count} more native species are still out there",
+  "finds_more": "+{count} more",
+  "inspired_heading": "Inspired by",
+  "inspired_progress": "Gathered {amount} of {needed}",
+  "requires_unknown": "…and knowledge not yet found",
+  "species_unknown": "An unfamiliar species. Gather it to learn what it is.",
+  "species_gathered": "The colony has gathered {amount} so far.",
+  "species_inspires": "Gathering more will inspire {count} more technologies.",
+  "crop_species": "Planted with {find}"
  },
  "chronicle": {
   "act_begins": [
@@ -647,6 +657,23 @@
   "vote_divided": [
    "{ending} was chosen, but only {yes} of {total} agreed. The colony is divided.",
    "A bitter vote: {ending}, with {yes} of {total} in favour."
+  ],
+  "first_find": [
+   "{name} brings back the colony's first {find}.",
+   "{name} finds {find} and carries some home to show the others.",
+   "Something new: {name} has gathered {find}."
+  ],
+  "tech_inspired": [
+   "Working with {find} gives the colony an idea: {tech}.",
+   "All that {find} has taught them something. {tech} can now be researched.",
+   "{find} inspires a new line of study: {tech}."
+  ],
+  "expedition_sample": [
+   "They carry home a sample of {find}, which does not grow near the colony.",
+   "Among the packs: {find}, a species never seen near the crash site."
+  ],
+  "orchard_planted": [
+   "The orchard is planted with {find}."
   ]
  },
  "tutorial": [

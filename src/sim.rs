@@ -111,7 +111,7 @@ impl Sim {
             .or_else(|| data.campaign.sites.first())
             .expect("campaign data has at least one landing site");
         let world = generate_world(site, setup.seed, &mut rng);
-        let tree = TechTree::generate(&mut rng);
+        let tree = TechTree::generate(&mut rng, &world.species);
         let mut colony = Colony::new(setup, tree);
         colony.modifiers = Modifiers::from_tree(&colony.tree);
         let scale = colony.difficulty_value(|d| d.starting_resources);

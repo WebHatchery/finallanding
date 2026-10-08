@@ -1,9 +1,10 @@
-//! Colony-wide state: the stockpile, priorities, policies, research, expeditions,
-//! campaign progress and the chronicle.
+//! Colony-wide state: the stockpile, priorities, policies, native species
+//! found, research, expeditions, campaign progress and the chronicle.
 
 pub mod campaign;
 pub mod chronicle;
 pub mod expeditions;
+pub mod finds;
 pub mod jobs;
 pub mod research;
 pub mod tech_tree;
@@ -14,6 +15,7 @@ use crate::data::{game_data, ResourceBag};
 use campaign::CampaignState;
 use chronicle::Chronicle;
 use expeditions::Expeditions;
+use finds::FindLog;
 use jobs::JobBoard;
 use research::ResearchState;
 use serde::{Deserialize, Serialize};
@@ -45,6 +47,8 @@ pub struct ColonyStats {
     pub structures_built: u32,
     pub peak_population: usize,
     pub creatures_repelled: u32,
+    #[serde(default)]
+    pub samples_brought_home: u32,
 }
 
 /// The run's fixed setup, chosen on the new-colony screen.
@@ -65,6 +69,8 @@ pub struct Colony {
     pub power: PowerBudget,
     pub research: ResearchState,
     pub tree: TechTree,
+    #[serde(default)]
+    pub finds: FindLog,
     pub expeditions: Expeditions,
     pub campaign: CampaignState,
     pub chronicle: Chronicle,
@@ -95,6 +101,7 @@ impl Colony {
             power: PowerBudget::default(),
             research: ResearchState::default(),
             tree,
+            finds: FindLog::default(),
             expeditions: Expeditions::default(),
             campaign: CampaignState::default(),
             chronicle: Chronicle::default(),

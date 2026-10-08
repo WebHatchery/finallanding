@@ -10,7 +10,9 @@ Check at 1920×1080 and at the 1280×720 minimum window.
 - [ ] Tap a survivor: the Mind tab shows a goal with its reason, a plan with the current step, a reasoning log and beliefs. Close and tapping empty ground both dismiss it.
 - [ ] Build: place tents, a Mess Hall and a Solar Array. Blocked spots explain why at the pointer; Close disarms the tool. Survivors haul materials and build on their own.
 - [ ] Colony overlay: change a work priority and a policy; survivors' choices shift within an in-game day.
-- [ ] Research: select hidden, waiting and available technologies; Set as research focus; watch progress and a eureka toast.
+- [ ] Research: only known technologies show; select waiting and available ones; Set as research focus; watch progress and a eureka toast.
+- [ ] Discovery: gather a new species and see the first-find entry; keep gathering until a technology is inspired; check the native finds strip, inspired-card colours and a resource node's inspector before and after its species is found.
+- [ ] Orchard: build a Native Orchard after Native Cultivation and confirm the inspector names the planted species.
 - [ ] Speed: pause, 1×, 2×, 3× from the top bar ★ (Space, 1, 2, 3).
 
 ## Minds and relationships

@@ -142,6 +142,14 @@ fn survival_candidates(agent: &Agent, view: &View, out: &mut Vec<Candidate>) {
     if view.colony.curfew() && view.is_sleep_time(agent) {
         sleep += 0.2;
     }
+    // Nobody lies down beside a known predator unless they are collapsing.
+    let threatened = agent
+        .beliefs
+        .nearest_threat(agent.tile)
+        .is_some_and(|(_, distance)| distance < 7.0);
+    if threatened && rest > 5.0 {
+        sleep *= 0.25;
+    }
     out.push(Candidate {
         goal: Goal::Sleep,
         utility: sleep,
@@ -316,6 +324,11 @@ fn help_candidates(agent: &Agent, view: &View, out: &mut Vec<Candidate>) {
             if ambition_kind(agent) == Some(AmbitionKind::MapTheWilds) {
                 willingness += 0.3;
             }
+            // Every call the colony could not fill makes the next harder to
+            // ignore, more so for the dutiful.
+            let unanswered = view.colony.expeditions.unanswered_calls as f32;
+            let duty = 1.0 + agent.personality.diligence.max(0.0);
+            willingness += (unanswered * 0.06 * duty).min(0.35);
             willingness *= view.colony.volunteer_bias();
             if willingness > 0.4
                 && call.volunteers.len() < game_data().balance.expeditions.max_party
@@ -349,7 +362,7 @@ fn aptitude(agent: &Agent, skill: Skill) -> f32 {
 pub fn gather_skill(kind: NodeKind) -> Skill {
     match kind {
         NodeKind::Wreckage => Skill::Crafting,
-        NodeKind::FibreGrove | NodeKind::Glowfruit => Skill::Farming,
+        NodeKind::FibreGrove | NodeKind::Forage => Skill::Farming,
         NodeKind::StoneOutcrop | NodeKind::OreVein => Skill::Construction,
         NodeKind::Ruin => Skill::Science,
     }

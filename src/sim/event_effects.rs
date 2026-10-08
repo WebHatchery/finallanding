@@ -26,6 +26,7 @@ fn spawn_wreckage(sim: &mut Sim, nodes: u32) {
                     tile,
                     amount,
                     max_amount: amount,
+                    find: None,
                 });
                 break;
             }

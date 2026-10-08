@@ -28,6 +28,12 @@ pub struct RunSummary {
     pub expeditions: u32,
     pub friendships: u32,
     pub average_mood: f32,
+    /// Native species of the landing.
+    pub species: Vec<String>,
+    /// Species in the order the colony first gathered them.
+    pub finds: Vec<String>,
+    /// Inspired technologies revealed, and how many of them were researched.
+    pub inspired: (usize, usize),
 }
 
 impl RunSummary {
@@ -69,7 +75,36 @@ pub fn run_campaign(setup: RunSetup, max_days: u32) -> RunSummary {
         expeditions: sim.colony.expeditions.completed,
         friendships: crate::sim::campaign::friendship_count(&sim),
         average_mood: sim.average_mood(),
+        species: sim.world.species.iter().map(|id| find_name(id)).collect(),
+        finds: sim
+            .colony
+            .finds
+            .found
+            .iter()
+            .map(|f| find_name(&f.id))
+            .collect(),
+        inspired: inspired_counts(&sim),
     }
+}
+
+fn find_name(id: &str) -> String {
+    crate::data::game_data()
+        .find(id)
+        .map_or_else(|| id.to_owned(), |f| f.name.clone())
+}
+
+fn inspired_counts(sim: &Sim) -> (usize, usize) {
+    let inspired = sim.colony.tree.nodes.iter().filter(|node| {
+        crate::data::game_data()
+            .tech(&node.id)
+            .is_some_and(|t| t.is_inspired())
+    });
+    inspired.fold((0, 0), |(revealed, researched), node| {
+        (
+            revealed + usize::from(node.revealed),
+            researched + usize::from(node.researched),
+        )
+    })
 }
 
 pub fn markdown(runs: &[RunSummary]) -> String {
@@ -92,6 +127,22 @@ pub fn markdown(runs: &[RunSummary]) -> String {
             run.site, run.difficulty, run.seed, acts, run.final_day, run.estimated_hours(), run.outcome,
             run.population, run.peak_population, run.deaths, run.births, run.techs, run.relics,
             run.expeditions, run.friendships, run.average_mood,
+        ));
+    }
+    out.push_str("\n## Discovery\n\nEach landing draws its own native species; the colony finds them in an order set by where their territories fall. Inspired technologies are revealed by gathering those species.\n\n");
+    out.push_str(
+        "| Site | Seed | Native species | Order found | Inspired techs revealed / researched |\n",
+    );
+    out.push_str("| --- | ---: | --- | --- | ---: |\n");
+    for run in runs {
+        out.push_str(&format!(
+            "| {} | {} | {} | {} | {} / {} |\n",
+            run.site,
+            run.seed,
+            run.species.join(", "),
+            run.finds.join(" → "),
+            run.inspired.0,
+            run.inspired.1,
         ));
     }
     out

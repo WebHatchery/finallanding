@@ -4,12 +4,14 @@ use super::balance::Balance;
 use super::buildings::{BuildingDef, RecipeDef};
 use super::campaign::{ActDef, CampaignDef, DifficultyDef, EndingDef, SiteDef};
 use super::events::{EventDef, ExpeditionSiteDef};
+use super::finds::{FindDef, FindsFile};
+use super::kinds::NodeKind;
 use super::people::{AmbitionDef, NameLists, TraitDef};
 use super::society::{PolicyDef, SocietyDef, TextDef, ThoughtDef};
 use super::techs::TechDef;
 use super::validation;
 use serde::Deserialize;
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 use std::sync::OnceLock;
 
 #[derive(Deserialize)]
@@ -41,6 +43,9 @@ pub struct GameData {
     pub buildings: Vec<BuildingDef>,
     pub recipes: Vec<RecipeDef>,
     pub techs: Vec<TechDef>,
+    pub finds: Vec<FindDef>,
+    /// How many species of each node kind a landing site holds.
+    pub species_per_run: BTreeMap<NodeKind, usize>,
     pub traits: Vec<TraitDef>,
     pub ambitions: Vec<AmbitionDef>,
     pub names: NameLists,
@@ -51,6 +56,7 @@ pub struct GameData {
     pub text: TextDef,
     building_index: HashMap<String, usize>,
     tech_index: HashMap<String, usize>,
+    find_index: HashMap<String, usize>,
     trait_index: HashMap<String, usize>,
     thought_index: HashMap<String, usize>,
     event_index: HashMap<String, usize>,
@@ -71,6 +77,7 @@ impl GameData {
         let buildings: BuildingFile =
             macroquad_toolkit::include_json!("../../assets/data/buildings.json")?;
         let techs: TechFile = macroquad_toolkit::include_json!("../../assets/data/techs.json")?;
+        let finds: FindsFile = macroquad_toolkit::include_json!("../../assets/data/finds.json")?;
         let people: PeopleFile = macroquad_toolkit::include_json!("../../assets/data/people.json")?;
         let events: EventFile = macroquad_toolkit::include_json!("../../assets/data/events.json")?;
         let campaign: CampaignDef =
@@ -82,6 +89,7 @@ impl GameData {
         let data = GameData {
             building_index: index_by(&buildings.buildings, |b| &b.id),
             tech_index: index_by(&techs.techs, |t| &t.id),
+            find_index: index_by(&finds.finds, |f| &f.id),
             trait_index: index_by(&people.traits, |t| &t.id),
             thought_index: index_by(&society.thoughts, |t| &t.id),
             event_index: index_by(&events.events, |e| &e.id),
@@ -89,6 +97,8 @@ impl GameData {
             buildings: buildings.buildings,
             recipes: buildings.recipes,
             techs: techs.techs,
+            finds: finds.finds,
+            species_per_run: finds.species_per_run,
             traits: people.traits,
             ambitions: people.ambitions,
             names: people.names,
@@ -110,6 +120,23 @@ impl GameData {
 
     pub fn tech(&self, id: &str) -> Option<&TechDef> {
         self.tech_index.get(id).map(|index| &self.techs[*index])
+    }
+
+    pub fn find(&self, id: &str) -> Option<&FindDef> {
+        self.find_index.get(id).map(|index| &self.finds[*index])
+    }
+
+    /// Every species that can grow or lie in a kind of landscape feature.
+    pub fn finds_of(&self, kind: NodeKind) -> impl Iterator<Item = &FindDef> {
+        self.finds.iter().filter(move |find| find.node == kind)
+    }
+
+    /// A building, recipe or policy needs this technology.
+    pub fn tech_unlocks_content(&self, id: &str) -> bool {
+        let needs = |tech: &Option<String>| tech.as_deref() == Some(id);
+        self.buildings.iter().any(|b| needs(&b.tech))
+            || self.recipes.iter().any(|r| needs(&r.tech))
+            || self.society.policies.iter().any(|p| needs(&p.tech))
     }
 
     pub fn tech_position(&self, id: &str) -> Option<usize> {

@@ -607,7 +607,7 @@
   {
    "id": "fibre_valley",
    "name": "Fibre Valley",
-   "description": "A sheltered valley thick with fibre reeds and glowfruit.",
+   "description": "A sheltered valley thick with fibre reeds and wild food.",
    "danger": 0.15,
    "days": 1.5,
    "rewards": [

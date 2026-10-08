@@ -6,12 +6,77 @@ use macroquad_toolkit::colors::shift_hue;
 
 const PORTRAIT_COLUMNS: f32 = 3.0;
 const PORTRAIT_ROWS: f32 = 2.0;
-const BUILDING_SPRITES: f32 = 5.0;
+/// Painted buildings in the atlas, one per equal-width column.
+pub const BUILDING_SPRITES: usize = 5;
+/// Pixels at least this opaque count as part of a painted sprite.
+const OPAQUE_ALPHA: u8 = 40;
+/// A painted building spans this much of its footprint's width.
+const SPRITE_WIDTH: f32 = 1.06;
+/// The painted base sits this far (as a share of footprint height) above the
+/// footprint's lower edge, so the building stands inside its own tiles.
+const SPRITE_BASE_INSET: f32 = 0.03;
+
+pub const BUILDING_ATLAS_PNG: &[u8] = include_bytes!("../../assets/art/building_atlas.png");
 
 pub struct Art {
     pub backdrop: Texture2D,
     pub portraits: Texture2D,
     pub buildings: Texture2D,
+    /// The opaque bounds of each painted building in the atlas.
+    pub building_frames: Vec<Rect>,
+}
+
+/// The tight opaque bounds of each equal-width column of a sprite atlas, so
+/// transparent margins never lift a sprite off the ground it is drawn on.
+pub fn sprite_frames(image: &Image, columns: usize) -> Vec<Rect> {
+    let (width, height) = (image.width as usize, image.height as usize);
+    let column_width = width / columns.max(1);
+    let opaque = |x: usize, y: usize| image.bytes[(y * width + x) * 4 + 3] >= OPAQUE_ALPHA;
+    (0..columns)
+        .map(|column| {
+            let (left, right) = (column * column_width, (column + 1) * column_width);
+            let mut bounds: Option<(usize, usize, usize, usize)> = None;
+            for y in 0..height {
+                for x in left..right {
+                    if opaque(x, y) {
+                        let (x0, y0, x1, y1) = bounds.unwrap_or((x, y, x, y));
+                        bounds = Some((x0.min(x), y0.min(y), x1.max(x), y1.max(y)));
+                    }
+                }
+            }
+            bounds.map_or(Rect::new(left as f32, 0.0, 0.0, 0.0), |(x0, y0, x1, y1)| {
+                Rect::new(
+                    x0 as f32,
+                    y0 as f32,
+                    (x1 - x0 + 1) as f32,
+                    (y1 - y0 + 1) as f32,
+                )
+            })
+        })
+        .collect()
+}
+
+/// The decoded building atlas and its frames.
+pub fn building_atlas() -> (Image, Vec<Rect>) {
+    let image = Image::from_file_with_format(BUILDING_ATLAS_PNG, Some(ImageFormat::Png))
+        .expect("the embedded building atlas is a valid PNG");
+    let frames = sprite_frames(&image, BUILDING_SPRITES);
+    (image, frames)
+}
+
+/// Where a painted building is drawn for a footprint: as wide as its tiles,
+/// rising above them in three-quarter view, with its painted base resting on
+/// the footprint's lower edge.
+pub fn sprite_placement(frame: Rect, footprint: Rect) -> Rect {
+    let width = footprint.w * SPRITE_WIDTH;
+    let height = width * frame.h / frame.w.max(1.0);
+    let bottom = footprint.y + footprint.h * (1.0 - SPRITE_BASE_INSET);
+    Rect::new(
+        footprint.x + (footprint.w - width) * 0.5,
+        bottom - height,
+        width,
+        height,
+    )
 }
 
 fn texture(bytes: &[u8]) -> Texture2D {
@@ -22,10 +87,14 @@ fn texture(bytes: &[u8]) -> Texture2D {
 
 impl Art {
     pub fn load() -> Self {
+        let (atlas, building_frames) = building_atlas();
+        let buildings = Texture2D::from_image(&atlas);
+        buildings.set_filter(FilterMode::Linear);
         Self {
             backdrop: texture(include_bytes!("../../assets/art/crash_site_backdrop.png")),
             portraits: texture(include_bytes!("../../assets/art/survivor_portraits.png")),
-            buildings: texture(include_bytes!("../../assets/art/building_atlas.png")),
+            buildings,
+            building_frames,
         }
     }
 
@@ -63,22 +132,30 @@ impl Art {
         );
     }
 
-    /// A building sprite fitted into a destination rectangle, bottom-aligned.
-    pub fn draw_building(&self, index: usize, rect: Rect, color: Color) {
-        let width = self.buildings.width() / BUILDING_SPRITES;
-        let height = self.buildings.height();
-        let source = Rect::new(index as f32 * width, height * 0.08, width, height * 0.86);
-        let aspect = source.h / source.w;
-        let draw_w = rect.w * 1.15;
-        let draw_h = draw_w * aspect;
+    /// A painted building standing on its footprint, with a contact shadow
+    /// where its base meets the ground.
+    pub fn draw_building(&self, index: usize, footprint: Rect, color: Color) {
+        let Some(frame) = self.building_frames.get(index).copied() else {
+            return;
+        };
+        let dest = sprite_placement(frame, footprint);
+        let base = dest.y + dest.h;
+        draw_ellipse(
+            footprint.x + footprint.w * 0.53,
+            base - footprint.h * 0.12,
+            footprint.w * 0.54,
+            footprint.h * 0.2,
+            0.0,
+            Color::new(0.0, 0.0, 0.0, 0.32),
+        );
         draw_texture_ex(
             &self.buildings,
-            rect.x + (rect.w - draw_w) * 0.5,
-            rect.y + rect.h - draw_h,
+            dest.x,
+            dest.y,
             color,
             DrawTextureParams {
-                dest_size: Some(vec2(draw_w, draw_h)),
-                source: Some(source),
+                dest_size: Some(vec2(dest.w, dest.h)),
+                source: Some(frame),
                 ..Default::default()
             },
         );

@@ -1,8 +1,11 @@
 //! The per-run technology tree, regenerated from the pool for every seed.
 //!
-//! Prerequisites are drawn from earlier tiers (mostly the same branch), about a
-//! third of technologies start hidden, forks lock their alternatives, and costs
-//! fall as the colony practises a branch.
+//! Most technologies are inspired by native species: they stay hidden until
+//! the colony has gathered enough of one, and are absent altogether when this
+//! landing holds none of them. Prerequisites are drawn from earlier tiers of
+//! the crew's own knowledge (mostly the same branch), some of that knowledge
+//! starts hidden until a eureka, forks lock their alternatives, and costs fall
+//! as the colony practises a branch.
 
 use crate::data::techs::TechEffect;
 use crate::data::{game_data, Branch, NEED_COUNT, SKILL_COUNT};
@@ -11,6 +14,8 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum TechStatus {
+    /// Inspired only by species this landing does not hold.
+    Absent,
     Hidden,
     Locked,
     Waiting,
@@ -25,6 +30,9 @@ pub struct TechNode {
     pub revealed: bool,
     pub researched: bool,
     pub locked: bool,
+    /// None of the species that inspire it live here (yet).
+    #[serde(default)]
+    pub absent: bool,
     pub researched_day: Option<u32>,
 }
 
@@ -51,7 +59,7 @@ fn choose_prereqs(tier: u8, branch: Branch, rng: &mut SeededRng) -> Vec<String> 
         let candidates: Vec<&str> = data
             .techs
             .iter()
-            .filter(|t| t.tier == source_tier && t.capstone.is_none())
+            .filter(|t| t.tier == source_tier && t.capstone.is_none() && !t.is_inspired())
             .filter(|t| !same_branch || t.branch == branch)
             .filter(|t| !chosen.contains(&t.id))
             .map(|t| t.id.as_str())
@@ -59,7 +67,7 @@ fn choose_prereqs(tier: u8, branch: Branch, rng: &mut SeededRng) -> Vec<String> 
         let pool: Vec<&str> = if candidates.is_empty() {
             data.techs
                 .iter()
-                .filter(|t| t.tier == source_tier && !chosen.contains(&t.id))
+                .filter(|t| t.tier == source_tier && !t.is_inspired() && !chosen.contains(&t.id))
                 .map(|t| t.id.as_str())
                 .collect()
         } else {
@@ -73,7 +81,8 @@ fn choose_prereqs(tier: u8, branch: Branch, rng: &mut SeededRng) -> Vec<String> 
 }
 
 impl TechTree {
-    pub fn generate(rng: &mut SeededRng) -> Self {
+    /// Build this run's tree for the landing's native species.
+    pub fn generate(rng: &mut SeededRng, species: &[String]) -> Self {
         let data = game_data();
         let hidden_fraction = data.balance.research.hidden_fraction;
         let nodes = data
@@ -87,9 +96,11 @@ impl TechTree {
                     }
                 }
                 let hidden_chance = hidden_fraction * (def.tier as f32 / 3.0).min(1.3);
+                let absent =
+                    def.is_inspired() && !def.inspired_by.iter().any(|f| species.contains(f));
                 let revealed = if def.always_known || def.capstone.is_some() {
                     true
-                } else if def.relic_only {
+                } else if def.relic_only || def.is_inspired() {
                     false
                 } else {
                     !rng.chance(hidden_chance)
@@ -100,6 +111,7 @@ impl TechTree {
                     revealed,
                     researched: false,
                     locked: false,
+                    absent,
                     researched_day: None,
                 }
             })
@@ -125,6 +137,8 @@ impl TechTree {
         };
         if node.researched {
             TechStatus::Researched
+        } else if node.absent {
+            TechStatus::Absent
         } else if node.locked {
             TechStatus::Locked
         } else if !node.revealed {
@@ -183,6 +197,42 @@ impl TechTree {
         locked
     }
 
+    /// A species new to the colony arrived (an expedition sample): the
+    /// technologies it inspires can now be found.
+    pub fn introduce(&mut self, find: &str) {
+        for node in self.nodes.iter_mut().filter(|n| n.absent) {
+            let inspired = game_data()
+                .tech(&node.id)
+                .is_some_and(|t| t.inspired_by.iter().any(|f| f == find));
+            if inspired {
+                node.absent = false;
+            }
+        }
+    }
+
+    /// Hidden, present technologies a species inspires, in pool order.
+    pub fn awaiting_inspiration(&self, find: &str) -> Vec<String> {
+        self.nodes
+            .iter()
+            .filter(|n| !n.revealed && !n.absent && !n.locked)
+            .filter(|n| {
+                game_data()
+                    .tech(&n.id)
+                    .is_some_and(|t| t.inspired_by.iter().any(|f| f == find))
+            })
+            .map(|n| n.id.clone())
+            .collect()
+    }
+
+    /// Technologies still to be found in a branch: hidden but not absent.
+    pub fn unknown_in(&self, branch: Branch) -> usize {
+        self.nodes
+            .iter()
+            .filter(|n| !n.revealed && !n.absent && !n.locked)
+            .filter(|n| game_data().tech(&n.id).is_some_and(|t| t.branch == branch))
+            .count()
+    }
+
     pub fn reveal(&mut self, id: &str) -> bool {
         match self.node_mut(id) {
             Some(node) if !node.revealed => {
@@ -194,15 +244,19 @@ impl TechTree {
     }
 
     /// Hidden technologies in a branch whose prerequisites are mostly known:
-    /// the candidates for a eureka. Relic-only techs need relics instead.
+    /// the candidates for a eureka. Relic-only techs need relics instead, and
+    /// inspired techs need their species gathered.
     pub fn discoverable(&self, branch: Option<Branch>, allow_relic: bool) -> Vec<String> {
         self.nodes
             .iter()
-            .filter(|node| !node.revealed && !node.locked)
+            .filter(|node| !node.revealed && !node.locked && !node.absent)
             .filter(|node| {
                 let Some(def) = game_data().tech(&node.id) else {
                     return false;
                 };
+                if def.is_inspired() {
+                    return false;
+                }
                 let branch_ok = branch.is_none_or(|b| def.branch == b);
                 let relic_ok = allow_relic || !def.relic_only;
                 let known_prereqs = node

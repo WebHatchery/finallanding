@@ -6,6 +6,7 @@ pub mod buildings;
 pub mod campaign;
 pub mod catalog;
 pub mod events;
+pub mod finds;
 pub mod kinds;
 pub mod people;
 pub mod resources;
