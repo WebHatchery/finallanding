@@ -1,4 +1,5 @@
-//! Research progress, project choice, insight and eureka discoveries.
+//! Research progress, project choice, insight, eureka discoveries and the
+//! inspiration that gathering native species brings.
 
 use super::chronicle_text::line;
 use super::Ctx;
@@ -134,6 +135,55 @@ pub fn add_insight(agent: &mut Agent, ctx: &mut Ctx, branch: Branch, amount: f32
         &[("name", &agent.given_name), ("tech", name)],
     );
     ctx.log(Category::Discovery, 2, text, vec![agent.id]);
+}
+
+/// A survivor gathered (or tasted) some of a native species. The first find
+/// is news; enough gathering inspires the technologies it suggests.
+pub fn gather_find(agent: &mut Agent, ctx: &mut Ctx, find: &str, amount: f32) {
+    let Some(def) = game_data().find(find) else {
+        return;
+    };
+    let tick = ctx.calendar.tick;
+    let first = ctx
+        .colony
+        .finds
+        .record(find, amount, ctx.calendar.day(), &agent.given_name);
+    if first {
+        agent.mind.add("learned", None, Calendar::ticks_per_day());
+        let text = line(
+            "first_find",
+            tick,
+            &[("name", &agent.given_name), ("find", &def.name)],
+        );
+        ctx.log(Category::Discovery, 2, text, vec![agent.id]);
+    }
+    for tech in inspire(ctx.colony, find) {
+        let name = game_data().tech(&tech).map_or(tech.as_str(), |t| &t.name);
+        let text = line(
+            "tech_inspired",
+            tick,
+            &[("find", &def.name), ("tech", name)],
+        );
+        ctx.log(Category::Discovery, 2, text, vec![agent.id]);
+    }
+}
+
+/// Reveal every technology that gathering a species has now earned.
+pub fn inspire(colony: &mut Colony, find: &str) -> Vec<String> {
+    let ready: Vec<String> = colony
+        .tree
+        .awaiting_inspiration(find)
+        .into_iter()
+        .filter(|id| {
+            game_data()
+                .tech(id)
+                .is_some_and(|t| colony.finds.gathered_any(&t.inspired_by) >= t.inspiration)
+        })
+        .collect();
+    for id in &ready {
+        colony.tree.reveal(id);
+    }
+    ready
 }
 
 /// Reveal a hidden technology from an event, expedition or relic.

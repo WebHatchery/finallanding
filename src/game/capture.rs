@@ -89,6 +89,7 @@ fn asset_gallery(mut sim: Sim) -> Sim {
                 tile: Tile::new(x, y),
                 amount: if depleted { 0.0 } else { 40.0 },
                 max_amount: 40.0,
+                find: game_data().finds_of(kind).next().map(|f| f.id.clone()),
             });
             x += 2;
         }

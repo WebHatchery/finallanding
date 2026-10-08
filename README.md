@@ -23,15 +23,20 @@ design behind the survivors.
   work and help; trait clashes and tempers produce arguments, fights, rivalries
   and reconciliations. Partners move into family quarters and raise children.
   Grief, breakdowns and departures follow neglect.
-- **A dynamic technology tree.** 57 technologies in six branches and five tiers,
-  re-wired from the run seed: prerequisites change, a third start hidden until a
-  survivor's eureka, an expedition or a relic reveals them, forks lock their
-  alternatives, and practice makes a branch cheaper.
+- **A technology tree grown from what each colony finds.** Every landing draws
+  its own native foods, fibres, stones, ores and ruins (22 species in all) and
+  scatters them in territories, so each crew gathers different things in a
+  different order. Gathering a species inspires the technologies it suggests;
+  technologies tied to species this world lacks never appear. The crew's own
+  knowledge is re-wired from the seed as well: prerequisites change, some starts
+  hidden until a eureka, forks lock alternatives, and practice makes a branch
+  cheaper. Orchards grow whichever native food the colony gathers most.
 - **A five-act campaign** (Landfall, Roots, Echoes, Divergence, The Final
   Landing) over five in-game years with three endings — Beacon, Rootbound and
   Ascendant — chosen by a colony vote that can divide it.
-- **Replayability:** seeded maps, three landing sites, three difficulties,
-  generated crews, a reshaped tech tree, a 36-card event deck and three endings.
+- **Replayability:** seeded maps and native species, three landing sites, three
+  difficulties, generated crews, a tree that grows from each run's finds, a
+  36-card event deck and three endings.
 - **Persistence:** daily autosave through the toolkit (native files or browser
   storage); Continue resumes the run.
 
@@ -64,7 +69,7 @@ visible control and keyboard shortcuts are only supplements.
 | Observation | Which pressure to address next | The colony map | Open a tool or tap something | Resources, date, weather, act objectives, alerts | Roster, tech tree, relations, chronicle |
 | Placement | Does this building fit here? | Ghost footprint | Tap to place / Close | Cost and blocking reason at the pointer | Other categories |
 | Inspection | Why is this survivor doing that? | Inspector beside the map | Close or Follow | Goal, reason, plan steps, reasoning log, beliefs vs. reality | Needs, bonds, life story in tabs |
-| Research | Which technology next | Tech tree overlay | Set as research focus | Cost, progress, prerequisites, unlocks, forks, insight | Hidden technologies |
+| Research | Which technology next | Known technologies, laid out from what was found | Set as research focus | Cost, progress, inspiring species, prerequisites, unlocks, forks, native finds | Hidden and absent technologies |
 | Expeditions | Where to send people | Site list | Call for volunteers | Danger, duration, yield, rewards | Results until return |
 | Relations | Who is close or in conflict | Relationship web | Tap a survivor | Two-sided opinions | Thought history |
 | Chronicle | What happened and why | Daily reports and entries | Filter / page | Category, day | Older entries via paging |
@@ -94,13 +99,15 @@ open as overlays that replace the map focus.
 ## Architecture
 
 - `src/data/` — typed schemas, the embedded JSON catalog (`assets/data/*.json`
-  loaded with `macroquad_toolkit::include_json!`) and semantic validation.
+  loaded with `macroquad_toolkit::include_json!`, including the native species
+  in `finds.json`) and semantic validation.
 - `src/world/` — tile map, structures, landscape features, fauna, weather,
   calendar and seeded map generation.
 - `src/agents/` — the BDI survivor: personality, needs, beliefs, goals,
   plans, intentions, messages, deliberation and the plan library.
-- `src/colony/` — stockpile, priorities, policies, the per-run tech tree,
-  research, expeditions, campaign state, chronicle and the job board.
+- `src/colony/` — stockpile, priorities, policies, the species the colony has
+  found, the per-run tech tree, research, expeditions, campaign state,
+  chronicle and the job board.
 - `src/sim/` — the tick: perception, inbox, cognition, step execution,
   movement, social outcomes, environment, fauna, director, expeditions,
   campaign and the Divergence vote. `sim::commands` is the player's only lever.
@@ -116,11 +123,13 @@ replays identically (covered by tests).
 
 ## Verification
 
-- `cargo test` — data coverage, BDI agent properties, tech tree, campaign,
-  simulation (determinism, save round-trip, expeditions, a scripted colony's
-  first weeks), interface geometry and the 800-line source gate.
-- `.\scripts\capture_ui_smoke.ps1` — every scene at 1920×1080 plus the busiest
-  scenes at 1280×720, written to `docs\verification\ui_<scene>.png`.
+- `cargo test` — data coverage, BDI agent properties, tech tree, native
+  species and inspiration, campaign, simulation (determinism, save round-trip,
+  expeditions, a scripted colony's first weeks), painted assets standing on
+  their footprints, interface geometry and the 800-line source gate.
+- `.\scripts\capture_ui_smoke.ps1` — every scene at 1920×1080 (including an
+  `assets` gallery of every building, landscape feature and creature) plus the
+  busiest scenes at 1280×720, written to `docs\verification\ui_<scene>.png`.
 - `.\scripts\capture_playthrough_report.ps1` — headless campaign matrix at
   `docs\verification\campaign_report.md`.
 - `docs\verification\manual_playtest.md` — the hands-on checklist.

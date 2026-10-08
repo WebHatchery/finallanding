@@ -130,7 +130,7 @@ fn help_plans(agent: &Agent, view: &View, requester: AgentId, need: HelpNeed) ->
                     ],
                 ));
             }
-            if let Some(node) = known_nodes(agent, view, NodeKind::Glowfruit).first() {
+            if let Some(node) = known_nodes(agent, view, NodeKind::Forage).first() {
                 plans.push(option(
                     "forage_for_friend",
                     0.6,

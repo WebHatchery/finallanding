@@ -60,6 +60,7 @@ pub fn validate(data: &GameData) -> Result<(), String> {
     validate_balance(data, &mut errors);
     validate_buildings(data, &mut errors);
     validate_techs(data, &mut errors);
+    validate_finds(data, &mut errors);
     validate_people(data, &mut errors);
     validate_events(data, &mut errors);
     validate_campaign(data, &mut errors);
@@ -191,6 +192,84 @@ fn validate_techs(data: &GameData, errors: &mut Vec<String>) {
             || format!("tech tier {tier} is empty"),
             errors,
         );
+    }
+}
+
+/// Inspired technologies, and the species that inspire them. A technology
+/// that unlocks content must be inspirable on every landing: it lists enough
+/// species of a kind that any drawn set includes one of them.
+fn validate_finds(data: &GameData, errors: &mut Vec<String>) {
+    unique_ids("find", data.finds.iter().map(|f| f.id.as_str()), errors);
+    const TERRAIN: [&str; 5] = ["grass", "soil", "sand", "water", "rock"];
+    for find in &data.finds {
+        check(
+            find.yield_scale > 0.0,
+            || format!("find '{}' has no yield", find.id),
+            errors,
+        );
+        if let Some(near) = &find.near {
+            check(
+                TERRAIN.contains(&near.as_str()),
+                || format!("find '{}' prefers unknown terrain '{near}'", find.id),
+                errors,
+            );
+        }
+    }
+    for (kind, count) in &data.species_per_run {
+        let available = data.finds_of(*kind).count();
+        check(
+            *count >= 1 && *count <= available,
+            || {
+                format!(
+                    "{} species per run exceeds the {available} defined",
+                    kind.key()
+                )
+            },
+            errors,
+        );
+    }
+    for tech in data.techs.iter().filter(|t| t.is_inspired()) {
+        check(
+            !tech.always_known && !tech.relic_only && tech.capstone.is_none(),
+            || format!("tech '{}' cannot be both inspired and fixed", tech.id),
+            errors,
+        );
+        for id in &tech.inspired_by {
+            check(
+                data.find(id).is_some(),
+                || format!("tech '{}' is inspired by unknown find '{id}'", tech.id),
+                errors,
+            );
+        }
+        let required = data
+            .techs
+            .iter()
+            .any(|t| t.fixed_prereqs.contains(&tech.id));
+        check(
+            !required,
+            || format!("inspired tech '{}' cannot be a fixed prerequisite", tech.id),
+            errors,
+        );
+        if data.tech_unlocks_content(&tech.id) {
+            let guaranteed = data.species_per_run.iter().any(|(kind, drawn)| {
+                let total = data.finds_of(*kind).count();
+                let listed = data
+                    .finds_of(*kind)
+                    .filter(|f| tech.inspired_by.contains(&f.id))
+                    .count();
+                listed + drawn > total
+            });
+            check(
+                guaranteed,
+                || {
+                    format!(
+                        "tech '{}' unlocks content but may never be inspired",
+                        tech.id
+                    )
+                },
+                errors,
+            );
+        }
     }
 }
 

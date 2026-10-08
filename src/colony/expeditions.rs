@@ -36,6 +36,10 @@ pub struct Expeditions {
     pub call: Option<ExpeditionCall>,
     pub active: Vec<ActiveExpedition>,
     pub completed: u32,
+    /// Calls in a row that closed without a party. Each one weighs on the
+    /// survivors' sense of duty until someone goes.
+    #[serde(default)]
+    pub unanswered_calls: u32,
     pub next_id: u32,
     pub reports: Vec<ExpeditionReport>,
 }

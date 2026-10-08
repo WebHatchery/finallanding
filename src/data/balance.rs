@@ -173,6 +173,13 @@ pub struct ExpeditionBalance {
     pub reward_scale: f32,
     pub recruit_chance: f32,
     pub tech_chance: f32,
+    /// Chance a returning party carries a species from beyond the colony.
+    pub sample_chance: f32,
+    /// Units of gathering a sample counts for.
+    pub sample_amount: f32,
+    /// Foreign species a run can gain this way, so the landing keeps its
+    /// own character.
+    pub max_samples: u32,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]

@@ -4,6 +4,7 @@
 
 pub mod report;
 
+use crate::data::campaign::ObjectiveKind;
 use crate::data::{game_data, Branch, Resource};
 use crate::sim::campaign::is_met;
 use crate::sim::commands::{apply, is_unlocked, Command};
@@ -116,12 +117,12 @@ fn plan_essentials(sim: &mut Sim) {
         place(sim, source);
     }
     let farms =
-        count(sim, "farm_plot") + count(sim, "glowfruit_orchard") + count(sim, "hydroponics_bay");
+        count(sim, "farm_plot") + count(sim, "native_orchard") + count(sim, "hydroponics_bay");
     if farms < (population as usize).div_ceil(3).max(3) {
         let farm = if sim.calendar.season() == crate::data::Season::Autumn {
-            first_unlocked(sim, &["hydroponics_bay", "glowfruit_orchard", "farm_plot"])
+            first_unlocked(sim, &["hydroponics_bay", "native_orchard", "farm_plot"])
         } else {
-            first_unlocked(sim, &["glowfruit_orchard", "farm_plot"])
+            first_unlocked(sim, &["native_orchard", "farm_plot"])
         };
         if let Some(farm) = farm {
             place(sim, farm);
@@ -130,6 +131,25 @@ fn plan_essentials(sim: &mut Sim) {
     if sim.colony.stock.total() > sim.world.storage_capacity() * 0.75 {
         let store = first_unlocked(sim, &["warehouse", "storage_depot"]).unwrap_or("storage_depot");
         place(sim, store);
+    }
+}
+
+/// Build what the current act's objectives name, as a player reading the
+/// act tracker would.
+fn plan_objectives(sim: &mut Sim) {
+    let Some(act) = game_data().act(sim.colony.campaign.act) else {
+        return;
+    };
+    for objective in &act.objectives {
+        if let ObjectiveKind::Structure {
+            building,
+            count: wanted,
+        } = &objective.kind
+        {
+            if count(sim, building) < *wanted as usize {
+                place(sim, building);
+            }
+        }
     }
 }
 
@@ -198,6 +218,17 @@ fn choose_research(sim: &mut Sim) {
         "prefab_shelters",
         "field_medicine",
     ];
+    // A site with freezing winters needs heat and clothing before the first
+    // one, whatever else the colony has been inspired to study.
+    let harsh_winter = game_data()
+        .site(&sim.colony.setup.site)
+        .is_some_and(|site| site.climate.season_temperature[3] < 5.0);
+    let warmth = [
+        "combustion",
+        "cold_weather_gear",
+        "sunstone_hearths",
+        "habitat_engineering",
+    ];
     let scale = sim.colony.difficulty_value(|d| d.research_cost);
     let score = |id: &str| -> f32 {
         let mut cost = sim.colony.tree.cost(id, scale);
@@ -206,6 +237,9 @@ fn choose_research(sim: &mut Sim) {
         }
         if wanted.contains(&id) {
             cost *= 0.3;
+        }
+        if harsh_winter && warmth.contains(&id) {
+            cost *= 0.25;
         }
         if game_data()
             .tech(id)
@@ -325,6 +359,7 @@ fn plan_with(sim: &mut Sim, vote: bool) {
         return;
     }
     plan_essentials(sim);
+    plan_objectives(sim);
     plan_growth(sim);
     choose_research(sim);
     manage_expeditions(sim);

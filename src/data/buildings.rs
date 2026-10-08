@@ -11,6 +11,10 @@ pub struct FarmSpec {
     pub grow_days: f32,
     #[serde(default)]
     pub indoor: bool,
+    /// Grows whichever native food the colony has gathered most, with that
+    /// species' yield and growing time.
+    #[serde(default)]
+    pub native: bool,
 }
 
 /// Static description of a building type. Behaviour is selected by the

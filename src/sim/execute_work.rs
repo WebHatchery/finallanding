@@ -2,7 +2,7 @@
 //! and research.
 
 use super::chronicle_text::line;
-use super::research::{add_insight, contribute};
+use super::research::{add_insight, contribute, gather_find};
 use super::Ctx;
 use crate::agents::deliberation::gather_skill;
 use crate::agents::plans::{FailReason, Step, StepOutcome};
@@ -225,6 +225,7 @@ fn harvest(agent: &mut Agent, ctx: &mut Ctx, node_id: u32) -> StepOutcome {
         return StepOutcome::Failed(FailReason::TargetGone);
     }
     let (kind, resource) = (node.kind, node.resource());
+    let (find, yield_scale) = (node.find.clone(), node.yield_scale());
     if node.is_depleted() {
         return StepOutcome::Failed(FailReason::Depleted);
     }
@@ -236,7 +237,7 @@ fn harvest(agent: &mut Agent, ctx: &mut Ctx, node_id: u32) -> StepOutcome {
         .get(&resource)
         .copied()
         .unwrap_or(0.2);
-    let rate = base * work_rate(agent, ctx, skill, true);
+    let rate = base * yield_scale * work_rate(agent, ctx, skill, true);
     let capacity = agent.carry_capacity(ctx.colony.modifiers.carry);
     let room = (capacity - agent.carried(resource)).max(0.0);
     let Some(node) = ctx.world.node_mut(node_id) else {
@@ -250,6 +251,9 @@ fn harvest(agent: &mut Agent, ctx: &mut Ctx, node_id: u32) -> StepOutcome {
     agent.activity = Activity::Working(skill);
     set_carry(agent, ctx, resource, taken);
     practise(agent, ctx, skill);
+    if let Some(find) = find.filter(|_| taken > 0.0) {
+        gather_find(agent, ctx, &find, taken);
+    }
     if resource == Resource::Relics {
         add_insight(agent, ctx, Branch::Xenology, 0.05);
     }
@@ -283,11 +287,15 @@ fn forage(agent: &mut Agent, ctx: &mut Ctx, node_id: u32, step_ticks: u32) -> St
         return StepOutcome::Running;
     }
     node.amount -= 1.0;
-    let restore = game_data().balance.needs.forage_restore;
+    let (find, yield_scale) = (node.find.clone(), node.yield_scale());
+    let restore = game_data().balance.needs.forage_restore * yield_scale;
     agent.needs.change(Need::Food, restore);
     agent
         .mind
         .add("ate_foraged", None, Calendar::ticks_per_day());
+    if let Some(find) = find {
+        gather_find(agent, ctx, &find, 1.0);
+    }
     StepOutcome::Done
 }
 
@@ -315,16 +323,16 @@ fn tend(agent: &mut Agent, ctx: &mut Ctx, plot: StructureId) -> StepOutcome {
         .structure(plot)
         .map(|s| ctx.world.map.fertility_at(s.footprint.origin))
         .unwrap_or(30.0);
-    let yield_scale = ctx.colony.modifiers.farm_yield;
+    let favourite = ctx.colony.finds.favourite_crop().map(str::to_owned);
     let Some(structure) = ctx.world.structure_mut(plot) else {
         return StepOutcome::Failed(FailReason::TargetGone);
     };
-    let spec_yield = structure
-        .def()
-        .farm
-        .as_ref()
-        .map(|f| f.yield_food)
-        .unwrap_or(0.0);
+    let Some(spec) = structure.def().farm.as_ref() else {
+        return StepOutcome::Failed(FailReason::TargetGone);
+    };
+    let yield_scale = ctx.colony.modifiers.farm_yield * structure.crop_traits().yield_scale;
+    let (spec_yield, native) = (spec.yield_food, spec.native);
+    let mut planted = None;
     let Some(crop) = structure.crop.as_mut() else {
         return StepOutcome::Failed(FailReason::TargetGone);
     };
@@ -337,6 +345,10 @@ fn tend(agent: &mut Agent, ctx: &mut Ctx, plot: StructureId) -> StepOutcome {
                 crop.stage = CropStage::Growing;
                 crop.growth = 0.0;
                 crop.work = 0.0;
+                if native && structure.crop_species != favourite {
+                    structure.crop_species = favourite.clone();
+                    planted = favourite;
+                }
             }
         }
         CropStage::Ripe => {
@@ -357,6 +369,14 @@ fn tend(agent: &mut Agent, ctx: &mut Ctx, plot: StructureId) -> StepOutcome {
         }
     }
     let done = crop.stage == CropStage::Growing;
+    if let Some(find) = planted.as_deref().and_then(|id| game_data().find(id)) {
+        let text = line(
+            "orchard_planted",
+            ctx.calendar.tick,
+            &[("find", &find.name)],
+        );
+        ctx.log(Category::Colony, 1, text, vec![agent.id]);
+    }
     practise(agent, ctx, Skill::Farming);
     if done {
         StepOutcome::Done

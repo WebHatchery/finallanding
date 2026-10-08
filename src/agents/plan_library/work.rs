@@ -216,7 +216,7 @@ fn cook_plans(agent: &Agent, view: &View, store: Option<StructureId>) -> Vec<Pla
             ],
         ));
     }
-    if let Some(node) = known_nodes(agent, view, NodeKind::Glowfruit).first() {
+    if let Some(node) = known_nodes(agent, view, NodeKind::Forage).first() {
         plans.push(option(
             "cook_foraged",
             0.5,

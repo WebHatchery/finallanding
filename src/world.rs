@@ -55,6 +55,10 @@ pub struct World {
     pub next_node_id: NodeId,
     pub next_creature_id: u32,
     pub landing_tile: Tile,
+    /// The native species of this landing, drawn per run. Expeditions can
+    /// bring samples of others home.
+    #[serde(default)]
+    pub species: Vec<String>,
 }
 
 impl World {

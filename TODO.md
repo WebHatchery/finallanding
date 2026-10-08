@@ -15,3 +15,13 @@ dynamic tech tree, five-act campaign, 1920×1080 UI).
 - [ ] **Pinch zoom.** Touch zoom currently uses the - / + buttons; add a
   two-finger pinch through the toolkit gesture helpers.
 - [ ] **Audio.** No music or sound effects yet.
+- [ ] **Species art.** Native species are told apart by colour only; each would
+  read better with its own drawn or painted node (tubers, fungus caps, shells,
+  crystal ores, glyph stones, the dormant engine).
+- [ ] **Ending balance.** Since survivors stopped sleeping beside predators and
+  colonies prepare for winter, the scripted colony loses almost no one, and the
+  Beacon future (which draws on hardship) no longer wins its matrix runs.
+  Rootbound and Ascendant both do. Give Beacon another source of support.
+- [ ] **Pacing.** Standard runs end at days 279–326 (≈24–28 hours before
+  pauses). Pauses bring that to the 30–40 hour target only for players who
+  stop often; consider a longer Act IV or V if playtests run short.

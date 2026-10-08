@@ -162,10 +162,10 @@
     },
     {
      "id": "techs",
-     "text": "Research 26 technologies",
+     "text": "Research 32 technologies",
      "kind": {
       "type": "tech_count",
-      "count": 26
+      "count": 32
      }
     }
    ]
@@ -310,7 +310,7 @@
     "fibre_grove": 5.0,
     "stone_outcrop": 3.0,
     "ore_vein": 1.2,
-    "glowfruit": 3.0,
+    "forage": 3.0,
     "ruin": 0.5
    },
    "bonus_resources": {
@@ -355,7 +355,7 @@
     "fibre_grove": 3.0,
     "stone_outcrop": 4.5,
     "ore_vein": 2.5,
-    "glowfruit": 1.5,
+    "forage": 1.5,
     "ruin": 0.9
    },
    "bonus_resources": {
@@ -401,7 +401,7 @@
     "fibre_grove": 3.5,
     "stone_outcrop": 3.5,
     "ore_vein": 1.6,
-    "glowfruit": 2.5,
+    "forage": 2.5,
     "ruin": 0.6
    },
    "bonus_resources": {

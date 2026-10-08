@@ -18,7 +18,7 @@ That pillar is kept. What it lacked was a world worth inhabiting for long:
 | Original choice | Problem found in the first build | Rebuild decision |
 | --- | --- | --- |
 | 6–10 colonists with one trait | Survivors felt interchangeable; behaviour came from scripted schedules | Generated survivors with several traits, eight skills, passions, an ambition, memories and BDI reasoning |
-| No tech tree | Nothing to plan beyond the first day | A **dynamic** tech tree regenerated each run, discovered through colonist activity |
+| No tech tree | Nothing to plan beyond the first day | A **dynamic** tech tree grown from the native species each colony gathers, discovered through colonist activity |
 | 5 buildings, 2 resources | No production chains, no reason to rearrange a settlement | ~30 buildings, 9 stockpiled resources, power, farming, crafting, medicine and defence |
 | Day 7 victory (≈34 minutes) | The run ended before relationships could matter | A five-act campaign of five in-game years (≈300 days, 30–40 hours) |
 | Abstract jobs assigned by the player | Colonists were puppets with a role label | Survivors choose their own goals; the player sets policies, priorities and spaces |
@@ -74,10 +74,11 @@ in the intended day band.
 
 `docs/verification/campaign_report.md` records the scripted colony AI playing
 every landing site and difficulty. All runs reach a victory; Standard runs end
-between days 276 and 402 (≈24–35 hours at the speed mix above, before
-pauses), Gentle around day 200 and Harsh near day 390. Act IV opens between
-days 85 and 166 depending on the site. A human player who pauses to plan and
-read will take longer than the script, which never stops.
+between days 279 and 326 (≈24–28 hours at the speed mix above, before
+pauses), Gentle around day 210 and Harsh near day 285. Act IV opens between
+days 95 and 157 depending on the site. The report's Discovery table shows
+each run's native species and the order they were found. A human player who
+pauses to plan and read will take longer than the script, which never stops.
 
 ### Replayability
 
@@ -85,12 +86,13 @@ read will take longer than the script, which never stops.
   rich ore), Ashen Steppe (dry, fertile ash, frequent storms).
 - **Difficulty:** Gentle, Standard, Harsh — need decay, event pressure and
   starting stores.
-- **Seeds:** map layout, resource fields, ruins, crew, tech-tree shape and
-  event deck all derive from one run seed.
+- **Seeds:** map layout, native species and their territories, ruins, crew,
+  tech-tree shape and event deck all derive from one run seed.
 - **Generated survivors:** name, age, traits, skills, passions, ambition and
   backstory. No two crews reason alike.
-- **Dynamic tech tree:** prerequisites, hidden discoveries, mutually exclusive
-  forks and costs change every run (§6).
+- **Dynamic tech tree:** technologies are inspired by the native species each
+  colony gathers, in the order it finds them; prerequisites, hidden
+  discoveries, forks and costs also change every run (§6).
 - **Three endings** with different capstones and political consequences.
 - **Legacy:** achievements persist between runs.
 
@@ -123,7 +125,7 @@ ambitions; reach a campaign ending.
 sleep, talk, send a message, flee, fight, wait.
 
 **Key scenarios.** *Hungry with an empty mess hall:* the survivor tries the
-mess hall, learns it is empty, takes raw stores, forages a known glowfruit
+mess hall, learns it is empty, takes raw stores, forages a known wild-food patch
 bush, and finally asks a friend for food. *Construction interrupted by a
 creature:* the builder flees indoors, warns others, and resumes the site
 afterwards. *A rival on the same shift:* a survivor with low opinion of a
@@ -196,20 +198,59 @@ Interaction protocols:
 
 ## 6. Dynamic technology tree
 
-The data file lists ~60 technologies in six branches — Survival, Agronomy,
-Industry, Medicine, Society, Xenology — across five tiers, plus three capstones.
-Each run the tree is regenerated from the seed:
+The tree grows from what each colony finds. The data files list 79
+technologies in six branches — Survival, Agronomy, Industry, Medicine,
+Society, Xenology — across five tiers, plus three capstones, and 22 native
+species (`assets/data/finds.json`).
+
+**Native species.** Every landing draws its own species: three foods, two
+fibres, two stones, two ores and two kinds of ruin, out of seven, four, four,
+four and three. Each species is given territories on the map (beside water,
+rock, soil or sand when it prefers them), so which species lie closest to the
+crash site — and so which the crew gathers first — changes every run. Food
+species differ in yield, and plantable ones in how much an orchard grows and
+how fast: Ember Tubers are heavy and slow, Veilcaps thin and quick, Shellbacks
+rich but cannot be farmed.
+
+**Inspiration.** Most technologies are *inspired*: they name the species that
+suggest them and how much the colony must gather. Until then they are not
+shown at all. Gathering a species for the first time is logged ("Rosa brings
+back the colony's first Reedgrain"), and crossing a technology's threshold
+reveals it ("Reedgrain inspires a new line of study: Reedgrain Milling").
+Each species has its own technology (Tuber Beds, Spore Tinctures, Basalt
+Footings, Cobalt Lenses, Engine Autopsy…), and core technologies take any
+species of a kind (Smelting needs any ore, Native Cultivation any plantable
+food). A technology inspired only by species this landing lacks is **absent**
+for the run. Expeditions can carry home a sample of a foreign species
+(at most three a run), which brings its technologies within reach.
+
+**Guarantees.** Validation requires every technology that unlocks a
+building, recipe or policy to list enough species of a kind that any draw
+includes one, and inspired technologies are never drawn as prerequisites, so
+no run can lock itself out of content. Tests cover 24 seeds on every site.
+
+**The crew's own knowledge** (shelters, field medicine, power, labs, the
+capstone paths) is regenerated from the seed as before:
 
 - Prerequisites are drawn from earlier tiers, favouring the same branch and
   sometimes crossing branches.
-- About a third of technologies start **hidden**. They are revealed by
-  *insight*: survivors practising related work accumulate branch insight and
-  occasionally have a eureka (logged in the chronicle). Relics and expeditions
-  reveal others.
+- About a third of it starts **hidden** and is revealed by *insight*:
+  survivors practising related work accumulate branch insight and occasionally
+  have a eureka. Relics and expeditions reveal others.
 - **Forks** are mutually exclusive pairs; researching one locks the other.
 - **Cost adapts**: a branch the colony practises becomes cheaper.
 - Researchers work at labs. If the player sets no focus, curious researchers
   pick a project from their own interests.
+
+**Native orchards** grow whichever plantable food the colony has gathered
+most, with that species' yield and growing time, so a colony's farming
+follows its foraging.
+
+The research overlay draws only known technologies, packed by branch and
+tier, so the tree visibly takes a different shape each run. A strip of
+native finds lists the species in the order they were found with what has
+been gathered; inspired cards carry their species' colour, and the map tints
+each resource node by its species.
 
 ## 7. Colony systems
 
@@ -222,7 +263,9 @@ Each run the tree is regenerated from the seed:
 - **Threats:** native fauna raid crops and stores; brave survivors defend,
   cautious ones flee and warn.
 - **Expeditions:** pick a discovered site; survivors volunteer according to
-  bravery and ambition; they return with loot, relics, technologies,
+  bravery, curiosity and ambition, and each call the colony could not fill
+  weighs on their sense of duty (more for the diligent) until someone goes;
+  they return with loot, relics, technologies, samples of foreign species,
   recruits, injuries or stories.
 - **Policies:** rationing, work hours, curfew, family planning, expedition
   stance. Survivors judge policies through their traits.
@@ -242,7 +285,7 @@ window (scale 0.67). Touch targets are at least 48 virtual pixels.
 | Observation | Which pressure to address next | The colony map | Open a tool or select something | Resources, date, act objectives, active alerts | Roster, tech tree, relations, chronicle |
 | Placement | Does this building fit here? | Ghost footprint on the map | Place / Cancel | Cost, requirements and blocking reason | Other categories |
 | Inspection | Understand a survivor or building | Inspector panel beside the map | Close or follow | Mind: goal, plan, beliefs; needs; relations | Full history in chronicle |
-| Research | Which technology next | Tech tree overlay | Set focus | Cost, unlocks, prerequisites, forks | Hidden technologies until discovered |
+| Research | Which technology next | Tech tree overlay | Set focus | Cost, unlocks, prerequisites, forks, inspiring species, native finds | Hidden and absent technologies |
 | Expeditions | Where to send people | Site list | Call for volunteers | Danger, duration, rewards | Results until return |
 | Relations | Who is close or in conflict | Relationship web | Select a survivor | Opinion values and status | Thought history |
 | Chronicle | What happened and why | Daily entry list | Read and filter | Category filters | Older years via paging |
