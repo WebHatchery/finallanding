@@ -1,0 +1,444 @@
+{
+ "acts": [
+  {
+   "number": 1,
+   "name": "Landfall",
+   "intro": "The hull is cracked open, the stores are thin and night is coming. Give the survivors shelter, food and light, and they will find their own way to work.",
+   "opening_event": "crash_landing",
+   "climax_event": "first_storm",
+   "objectives": [
+    {
+     "id": "beds",
+     "text": "Shelter for ten survivors",
+     "kind": {
+      "type": "beds",
+      "count": 10
+     }
+    },
+    {
+     "id": "mess",
+     "text": "Build a Mess Hall",
+     "kind": {
+      "type": "structure",
+      "building": "mess_hall",
+      "count": 1
+     }
+    },
+    {
+     "id": "food",
+     "text": "Stockpile 80 food",
+     "kind": {
+      "type": "stock",
+      "resource": "food",
+      "amount": 80
+     }
+    },
+    {
+     "id": "power",
+     "text": "Generate spare power",
+     "kind": {
+      "type": "power_surplus",
+      "amount": 2
+     }
+    },
+    {
+     "id": "explore",
+     "text": "Explore 30% of the region",
+     "kind": {
+      "type": "explored",
+      "fraction": 0.3
+     }
+    },
+    {
+     "id": "research",
+     "text": "Research 5 technologies",
+     "kind": {
+      "type": "tech_count",
+      "count": 5
+     }
+    }
+   ]
+  },
+  {
+   "number": 2,
+   "name": "Roots",
+   "intro": "Survival is no longer enough. Farms, workshops and the first expeditions will decide whether this is a camp or a colony. Winter is coming.",
+   "opening_event": "roots_begin",
+   "climax_event": "the_long_frost",
+   "objectives": [
+    {
+     "id": "winter",
+     "text": "Survive the first winter",
+     "kind": {
+      "type": "survive_season",
+      "season": "winter",
+      "year": 1
+     }
+    },
+    {
+     "id": "population",
+     "text": "Grow to 10 survivors",
+     "kind": {
+      "type": "population",
+      "count": 10
+     }
+    },
+    {
+     "id": "farms",
+     "text": "Tend 3 farm plots",
+     "kind": {
+      "type": "structure",
+      "building": "farm_plot",
+      "count": 3
+     }
+    },
+    {
+     "id": "workshop",
+     "text": "Build a Workshop",
+     "kind": {
+      "type": "structure",
+      "building": "workshop",
+      "count": 1
+     }
+    },
+    {
+     "id": "expedition",
+     "text": "Return from an expedition",
+     "kind": {
+      "type": "expeditions",
+      "count": 1
+     }
+    },
+    {
+     "id": "techs",
+     "text": "Research 10 technologies",
+     "kind": {
+      "type": "tech_count",
+      "count": 10
+     }
+    }
+   ]
+  },
+  {
+   "number": 3,
+   "name": "Echoes",
+   "intro": "Something beneath the plain is calling. Recover relics, study the precursors and raise a mast to answer the signal.",
+   "opening_event": "signal_heard",
+   "climax_event": "migration",
+   "objectives": [
+    {
+     "id": "relics",
+     "text": "Recover 12 relics",
+     "kind": {
+      "type": "relics",
+      "count": 12
+     }
+    },
+    {
+     "id": "xeno",
+     "text": "Research 4 Xenology technologies",
+     "kind": {
+      "type": "branch_techs",
+      "branch": "xenology",
+      "count": 4
+     }
+    },
+    {
+     "id": "mast",
+     "text": "Raise the Signal Mast",
+     "kind": {
+      "type": "structure",
+      "building": "signal_mast",
+      "count": 1
+     }
+    },
+    {
+     "id": "friends",
+     "text": "Six friendships in the colony",
+     "kind": {
+      "type": "friendships",
+      "count": 6
+     }
+    },
+    {
+     "id": "techs",
+     "text": "Research 26 technologies",
+     "kind": {
+      "type": "tech_count",
+      "count": 26
+     }
+    }
+   ]
+  },
+  {
+   "number": 4,
+   "name": "Divergence",
+   "intro": "The colony understands enough to choose its future. Propose a path to the council; the survivors will vote with their hearts.",
+   "opening_event": "divergence",
+   "climax_event": "dissent",
+   "objectives": [
+    {
+     "id": "council",
+     "text": "Build the Council Hall",
+     "kind": {
+      "type": "structure",
+      "building": "council_hall",
+      "count": 1
+     }
+    },
+    {
+     "id": "vote",
+     "text": "Hold the Divergence vote",
+     "kind": {
+      "type": "vote_held"
+     }
+    },
+    {
+     "id": "capstone_tech",
+     "text": "Research the chosen capstone",
+     "kind": {
+      "type": "capstone_tech"
+     }
+    },
+    {
+     "id": "population",
+     "text": "Grow to 12 survivors",
+     "kind": {
+      "type": "population",
+      "count": 12
+     }
+    },
+    {
+     "id": "mood",
+     "text": "Average mood of 45",
+     "kind": {
+      "type": "average_mood",
+      "at_least": 45
+     }
+    }
+   ]
+  },
+  {
+   "number": 5,
+   "name": "The Final Landing",
+   "intro": "Everything the colony has learned goes into one last work. Build it, and hold together until it is done.",
+   "opening_event": "final_landing",
+   "objectives": [
+    {
+     "id": "capstone",
+     "text": "Complete the capstone",
+     "kind": {
+      "type": "capstone_built"
+     }
+    },
+    {
+     "id": "endure",
+     "text": "Hold the colony together for 10 days after",
+     "kind": {
+      "type": "days_after_capstone",
+      "days": 10
+     }
+    }
+   ]
+  }
+ ],
+ "endings": [
+  {
+   "id": "beacon",
+   "name": "Beacon",
+   "pitch": "Repair the long-range array and call the fleet. Rescue, reunion, and a place in humanity's story.",
+   "capstone_tech": "deep_space_beacon",
+   "capstone_building": "beacon_array",
+   "final_crisis_event": "fleet_static",
+   "epilogue": "The fleet answered. Three months later, shuttles burned down through the clouds onto the plain where the Meridian fell. The colonists who walked out to meet them were no longer crew; they were the first people of a new world, and the fleet would learn that from them."
+  },
+  {
+   "id": "rootbound",
+   "name": "Rootbound",
+   "pitch": "Join the colony to the planet's living network. Become native, and never be alone again.",
+   "capstone_tech": "biosphere_communion",
+   "capstone_building": "verdant_heart",
+   "final_crisis_event": "root_fever",
+   "epilogue": "The grove took root, and the colony with it. Crops grew where no crops should, fevers broke in a night, and the survivors dreamed the planet's slow dreams. When the fleet finally came, it found a people who no longer needed rescue."
+  },
+  {
+   "id": "ascendant",
+   "name": "Ascendant",
+   "pitch": "Wake the precursor spire and inherit what the first civilisation left behind.",
+   "capstone_tech": "spire_resonance",
+   "capstone_building": "spire_conduit",
+   "final_crisis_event": "spire_awakening",
+   "epilogue": "The spire woke. Light ran through the ground like water, and the precursors' archive opened to the colony's halting songs. They had crashed as refugees; they rose as heirs to a knowledge older than Earth."
+  }
+ ],
+ "sites": [
+  {
+   "id": "verdant_basin",
+   "name": "Verdant Basin",
+   "description": "A temperate river basin with mild winters, rich soil and plenty of fibre. The recommended first landing.",
+   "climate": {
+    "season_temperature": [
+     12,
+     20,
+     10,
+     -2
+    ],
+    "temperature_swing": 5,
+    "storm_chance": [
+     0.08,
+     0.05,
+     0.1,
+     0.06
+    ],
+    "precipitation_chance": [
+     0.3,
+     0.2,
+     0.35,
+     0.3
+    ],
+    "snows": true
+   },
+   "terrain": {
+    "ground": "grass",
+    "fertile": 0.3,
+    "rock": 0.07,
+    "water": 0.06,
+    "sand": 0.04
+   },
+   "node_density": {
+    "wreckage": 3.0,
+    "fibre_grove": 5.0,
+    "stone_outcrop": 3.0,
+    "ore_vein": 1.2,
+    "glowfruit": 3.0,
+    "ruin": 0.5
+   },
+   "bonus_resources": {
+    "food": 20
+   }
+  },
+  {
+   "id": "frost_shelf",
+   "name": "Frost Shelf",
+   "description": "A wind-scoured shelf of ice and stone. Brutal winters, short summers, but rich ore and ancient ruins.",
+   "climate": {
+    "season_temperature": [
+     3,
+     11,
+     1,
+     -15
+    ],
+    "temperature_swing": 6,
+    "storm_chance": [
+     0.08,
+     0.04,
+     0.1,
+     0.14
+    ],
+    "precipitation_chance": [
+     0.3,
+     0.2,
+     0.35,
+     0.45
+    ],
+    "snows": true
+   },
+   "terrain": {
+    "ground": "snow",
+    "fertile": 0.12,
+    "rock": 0.12,
+    "water": 0.05,
+    "sand": 0.02
+   },
+   "node_density": {
+    "wreckage": 3.0,
+    "fibre_grove": 3.0,
+    "stone_outcrop": 4.5,
+    "ore_vein": 2.5,
+    "glowfruit": 1.5,
+    "ruin": 0.9
+   },
+   "bonus_resources": {
+    "metal": 20
+   }
+  },
+  {
+   "id": "ashen_steppe",
+   "name": "Ashen Steppe",
+   "description": "Volcanic plains under a hot sun. Fertile ash, frequent storms and ashfall, and few places to hide.",
+   "climate": {
+    "season_temperature": [
+     16,
+     28,
+     14,
+     5
+    ],
+    "temperature_swing": 7,
+    "storm_chance": [
+     0.12,
+     0.1,
+     0.14,
+     0.08
+    ],
+    "precipitation_chance": [
+     0.15,
+     0.05,
+     0.15,
+     0.2
+    ],
+    "snows": false,
+    "ashfall": true
+   },
+   "terrain": {
+    "ground": "ash",
+    "fertile": 0.4,
+    "rock": 0.09,
+    "water": 0.03,
+    "sand": 0.12
+   },
+   "node_density": {
+    "wreckage": 3.0,
+    "fibre_grove": 3.5,
+    "stone_outcrop": 3.5,
+    "ore_vein": 1.6,
+    "glowfruit": 2.5,
+    "ruin": 0.6
+   },
+   "bonus_resources": {
+    "stone": 30
+   }
+  }
+ ],
+ "difficulties": [
+  {
+   "id": "gentle",
+   "name": "Gentle",
+   "description": "Slower needs, fewer threats and fuller stores. For enjoying the story.",
+   "need_decay": 0.8,
+   "event_pressure": 0.6,
+   "starting_resources": 1.4,
+   "threat_scale": 0.6,
+   "research_cost": 1.0
+  },
+  {
+   "id": "standard",
+   "name": "Standard",
+   "description": "The intended balance of hardship and hope.",
+   "need_decay": 1.0,
+   "event_pressure": 1.0,
+   "starting_resources": 1.0,
+   "threat_scale": 1.0,
+   "research_cost": 1.0
+  },
+  {
+   "id": "harsh",
+   "name": "Harsh",
+   "description": "Hungry survivors, frequent disasters and thin stores. Every death is likely.",
+   "need_decay": 1.2,
+   "event_pressure": 1.4,
+   "starting_resources": 0.7,
+   "threat_scale": 1.4,
+   "research_cost": 1.15
+  }
+ ]
+}

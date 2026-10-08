@@ -1,160 +1,105 @@
-//! art domain.
+//! Painted art embedded in the binary: the crash-site backdrop, survivor
+//! portraits and the building atlas.
 
 use macroquad::prelude::*;
+use macroquad_toolkit::colors::shift_hue;
 
-pub mod portrait;
-pub mod profiles;
-pub mod sprite;
+const PORTRAIT_COLUMNS: f32 = 3.0;
+const PORTRAIT_ROWS: f32 = 2.0;
+const BUILDING_SPRITES: f32 = 5.0;
 
-use profiles::SURVIVOR_ART_PROFILES;
-use sprite::generate_sprite;
-
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum SpritePose {
-    Idle,
-    Moving,
-    Working,
-    Eating,
-    Sleeping,
-    Supported,
-    SupportedReach,
-    Tense,
-    TenseGuarded,
+pub struct Art {
+    pub backdrop: Texture2D,
+    pub portraits: Texture2D,
+    pub buildings: Texture2D,
 }
 
-impl SpritePose {
-    pub const fn all() -> &'static [SpritePose] {
-        &[
-            SpritePose::Idle,
-            SpritePose::Moving,
-            SpritePose::Working,
-            SpritePose::Eating,
-            SpritePose::Sleeping,
-            SpritePose::Supported,
-            SpritePose::SupportedReach,
-            SpritePose::Tense,
-            SpritePose::TenseGuarded,
-        ]
-    }
-
-    const fn index(self) -> usize {
-        match self {
-            SpritePose::Idle => 0,
-            SpritePose::Moving => 1,
-            SpritePose::Working => 2,
-            SpritePose::Eating => 3,
-            SpritePose::Sleeping => 4,
-            SpritePose::Supported => 5,
-            SpritePose::SupportedReach => 6,
-            SpritePose::Tense => 7,
-            SpritePose::TenseGuarded => 8,
-        }
-    }
-}
-
-pub struct PlaceholderArt {
-    colonist_sprites: Vec<Texture2D>,
-    production_portraits: Texture2D,
-    building_atlas: Texture2D,
-    crash_site_backdrop: Texture2D,
-}
-
-impl Default for PlaceholderArt {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl PlaceholderArt {
-    pub fn new() -> Self {
-        let colonist_sprites = SURVIVOR_ART_PROFILES
-            .iter()
-            .enumerate()
-            .flat_map(|(index, profile)| {
-                SpritePose::all().iter().map(move |pose| {
-                    texture_from_image(generate_sprite(*profile, index, *pose), FilterMode::Nearest)
-                })
-            })
-            .collect();
-
-        let production_portraits = Texture2D::from_file_with_format(
-            include_bytes!("../../assets/art/survivor_portraits.png"),
-            Some(ImageFormat::Png),
-        );
-        production_portraits.set_filter(FilterMode::Linear);
-        let crash_site_backdrop = Texture2D::from_file_with_format(
-            include_bytes!("../../assets/art/crash_site_backdrop.png"),
-            Some(ImageFormat::Png),
-        );
-        crash_site_backdrop.set_filter(FilterMode::Linear);
-        let building_atlas = Texture2D::from_file_with_format(
-            include_bytes!("../../assets/art/building_atlas.png"),
-            Some(ImageFormat::Png),
-        );
-        building_atlas.set_filter(FilterMode::Linear);
-
-        Self {
-            colonist_sprites,
-            production_portraits,
-            building_atlas,
-            crash_site_backdrop,
-        }
-    }
-
-    pub fn colonist_sprite_for_pose(
-        &self,
-        colonist_id: u32,
-        pose: SpritePose,
-    ) -> Option<&Texture2D> {
-        if self.colonist_sprites.is_empty() {
-            return None;
-        }
-
-        let pose_count = SpritePose::all().len();
-        let profile_index = colonist_id as usize % SURVIVOR_ART_PROFILES.len();
-        self.colonist_sprites
-            .get(profile_index * pose_count + pose.index())
-    }
-
-    pub fn colonist_portrait(&self, colonist_id: u32) -> Option<(&Texture2D, Rect)> {
-        let index = colonist_id as usize % 6;
-        let column = index % 3;
-        let row = index / 3;
-        Some((
-            &self.production_portraits,
-            Rect::new(
-                column as f32 * self.production_portraits.width() / 3.0,
-                row as f32 * self.production_portraits.height() / 2.0,
-                self.production_portraits.width() / 3.0,
-                self.production_portraits.height() / 2.0,
-            ),
-        ))
-    }
-
-    pub fn crash_site_backdrop(&self) -> &Texture2D {
-        &self.crash_site_backdrop
-    }
-
-    pub fn building_icon(&self, building_type: crate::data::building::BuildingType) -> Rect {
-        let index = crate::data::building::BuildingType::all()
-            .iter()
-            .position(|candidate| *candidate == building_type)
-            .unwrap_or(0);
-        Rect::new(
-            index as f32 * self.building_atlas.width() / 5.0,
-            0.0,
-            self.building_atlas.width() / 5.0,
-            self.building_atlas.height(),
-        )
-    }
-
-    pub fn building_atlas(&self) -> &Texture2D {
-        &self.building_atlas
-    }
-}
-
-fn texture_from_image(image: Image, filter: FilterMode) -> Texture2D {
-    let texture = Texture2D::from_image(&image);
-    texture.set_filter(filter);
+fn texture(bytes: &[u8]) -> Texture2D {
+    let texture = Texture2D::from_file_with_format(bytes, Some(ImageFormat::Png));
+    texture.set_filter(FilterMode::Linear);
     texture
+}
+
+impl Art {
+    pub fn load() -> Self {
+        Self {
+            backdrop: texture(include_bytes!("../../assets/art/crash_site_backdrop.png")),
+            portraits: texture(include_bytes!("../../assets/art/survivor_portraits.png")),
+            buildings: texture(include_bytes!("../../assets/art/building_atlas.png")),
+        }
+    }
+
+    /// A survivor portrait, tinted by their hue so repeated faces differ.
+    pub fn draw_portrait(&self, index: u8, hue: f32, rect: Rect) {
+        let width = self.portraits.width() / PORTRAIT_COLUMNS;
+        let height = self.portraits.height() / PORTRAIT_ROWS;
+        let column = (index as f32 % PORTRAIT_COLUMNS).floor();
+        let row = ((index as f32 / PORTRAIT_COLUMNS).floor() % PORTRAIT_ROWS).floor();
+        let inset = width * 0.12;
+        let source = Rect::new(
+            column * width + inset,
+            row * height + inset * 0.6,
+            width - inset * 2.0,
+            height - inset * 2.0,
+        );
+        let tint = shift_hue(Color::new(1.0, 0.97, 0.94, 1.0), hue);
+        draw_rectangle(
+            rect.x,
+            rect.y,
+            rect.w,
+            rect.h,
+            Color::new(0.08, 0.09, 0.1, 1.0),
+        );
+        draw_texture_ex(
+            &self.portraits,
+            rect.x,
+            rect.y,
+            tint,
+            DrawTextureParams {
+                dest_size: Some(vec2(rect.w, rect.h)),
+                source: Some(source),
+                ..Default::default()
+            },
+        );
+    }
+
+    /// A building sprite fitted into a destination rectangle, bottom-aligned.
+    pub fn draw_building(&self, index: usize, rect: Rect, color: Color) {
+        let width = self.buildings.width() / BUILDING_SPRITES;
+        let height = self.buildings.height();
+        let source = Rect::new(index as f32 * width, height * 0.08, width, height * 0.86);
+        let aspect = source.h / source.w;
+        let draw_w = rect.w * 1.15;
+        let draw_h = draw_w * aspect;
+        draw_texture_ex(
+            &self.buildings,
+            rect.x + (rect.w - draw_w) * 0.5,
+            rect.y + rect.h - draw_h,
+            color,
+            DrawTextureParams {
+                dest_size: Some(vec2(draw_w, draw_h)),
+                source: Some(source),
+                ..Default::default()
+            },
+        );
+    }
+
+    /// The backdrop scaled to cover a rectangle.
+    pub fn draw_backdrop(&self, rect: Rect, tint: Color) {
+        let scale = (rect.w / self.backdrop.width()).max(rect.h / self.backdrop.height());
+        let size = vec2(
+            self.backdrop.width() * scale,
+            self.backdrop.height() * scale,
+        );
+        draw_texture_ex(
+            &self.backdrop,
+            rect.x + (rect.w - size.x) * 0.5,
+            rect.y + (rect.h - size.y) * 0.5,
+            tint,
+            DrawTextureParams {
+                dest_size: Some(size),
+                ..Default::default()
+            },
+        );
+    }
 }

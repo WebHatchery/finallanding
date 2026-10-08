@@ -6,40 +6,36 @@
   },
   "canvas_rendering": "pixelated",
   "about": [
-    "Read the four-step arrival briefing, then build a home for crash survivors. Place living and working spaces, balance their needs, and help relationships grow through each decision."
+    "You are MERIDIAN, the intelligence of a crashed colony ship. Eight survivors think for themselves: they perceive, plan, fail, try again, help each other, fall in love and fall out. Build, set priorities and research a technology tree that changes every run, then lead them through a five-act campaign to one of three futures they vote on."
   ],
   "controls": [
     {
-      "key": "Mouse",
-      "desc": "Release to activate buttons, place buildings, select survivors, and use UI controls"
+      "key": "Tap / click",
+      "desc": "Inspect survivors, buildings and sites; tap empty ground to dismiss"
     },
     {
-      "key": "Q-W-E-R-T",
-      "desc": "Select building tools"
+      "key": "Drag / scroll",
+      "desc": "Pan and zoom the map (or the - / + and Recenter buttons)"
     },
     {
-      "key": "1-3",
-      "desc": "Adjust priority modes"
+      "key": "Toolbar",
+      "desc": "Build, Colony, Research, People, Relations, Expeditions, Chronicle, Council"
     },
     {
-      "key": "Space",
-      "desc": "Pause / resume time"
+      "key": "Space, 1-3",
+      "desc": "Pause and game speed (also the top-bar speed buttons)"
     },
     {
-      "key": "Z",
-      "desc": "Undo placement"
+      "key": "WASD / arrows, Q / E",
+      "desc": "Pan and zoom"
     },
     {
-      "key": "Esc",
-      "desc": "Cancel current tool"
+      "key": "B C R P L X J",
+      "desc": "Open Build, Colony, Research, People, Relations, Expeditions, Chronicle"
     },
     {
-      "key": "Visible controls",
-      "desc": "Undo, Cancel, Filter Room, Search archive, Export, and Restart Run"
-    },
-    {
-      "key": "Touch",
-      "desc": "Tap Continue through arrival, use the on-screen Log keyboard, and tap Filter Room before a map room"
+      "key": "Esc / right-click",
+      "desc": "Cancel the build tool, close a panel or deselect"
     }
   ],
   "details": [

@@ -1,260 +1,131 @@
-//! game domain.
+//! The game shell: screens, the frame loop, autosave and capture scenes.
 
-pub mod building_system;
-pub mod colonist_ai;
-pub mod colonist_spawner;
+mod capture;
+mod dispatch;
 
-use crate::state::menu_state::MenuState;
+pub use capture::begin_scene as begin_capture_scene;
 
-use crate::data::building::BuildingType;
-use crate::data::types::Position;
-use crate::state::game_state::GameplayState;
-use crate::state::{State, StateTransition};
-use macroquad::prelude::{request_new_screen_size, set_fullscreen};
-
-pub enum GameStateEnum {
-    Gameplay(Box<GameplayState>),
-    Menu(MenuState),
-}
+use crate::state::play::{PlayState, Toast};
+use crate::state::save::{self, Preferences};
+use crate::state::{Screen, TitleState};
+use crate::ui::art::Art;
+use crate::ui::context::Ui;
+use crate::ui::theme::{VIRTUAL_HEIGHT, VIRTUAL_WIDTH};
+use crate::ui::tracker::toast_seconds;
+use crate::ui::{input, play_screen, screens};
+use macroquad::prelude::*;
+use macroquad_toolkit::ui::{Pointer, VirtualUi};
 
 pub struct Game {
-    state: GameStateEnum,
+    pub screen: Screen,
+    pub art: Art,
+    pub preferences: Preferences,
+    pub quit_requested: bool,
 }
 
 impl Game {
-    pub async fn new() -> Self {
-        let state = if should_start_gameplay() {
-            GameStateEnum::Gameplay(Box::new(GameplayState::new_for_capture()))
+    pub fn new() -> Self {
+        Self {
+            screen: Screen::Title(TitleState {
+                has_save: save::has_save(),
+                message: None,
+            }),
+            art: Art::load(),
+            preferences: save::load_preferences(),
+            quit_requested: false,
+        }
+    }
+
+    /// One frame: draw the current screen, apply what the player asked for,
+    /// then advance the simulation.
+    pub fn frame(&mut self, dt: f32, pointer_enabled: bool) {
+        clear_background(BLACK);
+        let frame = VirtualUi::new(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+        let pointer = if pointer_enabled {
+            Pointer::read(|p| frame.screen_to_ui(p))
         } else {
-            GameStateEnum::Menu(MenuState::new())
+            Pointer::default()
         };
-
-        Self { state }
-    }
-
-    pub fn update(&mut self) {
-        match &mut self.state {
-            GameStateEnum::Gameplay(state) => {
-                let transition = state.update();
-                match transition {
-                    StateTransition::ToGameplay(new_state) => {
-                        self.state = GameStateEnum::Gameplay(new_state);
+        let wheel = if pointer_enabled {
+            mouse_wheel().1
+        } else {
+            0.0
+        };
+        let mut ui = Ui::new(pointer, wheel, get_time() as f32);
+        frame.begin();
+        match &mut self.screen {
+            Screen::Title(title) => screens::draw_title(&mut ui, &self.art, title),
+            Screen::Setup(setup) => screens::draw_setup(&mut ui, &self.art, setup),
+            Screen::Playing(play) => {
+                play_screen::draw(&mut ui, &self.art, play, &frame);
+                if !play.sim.colony.campaign.is_over() {
+                    if pointer_enabled {
+                        input::world_pointer(&mut ui, play);
                     }
-                    StateTransition::ToMenu { status_message } => {
-                        self.state = GameStateEnum::Menu(MenuState::with_status(status_message));
-                    }
-                    StateTransition::None => {}
-                }
-            }
-            GameStateEnum::Menu(state) => {
-                let transition = state.update_with_input();
-                match transition {
-                    StateTransition::ToGameplay(new_state) => {
-                        self.state = GameStateEnum::Gameplay(new_state);
-                    }
-                    StateTransition::ToMenu { .. } | StateTransition::None => {}
+                    input::keyboard(&mut ui, play, dt);
                 }
             }
         }
-    }
-
-    pub fn draw(&self) {
-        match &self.state {
-            GameStateEnum::Gameplay(state) => state.draw(),
-            GameStateEnum::Menu(state) => state.draw_ui(),
+        set_default_camera();
+        for action in ui.take_actions() {
+            dispatch::apply(self, action);
         }
-    }
-
-    pub fn begin_capture_scene(&mut self, scene: &str) {
-        const KEYS: &[&str] = &[
-            "TFL_START_TOOLBAR_MODE",
-            "TFL_START_SELECTED_COLONIST",
-            "TFL_START_SOCIAL_HISTORY_DAY",
-            "TFL_START_LOG_VIEW",
-            "TFL_START_SELECTED_BUILDING",
-            "TFL_PREVIEW_GRID_X",
-            "TFL_PREVIEW_GRID_Y",
-            "TFL_SEED_SOCIAL_HISTORY",
-            "TFL_SEED_ACTIVITY_POSES",
-            "TFL_SEED_ASSIGN_SPACES",
-        ];
-        for key in KEYS {
-            std::env::remove_var(key);
+        if let Screen::Playing(play) = &mut self.screen {
+            play.advance(dt);
+            follow_selection(play);
+            collect_toasts(play);
+            autosave(play);
         }
-
-        if let Some((width, height)) = capture_menu_size(scene) {
-            set_fullscreen(false);
-            request_new_screen_size(width as f32, height as f32);
-            self.state = GameStateEnum::Menu(MenuState::new());
-            return;
-        }
-
-        if let Some((width, height, reviewed)) = capture_result_size(scene) {
-            set_fullscreen(false);
-            request_new_screen_size(width as f32, height as f32);
-            let mut gameplay = GameplayState::new_for_capture();
-            gameplay.data.scenario.outcome = crate::data::scenario::ScenarioOutcome::Victory;
-            gameplay.data.scenario.outcome_tick = Some(gameplay.data.tick);
-            gameplay.result_review_open = reviewed;
-            if reviewed {
-                gameplay.toolbar_mode = crate::ui::ToolbarMode::Log;
-            }
-            self.state = GameStateEnum::Gameplay(Box::new(gameplay));
-            return;
-        }
-
-        let (width, height, fullscreen, values) = match scene {
-            "smoke_1920x1080" => (1920, 1080, true, vec![("TFL_START_TOOLBAR_MODE", "build")]),
-            "smoke_closed_1280x720" => {
-                (1280, 720, false, vec![("TFL_START_TOOLBAR_MODE", "build")])
-            }
-            "smoke_assign_1280x720" => (
-                1280,
-                720,
-                false,
-                vec![
-                    ("TFL_START_TOOLBAR_MODE", "assign"),
-                    ("TFL_START_SELECTED_COLONIST", "5"),
-                    ("TFL_SEED_ASSIGN_SPACES", "1"),
-                ],
-            ),
-            "smoke_log_1280x720" => (
-                1280,
-                720,
-                false,
-                vec![
-                    ("TFL_START_TOOLBAR_MODE", "log"),
-                    ("TFL_SEED_SOCIAL_HISTORY", "1"),
-                    ("TFL_START_SOCIAL_HISTORY_DAY", "4"),
-                ],
-            ),
-            "smoke_log_timeline_1280x720" => (
-                1280,
-                720,
-                false,
-                vec![
-                    ("TFL_START_TOOLBAR_MODE", "log"),
-                    ("TFL_SEED_SOCIAL_HISTORY", "1"),
-                ],
-            ),
-            "smoke_log_events_1280x720" => (
-                1280,
-                720,
-                false,
-                vec![
-                    ("TFL_START_TOOLBAR_MODE", "log"),
-                    ("TFL_START_LOG_VIEW", "events"),
-                    ("TFL_SEED_SOCIAL_HISTORY", "1"),
-                ],
-            ),
-            "smoke_research_1280x720" => (
-                1280,
-                720,
-                false,
-                vec![("TFL_START_TOOLBAR_MODE", "research")],
-            ),
-            "smoke_research_ready_1280x720" => (
-                1280,
-                720,
-                false,
-                vec![("TFL_START_TOOLBAR_MODE", "research")],
-            ),
-            "smoke_research_touch_720x480" => (
-                720,
-                480,
-                false,
-                vec![("TFL_START_TOOLBAR_MODE", "research")],
-            ),
-            "smoke_colony_1280x720" => {
-                (1280, 720, false, vec![("TFL_START_TOOLBAR_MODE", "colony")])
-            }
-            "smoke_placement_1280x720" => (
-                1280,
-                720,
-                false,
-                vec![
-                    ("TFL_START_TOOLBAR_MODE", "build"),
-                    ("TFL_START_SELECTED_BUILDING", "habitat"),
-                    ("TFL_PREVIEW_GRID_X", "5"),
-                    ("TFL_PREVIEW_GRID_Y", "9"),
-                ],
-            ),
-            "smoke_poses_1280x720" => (
-                1280,
-                720,
-                false,
-                vec![
-                    ("TFL_START_TOOLBAR_MODE", "build"),
-                    ("TFL_SEED_ACTIVITY_POSES", "1"),
-                ],
-            ),
-            "smoke_touch_720x480" => (
-                720,
-                480,
-                false,
-                vec![
-                    ("TFL_START_TOOLBAR_MODE", "assign"),
-                    ("TFL_START_SELECTED_COLONIST", "0"),
-                    ("TFL_SEED_ASSIGN_SPACES", "1"),
-                ],
-            ),
-            _ => (1280, 720, false, vec![("TFL_START_TOOLBAR_MODE", "build")]),
-        };
-        for (key, value) in values {
-            std::env::set_var(key, value);
-        }
-        set_fullscreen(fullscreen);
-        request_new_screen_size(width as f32, height as f32);
-        let mut gameplay = GameplayState::new_for_capture();
-        if scene == "smoke_closed_1280x720" {
-            gameplay.context_panel_open = false;
-        }
-        if scene == "help_1280x720" {
-            gameplay.help_open = true;
-        }
-        if scene == "smoke_research_ready_1280x720" {
-            let data = &mut gameplay.data;
-            let crate::state::runtime_state::GameState {
-                data: colony_data,
-                building_system,
-                ..
-            } = data;
-            let crate::data::game_state::ColonyData { grid, .. } = colony_data;
-            let _ = building_system.try_place_building(
-                grid,
-                BuildingType::ExplorationGate,
-                Position::new(1, 1),
-            );
-        }
-        self.state = GameStateEnum::Gameplay(Box::new(gameplay));
     }
 }
 
-fn should_start_gameplay() -> bool {
-    #[cfg(not(target_arch = "wasm32"))]
-    {
-        std::env::var("TFL_START_GAMEPLAY").is_ok_and(|value| value != "0")
-    }
-
-    #[cfg(target_arch = "wasm32")]
-    {
-        false
+impl Default for Game {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
-fn capture_menu_size(scene: &str) -> Option<(i32, i32)> {
-    match scene {
-        "menu_1280x720" => Some((1280, 720)),
-        "menu_720x480" => Some((720, 480)),
-        _ => None,
+fn follow_selection(play: &mut PlayState) {
+    if !play.follow {
+        return;
+    }
+    if let Some(crate::ui::actions::Selection::Agent(id)) = play.selection {
+        if let Some(agent) = play.sim.agent(id) {
+            let target = crate::ui::camera::point_center(agent.position);
+            play.camera.target += (target - play.camera.target) * 0.15;
+        }
     }
 }
 
-fn capture_result_size(scene: &str) -> Option<(i32, i32, bool)> {
-    match scene {
-        "result_1280x720" => Some((1280, 720, false)),
-        "result_review_1280x720" => Some((1280, 720, true)),
-        "result_720x480" => Some((720, 480, false)),
-        _ => None,
+/// Major chronicle entries surface briefly as toasts.
+fn collect_toasts(play: &mut PlayState) {
+    let entries = &play.sim.colony.chronicle.entries;
+    if play.seen_entries > entries.len() {
+        play.seen_entries = entries.len();
+    }
+    for entry in entries.iter().skip(play.seen_entries) {
+        if entry.importance >= 2 {
+            play.toasts.push(Toast {
+                text: entry.text.clone(),
+                category: entry.category,
+                born: play.clock,
+            });
+        }
+    }
+    play.seen_entries = entries.len();
+    let clock = play.clock;
+    play.toasts.retain(|t| clock - t.born < toast_seconds());
+    let excess = play.toasts.len().saturating_sub(6);
+    play.toasts.drain(..excess);
+}
+
+/// Save once per in-game day and when a run ends.
+fn autosave(play: &mut PlayState) {
+    let day = play.sim.calendar.day();
+    if day != play.last_autosave_day {
+        play.last_autosave_day = day;
+        if let Err(error) = save::save(&play.sim) {
+            eprintln!("autosave failed: {error}");
+        }
     }
 }

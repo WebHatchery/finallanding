@@ -1,0 +1,460 @@
+{
+ "policies": [
+  {
+   "id": "rations",
+   "name": "Rations",
+   "description": "How much food each survivor may eat.",
+   "default_option": "standard",
+   "options": [
+    {
+     "id": "generous",
+     "name": "Generous",
+     "description": "Eat well. Uses a quarter more food.",
+     "effects": {
+      "food_use": 1.25,
+      "mood": 3,
+      "trait_mood": {
+       "gourmand": 3
+      }
+     }
+    },
+    {
+     "id": "standard",
+     "name": "Standard",
+     "description": "Enough to work on.",
+     "effects": {}
+    },
+    {
+     "id": "strict",
+     "name": "Strict",
+     "description": "Make the stores last. Uses a fifth less food.",
+     "effects": {
+      "food_use": 0.8,
+      "mood": -4,
+      "trait_mood": {
+       "gourmand": -3
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "work_hours",
+   "name": "Work Hours",
+   "description": "How long the working day lasts.",
+   "default_option": "standard",
+   "options": [
+    {
+     "id": "short",
+     "name": "Short",
+     "description": "Two hours less work, more time to rest and talk.",
+     "effects": {
+      "work_hours": -2,
+      "mood": 2,
+      "trait_mood": {
+       "lazy": 3,
+       "diligent": -1
+      }
+     }
+    },
+    {
+     "id": "standard",
+     "name": "Standard",
+     "description": "Seven until six.",
+     "effects": {}
+    },
+    {
+     "id": "long",
+     "name": "Long",
+     "description": "Three extra hours. Faster progress, tired people.",
+     "effects": {
+      "work_hours": 3,
+      "mood": -4,
+      "trait_mood": {
+       "lazy": -4,
+       "diligent": 1
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "curfew",
+   "name": "Night Curfew",
+   "description": "Whether survivors stay indoors after dark.",
+   "default_option": "off",
+   "options": [
+    {
+     "id": "off",
+     "name": "Off",
+     "description": "Go where you like.",
+     "effects": {}
+    },
+    {
+     "id": "on",
+     "name": "On",
+     "description": "Indoors after dusk. Safer from fauna.",
+     "effects": {
+      "curfew": true,
+      "mood": -1,
+      "trait_mood": {
+       "cautious": 2,
+       "night_owl": -4
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "families",
+   "name": "Families",
+   "description": "The colony's stance on partners having children.",
+   "default_option": "neutral",
+   "tech": "kinship_customs",
+   "options": [
+    {
+     "id": "encouraged",
+     "name": "Encouraged",
+     "description": "Children are the colony's future.",
+     "effects": {
+      "child_chance": 2.0,
+      "trait_mood": {
+       "romantic": 2
+      }
+     }
+    },
+    {
+     "id": "neutral",
+     "name": "Neutral",
+     "description": "A private matter.",
+     "effects": {}
+    },
+    {
+     "id": "discouraged",
+     "name": "Discouraged",
+     "description": "Not until the colony is secure.",
+     "effects": {
+      "child_chance": 0.2,
+      "trait_mood": {
+       "romantic": -3
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "expeditions",
+   "name": "Expedition Stance",
+   "description": "How eagerly the colony sends people into the wilds.",
+   "default_option": "measured",
+   "tech": "field_survey",
+   "options": [
+    {
+     "id": "bold",
+     "name": "Bold",
+     "description": "Fortune favours the brave.",
+     "effects": {
+      "volunteer_bias": 1.5,
+      "trait_mood": {
+       "brave": 2,
+       "cautious": -2
+      }
+     }
+    },
+    {
+     "id": "measured",
+     "name": "Measured",
+     "description": "Go when it is worth it.",
+     "effects": {}
+    },
+    {
+     "id": "cautious",
+     "name": "Cautious",
+     "description": "Only when necessary.",
+     "effects": {
+      "volunteer_bias": 0.6,
+      "trait_mood": {
+       "cautious": 2,
+       "brave": -2
+      }
+     }
+    }
+   ]
+  }
+ ],
+ "thoughts": [
+  {
+   "id": "ate_meal",
+   "text": "Ate a proper meal",
+   "mood": 4,
+   "days": 0.6,
+   "max_stack": 1
+  },
+  {
+   "id": "ate_raw",
+   "text": "Ate raw rations",
+   "mood": -2,
+   "days": 0.5,
+   "max_stack": 1
+  },
+  {
+   "id": "ate_foraged",
+   "text": "Ate something foraged",
+   "mood": -1,
+   "days": 0.5,
+   "max_stack": 1
+  },
+  {
+   "id": "went_hungry",
+   "text": "Went hungry",
+   "mood": -8,
+   "days": 1.0,
+   "max_stack": 1
+  },
+  {
+   "id": "slept_bed",
+   "text": "Slept in a real bed",
+   "mood": 3,
+   "days": 0.8,
+   "max_stack": 1
+  },
+  {
+   "id": "slept_ground",
+   "text": "Slept on the ground",
+   "mood": -4,
+   "days": 0.8,
+   "max_stack": 1
+  },
+  {
+   "id": "freezing",
+   "text": "Freezing cold",
+   "mood": -7,
+   "days": 0.5,
+   "max_stack": 1
+  },
+  {
+   "id": "good_chat",
+   "text": "Had a good talk",
+   "mood": 3,
+   "days": 1.0,
+   "max_stack": 3
+  },
+  {
+   "id": "insulted",
+   "text": "Was insulted",
+   "mood": -5,
+   "days": 2.0,
+   "max_stack": 3
+  },
+  {
+   "id": "comforted",
+   "text": "Was comforted by a friend",
+   "mood": 6,
+   "days": 2.0,
+   "max_stack": 1
+  },
+  {
+   "id": "new_partner",
+   "text": "Found a partner",
+   "mood": 14,
+   "days": 8.0,
+   "max_stack": 1
+  },
+  {
+   "id": "breakup",
+   "text": "Broke up",
+   "mood": -12,
+   "days": 6.0,
+   "max_stack": 1
+  },
+  {
+   "id": "friend_died",
+   "text": "A friend died",
+   "mood": -14,
+   "days": 10.0,
+   "max_stack": 3
+  },
+  {
+   "id": "partner_died",
+   "text": "Their partner died",
+   "mood": -30,
+   "days": 20.0,
+   "max_stack": 1
+  },
+  {
+   "id": "ambition_fulfilled",
+   "text": "Fulfilled a life ambition",
+   "mood": 20,
+   "days": 30.0,
+   "max_stack": 1
+  },
+  {
+   "id": "frustrated",
+   "text": "Could not get what they needed",
+   "mood": -4,
+   "days": 1.0,
+   "max_stack": 3
+  },
+  {
+   "id": "eureka",
+   "text": "Had a breakthrough idea",
+   "mood": 8,
+   "days": 3.0,
+   "max_stack": 1
+  },
+  {
+   "id": "expedition_home",
+   "text": "Home from an expedition",
+   "mood": 6,
+   "days": 3.0,
+   "max_stack": 1
+  },
+  {
+   "id": "injured",
+   "text": "Injured",
+   "mood": -6,
+   "days": 3.0,
+   "max_stack": 1
+  },
+  {
+   "id": "sick",
+   "text": "Feeling sick",
+   "mood": -5,
+   "days": 1.0,
+   "max_stack": 1
+  },
+  {
+   "id": "child_born",
+   "text": "A child was born",
+   "mood": 16,
+   "days": 10.0,
+   "max_stack": 1
+  },
+  {
+   "id": "vote_won",
+   "text": "The colony chose their future",
+   "mood": 10,
+   "days": 15.0,
+   "max_stack": 1
+  },
+  {
+   "id": "vote_lost",
+   "text": "The colony chose the wrong future",
+   "mood": -12,
+   "days": 20.0,
+   "max_stack": 1
+  },
+  {
+   "id": "witnessed_attack",
+   "text": "Saw a creature attack",
+   "mood": -6,
+   "days": 2.0,
+   "max_stack": 2
+  },
+  {
+   "id": "helped_friend",
+   "text": "Helped someone in need",
+   "mood": 4,
+   "days": 2.0,
+   "max_stack": 2
+  },
+  {
+   "id": "refused_help",
+   "text": "Nobody came to help",
+   "mood": -6,
+   "days": 2.0,
+   "max_stack": 1
+  },
+  {
+   "id": "beautiful_place",
+   "text": "Spent time somewhere beautiful",
+   "mood": 3,
+   "days": 1.0,
+   "max_stack": 1
+  },
+  {
+   "id": "landed",
+   "text": "Survived the crash",
+   "mood": -6,
+   "days": 6.0,
+   "max_stack": 1
+  },
+  {
+   "id": "lonely",
+   "text": "Lonely",
+   "mood": -5,
+   "days": 1.0,
+   "max_stack": 1
+  },
+  {
+   "id": "learned",
+   "text": "Got better at their work",
+   "mood": 3,
+   "days": 2.0,
+   "max_stack": 2
+  },
+  {
+   "id": "comfy_home",
+   "text": "Has a comfortable home",
+   "mood": 4,
+   "days": 1.0,
+   "max_stack": 1
+  },
+  {
+   "id": "fought",
+   "text": "Got into a fight",
+   "mood": -8,
+   "days": 3.0,
+   "max_stack": 2
+  },
+  {
+   "id": "mental_break",
+   "text": "Lost control",
+   "mood": -3,
+   "days": 2.0,
+   "max_stack": 1
+  },
+  {
+   "id": "policy_pleased",
+   "text": "Approves of colony policy",
+   "mood": 2,
+   "days": 1.0,
+   "max_stack": 1
+  },
+  {
+   "id": "policy_upset",
+   "text": "Resents colony policy",
+   "mood": -3,
+   "days": 1.0,
+   "max_stack": 1
+  },
+  {
+   "id": "colony_event",
+   "text": "Colony mood",
+   "mood": 0,
+   "days": 1.0,
+   "max_stack": 1
+  },
+  {
+   "id": "death_witness",
+   "text": "Someone in the colony died",
+   "mood": -5,
+   "days": 5.0,
+   "max_stack": 1
+  },
+  {
+   "id": "recruited",
+   "text": "Joined the colony",
+   "mood": 5,
+   "days": 5.0,
+   "max_stack": 1
+  },
+  {
+   "id": "cared_for",
+   "text": "Was cared for in the infirmary",
+   "mood": 3,
+   "days": 2.0,
+   "max_stack": 1
+  }
+ ]
+}
