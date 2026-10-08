@@ -15,7 +15,7 @@ if (-not (Test-Path -LiteralPath $toolkitCapture)) {
 }
 
 $normal = @(
-    "title", "setup", "assets", "landing", "colony", "night", "late", "build",
+    "title", "setup", "assets", "species", "landing", "colony", "night", "late", "build",
     "mind", "needs", "bonds", "life",
     "research", "colonists", "relations", "expeditions", "chronicle", "colony_overlay",
     "council", "results"

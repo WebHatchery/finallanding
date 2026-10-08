@@ -9,7 +9,7 @@ use crate::sim::Sim;
 use crate::state::play::PlayState;
 use crate::state::{Screen, SetupState, TitleState};
 use crate::ui::actions::{InspectorTab, Overlay, Selection};
-use crate::world::{Calendar, Creature, CreatureMood, Point, ResourceNode, Terrain, Tile};
+use crate::world::{Calendar, Creature, CreatureMood, Point, ResourceNode, Terrain, Tile, World};
 use std::collections::VecDeque;
 
 const PLANS_PER_DAY: u64 = 6;
@@ -47,10 +47,8 @@ fn busiest_mind(sim: &Sim) -> Option<u32> {
         .map(|a| a.id)
 }
 
-/// Every building, landscape feature and creature on cleared grass, so each
-/// painted or drawn asset can be checked against the ground it stands on.
-fn asset_gallery(mut sim: Sim) -> Sim {
-    let world = &mut sim.world;
+/// Clear the map to explored grass with nothing on it.
+fn clear_ground(world: &mut World) {
     let structures: Vec<u32> = world.structures.iter().map(|s| s.id).collect();
     for id in structures {
         world.remove_structure(id);
@@ -64,6 +62,13 @@ fn asset_gallery(mut sim: Sim) -> Sim {
         world.map.terrain[index] = Terrain::Grass;
         world.map.explored[index] = true;
     }
+}
+
+/// Every building, landscape feature and creature on cleared grass, so each
+/// painted or drawn asset can be checked against the ground it stands on.
+fn asset_gallery(mut sim: Sim) -> Sim {
+    let world = &mut sim.world;
+    clear_ground(world);
     // The first row starts clear of the act tracker in the upper left.
     let (left, right) = (4, 60);
     let (mut x, mut y, mut row_height) = (left + 14, 4, 0);
@@ -121,6 +126,40 @@ fn asset_gallery(mut sim: Sim) -> Sim {
     sim
 }
 
+/// Where the species gallery starts, so the scene can frame it.
+const SPECIES_ORIGIN: Tile = Tile::new(10, 8);
+
+/// Every native species on cleared grass, one row per node kind, each row
+/// ending with its first species nearly spent.
+fn species_gallery(mut sim: Sim) -> Sim {
+    let world = &mut sim.world;
+    clear_ground(world);
+    let mut y = SPECIES_ORIGIN.y;
+    for kind in NodeKind::ALL {
+        let mut finds: Vec<(Option<String>, f32)> = game_data()
+            .finds_of(kind)
+            .map(|f| (Some(f.id.clone()), 40.0))
+            .collect();
+        if finds.is_empty() {
+            finds.push((None, 40.0));
+        }
+        finds.push((finds[0].0.clone(), 0.0));
+        for (column, (find, amount)) in finds.into_iter().enumerate() {
+            let id = world.allocate_node_id();
+            world.add_node(ResourceNode {
+                id,
+                kind,
+                tile: Tile::new(SPECIES_ORIGIN.x + column as i32 * 3, y),
+                amount,
+                max_amount: 40.0,
+                find,
+            });
+        }
+        y += 2;
+    }
+    sim
+}
+
 fn playing(game: &mut Game, sim: Sim) -> &mut PlayState {
     game.screen = Screen::Playing(Box::new(PlayState::new(sim, false)));
     match &mut game.screen {
@@ -157,6 +196,14 @@ pub fn begin_scene(game: &mut Game, scene: &str) {
             play.tracker_open = false;
             play.camera.zoom = 0.9;
             play.camera.target = crate::ui::camera::tile_center(Tile::new(32, 19));
+        }
+        "species" => {
+            let play = playing(game, species_gallery(at_hour(played_to(1), 11.0)));
+            play.speed = crate::state::play::SPEED_PAUSED;
+            play.tracker_open = false;
+            play.camera.zoom = 2.0;
+            let centre = Tile::new(SPECIES_ORIGIN.x + 10, SPECIES_ORIGIN.y + 5);
+            play.camera.target = crate::ui::camera::tile_center(centre);
         }
         "colony" => {
             playing(game, at_hour(played_to(14), 10.0));

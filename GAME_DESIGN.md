@@ -249,8 +249,10 @@ follows its foraging.
 The research overlay draws only known technologies, packed by branch and
 tier, so the tree visibly takes a different shape each run. A strip of
 native finds lists the species in the order they were found with what has
-been gathered; inspired cards carry their species' colour, and the map tints
-each resource node by its species.
+been gathered; inspired cards carry their species' colour, and the map draws
+each resource node as its own species (tubers in a mound, fungus caps,
+shells, hexagonal basalt, crystal ores, glyph stones, the dormant engine) in
+that species' colour.
 
 ## 7. Colony systems
 
