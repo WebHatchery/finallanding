@@ -1,5 +1,6 @@
 //! Drawing landscape features and buildings in world space.
 
+use super::species::{draw_species, Spot};
 use crate::data::{game_data, NodeKind};
 use crate::ui::art::Art;
 use crate::ui::camera::{tile_center, tile_size};
@@ -8,7 +9,7 @@ use crate::world::{CropStage, ResourceNode, Structure, Tile, World};
 use macroquad::prelude::*;
 use macroquad_toolkit::colors::{darken, lighten, with_alpha};
 
-fn hash(tile: Tile, salt: u32) -> f32 {
+pub(super) fn hash(tile: Tile, salt: u32) -> f32 {
     let mut h = (tile.x as u32).wrapping_mul(374_761_393)
         ^ (tile.y as u32).wrapping_mul(668_265_263)
         ^ salt.wrapping_mul(2_246_822_519);
@@ -20,15 +21,28 @@ fn rgb(r: f32, g: f32, b: f32) -> Color {
     Color::new(r, g, b, 1.0)
 }
 
-/// A node takes its species' colour, so a landing's fibres, stones, ores,
-/// foods and ruins look like what they are.
+/// A node is drawn as its species when it has one, in the species' colour;
+/// otherwise as a generic feature of its kind.
 pub fn draw_node(node: &ResourceNode, time: f32) {
     let c = tile_center(node.tile);
     let s = tile_size();
     let fullness = (node.amount / node.max_amount.max(1.0)).clamp(0.15, 1.0);
-    let species = node
-        .find_def()
-        .map(|find| Color::from_rgba(find.color[0], find.color[1], find.color[2], 255));
+    let find = node.find_def();
+    let species =
+        find.map(|find| Color::from_rgba(find.color[0], find.color[1], find.color[2], 255));
+    if let (Some(find), Some(color)) = (find, species) {
+        let spot = Spot {
+            c,
+            s,
+            color,
+            fullness,
+            tile: node.tile,
+            time,
+        };
+        if draw_species(&find.id, &spot) {
+            return;
+        }
+    }
     let tint = |fallback: Color| species.unwrap_or(fallback);
     match node.kind {
         NodeKind::Wreckage => {

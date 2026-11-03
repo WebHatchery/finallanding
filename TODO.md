@@ -15,9 +15,10 @@ dynamic tech tree, five-act campaign, 1920×1080 UI).
 - [ ] **Pinch zoom.** Touch zoom currently uses the - / + buttons; add a
   two-finger pinch through the toolkit gesture helpers.
 - [ ] **Audio.** No music or sound effects yet.
-- [ ] **Species art.** Native species are told apart by colour only; each would
-  read better with its own drawn or painted node (tubers, fungus caps, shells,
-  crystal ores, glyph stones, the dormant engine).
+- [ ] **Painted species art.** Each of the 22 native species now has its own
+  procedurally drawn node (`src/ui/world_view/species.rs`, reviewed in
+  `docs/verification/ui_species.png`). Painted sprites in the building atlas
+  style would sit better beside the painted buildings.
 - [ ] **Ending balance.** Since survivors stopped sleeping beside predators and
   colonies prepare for winter, the scripted colony loses almost no one, and the
   Beacon future (which draws on hardship) no longer wins its matrix runs.

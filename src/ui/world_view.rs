@@ -4,6 +4,7 @@
 pub mod actors;
 pub mod features;
 pub mod glyphs;
+pub mod species;
 pub mod terrain;
 
 use super::actions::Selection;
