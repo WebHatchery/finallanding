@@ -25,3 +25,7 @@ dynamic tech tree, five-act campaign, 1920×1080 UI).
 - [ ] **Pacing.** Standard runs end at days 279–326 (≈24–28 hours before
   pauses). Pauses bring that to the 30–40 hour target only for players who
   stop often; consider a longer Act IV or V if playtests run short.
+
+## Settings and display
+
+- [ ] Add a player-accessible Settings option with a persisted Fullscreen toggle.
